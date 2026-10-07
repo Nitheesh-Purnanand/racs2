@@ -1,0 +1,1713 @@
+=== PAGE 1 ===
+8106 IEEE TRANSACTIONS ON COGNITIVE COMMUNICATIONS AND NETWORKING, VOL. 12, 2026
+Secure Intellicise Wireless Network: Agentic AI for
+Coverless Semantic Steganography Communication
+Rui Meng
+ ,Member, IEEE , Song Gao
+ , Bingxuan Xu
+ ,Graduate Student Member, IEEE ,
+Xiaodong Xu
+ ,Senior Member, IEEE , Jianqiao Chen
+ , Nan Ma
+ ,Member, IEEE ,
+Pei Xiao
+ ,Senior Member, IEEE , Ping Zhang
+ ,Fellow, IEEE , and Rahim Tafazolli
+ ,Fellow, IEEE
+Abstract —Semantic Communication (SemCom), leveraging its
+signiﬁcant advantages in transmission efﬁciency and reliabil-
+ity, has emerged as a core technology for constructing future
+intellicise (intelligent and concise) wireless networks. However,
+intelligent attacks represented by semantic eavesdropping pose
+severe challenges to the security of SemCom. To address this chal-
+lenge, Semantic Steganographic Communication (SemSteCom)
+achieves “invisible” encryption by implicitly embedding private
+semantic information into cover modality carriers. The state-of-
+the-art study has further introduced generative diffusion models
+to directly generate stega images without relying on original
+cover images, effectively enhancing steganographic capacity.
+Nevertheless, the recovery process of private images is highly
+dependent on the guidance of private semantic keys, which may
+be inferred by intelligent eavesdroppers, thereby introducing new
+security threats. To address this issue, we propose an Agentic AI-
+driven SemSteCom (AgentSemSteCom) scheme, which includes
+semantic extraction, digital token controlled reference image
+generation, coverless steganography, semantic codec, and optional
+task-oriented enhancement modules. The proposed AgentSem-
+SteCom scheme obviates the need for both cover images and
+private semantic keys, thereby boosting steganographic capacity
+while reinforcing transmission security. The simulation results
+on open-source datasets verify that, AgentSemSteCom achieves
+better transmission quality and higher security levels than the
+baseline scheme.
+Received 22 January 2026; revised 1 April 2026; accepted 6 May 2026.
+Date of publication 12 May 2026; date of current version 19 May 2026. This
+work was supported in part by the National Key Research and Development
+Program of China under Grant 2020YFB1806905; in part by the National
+Natural Science Foundation of China under Grant 62501066 and under
+Grant U24B20131; in part by the Major Science and Technology Program
+of Hebei Province under Grant 202621502010001; in part by the Beijing
+Municipal Natural Science Foundation under Grant L242012; and in part by
+the Long Term Science and Technology Plan for Broadcasting, Television,
+and Online Audiovisual Program under Grant 2025AD0300. The associate
+editor coordinating the review of this article and approving it for publication
+was S. Zhang. (Corresponding authors: Rui Meng; Xiaodong Xu.)
+Rui Meng and Xiaodong Xu are with the State Key Laboratory of
+Networking and Switching Technology, Beijing University of Posts and
+Telecommunications, Beijing 100876, China, and also with the Satel-
+lite Internet Testing Center, Xiong’an Aerospace Information Research
+Institute, Xiong’an 070001, China (e-mail: buptmengrui@bupt.edu.cn; xux-
+iaodong@bupt.edu.cn).
+Song Gao, Bingxuan Xu, Nan Ma, and Ping Zhang are with the
+State Key Laboratory of Networking and Switching Technology, Beijing
+University of Posts and Telecommunications, Beijing 100876, China (e-mail:
+wkd251292@bupt.edu.cn; xubingxuan@bupt.edu.cn; manan@bupt.edu.cn;
+pzhang@bupt.edu.cn).
+Jianqiao Chen is with the ZGC Institute of Ubiquitous-X Innovation and
+Applications and Beijing Key Laboratory of 6G DOICT Converged and
+Cloud-Native Mobile Information Networks, Beijing 100876, China (e-mail:
+jqchen1988@163.com).
+Pei Xiao and Rahim Tafazolli are with the Institute for Communication
+Systems (ICS), Home for 5GIC/6GIC, University of Surrey, GU2 7XH
+Guildford, U.K. (e-mail: p.xiao@surrey.ac.uk; r.tafazolli@surrey.ac.uk).
+Digital Object Identiﬁer 10.1109/TCCN.2026.3692413Index Terms—Intellicise wireless network, semantic communi-
+cations, agentic AI, eavesdropping.
+I. I NTRODUCTION
+THE deep integration of Artiﬁcial Intelligence (AI) tech-
+nology and communication is one of the core trends
+driving the evolution of the sixth generation mobile com-
+munication (6G) [1], [2],[3]. In this context, the intellicise
+(intelligent and concise) wireless network, rooted and guided
+by information theory, complex science theory, and system
+theory, realizes holistic optimization through entropy reduc-
+tion. Intellicise embodies the dual principles of endogenous
+intelligence and native simplicity. Leveraging native intelli-
+gence, cognitive reshaping, and adaptive characteristics, it
+constructs intelligent service ecosystems tailored to diverse
+communication objects, ultimately enabling a self-evolving,
+self-optimizing, and self-balancing network [4],[5],[6].
+Semantic communication (SemCom) plays a pivotal role
+in the intellicise wireless network. Traditional communication
+based on Shannon information theory focuses on precise trans-
+mission of syntax layer symbols and pursues bit-level lossless
+transmission [7]. SemCom shifts towards the semantic layer,
+emphasizing the priority of meaning expression and allowing
+for moderate distortion at the symbolic level while preserv-
+ing semantics [8]. Numerous scholars have dedicated their
+research to SemCom and proposed key enabling technologies,
+such as semantic-based coding [9],[10], [11], semantic-based
+multiple access [12], semantic importance-based transmission
+[13], [14], [15], [16], [17], semantic knowledge base [18],
+and generative AI-based SemCom [19], [20]. For instance,
+Zhang et al. [21] explored generative AI towards semantic-
+aware satellite communication systems for model formulation,
+demonstrating that generative AI can effectively abstract
+high-level semantic information to guide communication
+decisions.
+In contrast to traditional communication, SemCom faces
+heightened security threats [22]. It must address not only
+conventional security risks, such as eavesdropping, jamming,
+and man-in-the-middle attacks, but also emerging threats intro-
+duced by semantic models, such as backdoor attacks and
+model inversion attacks [23]. Due to the open nature of
+wireless channels, eavesdropping remains one of the most
+prevalent attacks in SemCom [24]. Adversaries can lever-
+age specialized receiving equipment and advanced signal
+processing techniques to intercept transmitted signals [25].
+Moreover, if they acquire the decoder parameters deployed
+2332-7731 © 2026 IEEE. All rights reserved, including rights for text and data mining, and training of artiﬁcial intelligence and
+similar technologies. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 2 ===
+MENG et al.: SECURE INTELLICISE WIRELESS NETWORK: AGENTIC AI FOR COVERLESS SemSteCom 8107
+at legitimate receivers, they could potentially decode some or
+all private semantic information, even under degraded channel
+conditions.
+To defend against semantic eavesdropping attacks,
+researchers have recently proposed several approaches.
+Among them, encryption remains one of the most established
+techniques and has been widely adopted in SemCom,
+including cryptography encryption [26], homomorphic
+encryption [27], and quantum cryptography [28]. Based on
+physical-layer security [29], researchers employ superposition
+coding [30], beamforming [31] and reconﬁgurable intelligent
+surface [32] to achieve secure SemCom. Meanwhile, some
+researchers further consider covert communications [33],
+[34], [35], which aims to conceal the transmission behavior
+of SemCom from potential semantic eavesdroppers.
+While covert communications focus on hiding the com-
+munication signals [36], recent studies shift attention toward
+concealing the conﬁdential semantic content itself, leading
+to the exploration of Semantic Steganography Communica-
+tion (SemSteCom). Rather than directly encrypting semantic
+representations, SemSteCom conceals the conﬁdential seman-
+tic information within inconspicuous information. Towards
+text transmission, Long et al. [37] proposed a knowledge
+graph-guided steganography framework to improve seman-
+tic coherence and imperceptibility in linguistic domain.
+Li et al. [38] further embedded textual semantics into visual
+semantics to enable secure multi-modal semantic commu-
+nication. Toward image transmission, Tang et al. [39] and
+Ni et al. [40] developed Invertible Neural Network (INN)-
+based SemSteCom schemes, while Huo et al. [41] introduced
+a Generative Adversarial Network (GAN)-based framework.
+Also, Chen et al. [42] further proposed a coding-guided
+semantic jamming strategy based on superposition coding to
+degrade the eavesdropper’s decoding capability.
+However, the above solutions rely on cover modalities
+to hide secret information, which introduces limitations in
+steganographic capacity and security. To address these chal-
+lenges, Gao et al. [43] introduced a coverless SemSteDiff
+scheme that embeds secret semantics into the diffusion
+sampling trajectory, allowing legitimate receivers to recover
+conﬁdential image using private semantic keys to achieve
+“invisible encryption”. However, in some scenarios enabled by
+intellicise wireless networks, intelligent eavesdroppers could
+infer the private semantic key to generate the secret image
+based on the semantic background [44]. For example, in the
+intellicise healthcare scenario, an intelligent semantic eaves-
+dropper aware of a patient’s medical history could attempt to
+reconstruct sensitive diagnostic images by inferring semantic
+information like “fracture” or “tumor”.
+Against this background, we introduce agentic AI [45]
+to autonomously determine the generative path of stego
+image based on a ﬁxed digital token. Unlike conventional
+generative AI models that follow a static and predeﬁned gen-
+eration pipeline, agentic AI dynamically perceives semantic
+characteristics of the secret content and adaptively selects
+task-speciﬁc generative strategies. Speciﬁcally, agentic AI
+utilizes the digital token as a deterministic seed, generating
+context-adaptive stego images based on the semantic featureperceived from different secret images. It can effectively
+avoid the risk of information leakage caused by semantic
+correlation and repeated transmission of private semantic keys,
+enhancing the security and adaptability of SemSteCom. The
+main contributions of this paper are summarized as follows:
+We propose an Agentic AI-driven SemSteCom
+(AgentSemSteCom) scheme to realize autonomous
+defense against intelligent semantic eavesdroppers
+in intellicise wireless networks. Compared with the
+state-of-the-art SemSteCom schemes [39], [40], [41],
+[42], AgentSemSteCom eliminates the requirement for
+cover images and private semantic keys, enhancing the
+steganographic capacity and transmission security. To the
+best of our knowledge, this is the ﬁrst work to employ
+agentic AI for secure intellicise wireless networks.
+We develop an agentic AI-driven coverless semantic
+steganography framework, where the public semantic key
+and implicit feature are autonomously coordinated by
+agentic AI to control the stego image generation. The
+public semantic key determines the content description
+while the implicit feature constrains the structural dis-
+tribution, which enables controllable generation. Also,
+agentic AI employs an invertible sampling strategy,
+where coupled latent trajectories are exploited to elim-
+inate approximation error in diffusion inversion, thereby
+resolving semantic drift and enabling accurate recovery
+of the secret image at the receiver.
+We propose a digital token–based security mechanism to
+protect secret images without relying on private semantic
+keys. Agentic AI utilizes a user-deﬁned digital token as
+a deterministic random seed to initialize the diffusion
+noise for reference image generation, ensuring that only
+legitimate receivers can achieve invertible recovery using
+the digital token. Moreover, the digital token is also
+used to disturb the latent vector with controllable noise
+during diffusion process, where agentic AI applies a
+binary perturbation mask to ﬂip the speciﬁc position
+determined by digital token. This dual-stage protection
+enables agentic AI to coordinate reference image gen-
+eration and noise perturbation under a uniﬁed digital
+token control, effectively defending against the potential
+eavesdropping risk caused by the leakage of private
+semantic keys, which further enhances the security of
+SemSteCom.
+The simulation results on open-source UniStega dataset
+[46] demonstrate the effectiveness of the proposed
+AgentSemSteCom scheme for both the digital and analog
+SemCom. Compared with SemSteDiff [43], our scheme
+achieves higher Peak Signal-to-Noise Ratio (PSNR) by
+2.69 dB, higher Structural Similarity (SSIM) by 8.88%,
+lower Mean Squared Error (MSE) by 43.75%, and
+lower Learned Perceptual Image Patch Similarity (LPIPS)
+by 5.1%. Additionally, the agentic-AI based legitimate
+receiver with the correct digital token achieves PSNR
+of 25.37 dB, while the agentic-AI based eavesdrop-
+per with the wrong digital token only reaches PSNR
+of 18.91 dB.
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 3 ===
+8108 IEEE TRANSACTIONS ON COGNITIVE COMMUNICATIONS AND NETWORKING, VOL. 12, 2026
+Fig. 1. Network model of the proposed AgentSemSteCom scheme, including the agentic AI-based transmitter, physical channel, agentic AI-based receiver,
+key management center, and agentic AI-based eavesdropper. It is realized based on the edge-cloud library [47] and shared semantic knowledge base, with the
+aid of agentic AI’s capabilities of environmental perception, task reasoning, and tool invocation.
+TABLE I
+THELIST OF MAINPARAMETERS
+II. S YSTEM MODEL
+A. Network Model
+As shown in Figure 1, the proposed AgentSemSteCom
+scheme involves the following nodes, with main parameters
+illustrated in Table I.
+1) Agentic AI-Based Transmitter: Unlike traditional passive
+encoders, an intelligent agentic AI acts as the transmit-
+ter with perception and tool-invocation capabilities [48]. It
+autonomously analyzes the task requirements and content of
+the secret image xsto dynamically select the optimal semantic
+feature extraction strategy. Agentic AI-based transmitter uses
+the features and user-deﬁned digital token to hide secret
+images xsinto stego images xstego . Then, the transmitter
+performs environmental sensing to obtain the physical channel
+state, such as Signal-to-Noise Ratio (SNR) and available band-
+width [49]. The appropriate semantic model and knowledgebase are shared between the legitimate transmitter and receiver.
+The transmitter encodes the stego image xstego using semantic
+encoder and transmits it into channel.
+2) Physical Channel: The wireless channel is modeled as
+a quasi-static fading channel with Additive White Gaussian
+noise (AWGN) [7]. The noise component nfollows a complex
+Gaussian distribution CN(0;2
+w), where2
+windicates the noise
+power. Hence, the semantic vector of stego images transmitted
+through channel is ^Sstego =hSstego +n, wherehis the
+coefﬁcients of the physical channel.
+3) Agentic AI-Based Receiver: Agentic AI-based receiver
+ﬁrst decodes the transmitted semantic vector into the recon-
+structed stego image ^ xstego . Then, it utilizes the semantic
+feature and digital token distributed by key management center
+to recover the secret image ^ xs. Depending on the autonomous
+task-oriented reasoning ability, it intelligently determines the
+subsequent action, such as denoising or super-resolution, to
+match the speciﬁc task requirements.
+4) Key Management Center: The key management cen-
+ter is responsible for user-deﬁned digital token storage and
+distribution. Also, the shared semantic features and public
+keys between agentic AI are also managed by the center.
+It is assumed that the key management center provides a
+completely secure channel for successful transmission [50].
+To be noticed, the digital token is private while the public key
+and the semantic feature could be public.
+5) Agentic AI-Based Eavesdropper: The agentic AI-based
+eavesdropper attempts to intercept transmitted semantic infor-
+mation. It is assumed to have the access to semantic decoder
+and other available pre-trained Large AI Models (LAMs)
+[51], the eavesdropper aims to recover secret images from
+steganographic semantic representation.
+B. Overview of the Proposed AgentSemSteCom Scheme
+As presented in Figure 2, the proposed AgentSemSteCom
+scheme comprises ﬁve modules as follows.
+1) Semantic Extraction Module: The semantic extraction
+module is used to extract public semantic key Kpuband
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 4 ===
+MENG et al.: SECURE INTELLICISE WIRELESS NETWORK: AGENTIC AI FOR COVERLESS SemSteCom 8109
+Fig. 2. The proposed AgentSemSteCom scheme, where the designed ﬁve modules include the semantic extraction module, digital token controlled reference
+image generation module, conditional diffusion model-based coverless steganography module, JSCC-based semantic codec module, and optional task-oriented
+enhancement module.
+implicit feature xfeat. Agentic AI invokes Large Language
+Models (LLMs) due to their stronger contextual understanding,
+linguistic diversity, and control capability to generate the
+public keyKpubasKpub=fLLM(xs), which determines the
+content of stego image xstego .Kpub= (K1;K2;:::;KT)is a
+sequence of semantic prompts. Based on the task requirement,
+agentic AI also adaptively constructs implicit feature according
+to the content characteristics of the secret image by xfeat=
+G(xs;R), whereG()is the dynamic decision function of the
+agent, andRis the task requirements autonomously perceived
+by agentic AI.
+2) Digital Token Controlled Reference Image Generation
+Module: This module is deployed at both transmitter and
+receiver side, and relies on a diffusion model based generator
+to synthesize reference image. The digital token controls the
+distribution of initial gaussian noise zD, which determines the
+start point of diffusion process. Also, to ensure natural seman-
+tic background and preserve the structure of secret image, the
+sampling of reference image is guided by Kpuband implicit
+feature xfeat aszref=DDIM(zD;;Kpub;xfeat;T;0),
+whereis the noise prediction network. Then, the V AE-
+based decoder converts latent domain zrefinto bit domain
+to generate reference image xrefasxref=DV AE(zref).
+3) Conditional Diffusion Model-Based Coverless Steganog-
+raphy Module: To realize coverless stego image generation,
+the conditional diffusion model-based module directly gener-
+ates stego images from latent representations, which is guided
+by public semantic key and reference image at sampling
+stages.
+a) Transmitter: At the transmitter, the secret image is
+ﬁrst transformed into a latent vector zsby a V AE-based
+encoderE()aszs=EV AE(xs). Then, the noisy latent
+representation zTis obtained in forward diffusion process by a
+deterministic sampling method as zT=EDICT(zs;;0;T).
+Furthermore, the noisy latent vector zTis added deterministic
+perturbation fn()controlled by digital token, which serves as
+a random seed to generate a binary mask, ﬂipping the signs
+of certain positions as z0
+T=fn(zT). Subsequently, the public
+semantic key Kpuband reference image xrefare used to get
+the stego latent representation z0by guiding the denoising
+process as zstego =EDICT(z0
+T;;Kpub;xref;T;0), Finally,
+the V AE-based decoder D()converts latent domain z0into
+bit domain to reconstruct stego image xstego byxstego =
+DV AE(zstego).b) Receiver: At the receiver, we follow the same
+procedure as at the transmitter, but exchange the order
+of forward diffusion and denoising to achieve the inverse
+process. After operating reverse denoising for latent rep-
+resentation of transmitted stego image ^zstego by^z0
+T=
+EDICT( ^zstego;;Kpub;xref;0;T), the recovery perturbed
+noisy latent vector ^z0
+Tis restored back to ^zTby^zT=
+f 1
+n(^z0
+T). Then, the recovery latent vector of secret
+image is obtained by reverse forward diffusion as ^z0=
+EDICT( ^zT;;T;0),
+4) Joint Source-Channel Coding (JSCC)-Based Semantic
+Codec Module: A typical SemCom transmission is considered
+over a wireless channel, where the goal is to transmit the
+stego image with minimal semantic distortion under noisy
+wireless channel. To this end, a JSCC-based semantic codec
+module is employed that directly learns a mapping between the
+visual domain and physical channel domain [9]. Speciﬁcally,
+the stego image xstego is encoded into a semantic feature S
+through a semantic encoder Esem()byS=Esem(xstego). This
+latent representation is directly transmitted over the wireless
+channel, yielding a distorted signal S0. At the receiver, a
+decoderDsem()is employed to reconstruct the image ^xstego
+by^xstego=Dsem(S0).
+5) Optional Task-Oriented Enhancement Module: To fur-
+ther enhance the adaptability of SemCom, we introduce an
+optional task-oriented enhancement module driven by agentic
+AI. By perceiving the reconstruction quality of the secret
+image ^xsand evaluating the task requirement, agentic AI-
+based receiver can identify the most effective enhancement
+scheme tailored to current channel conditions and content
+types [52] by^x
+s=H(^xsjR), whereH()denotes a
+task-oriented enhancement operator selected by agentic AI.
+Depending on the scenario, it can invoke specialized tools
+from a shared model library, such as denoising models for
+low SNR environments or super-resolution models for high-
+ﬁdelity tasks like facial recognition.
+Overall, the general steps of AgentSemSteCom are summa-
+rized in Algorithm 1.
+III. P UBLIC SEMANTIC KEY AND IMPLICIT
+FEATURE EXTRACTION
+Both public semantic keys and implicit features are estab-
+lished as public conditions that contain no reversible or
+conﬁdential information, enabling a private keyless approach.
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 5 ===
+8110 IEEE TRANSACTIONS ON COGNITIVE COMMUNICATIONS AND NETWORKING, VOL. 12, 2026
+Algorithm 1 The Steps of the Proposed AgentSemSteCom
+Stage 1: Semantic Extraction and Public Key Generation
+1:Generate public key Kpubfrom secret image xsbyKpub=
+fLLM(xs)
+2:Extract implicit feature xfeatvia agentic decision function
+under task requirement by xfeat=G(xs;R)
+Stage 2: Digital Token Controlled Reference Image Gen-
+eration
+3:Initialize Gaussian noise zDcontrolled by digital token t
+4:Sample reference latent zref using DDIM
+underKpub and xfeat guidance by zref =
+DDIM(zD;;Kpub;xfeat;T;0)
+5:Decode zrefto generate reference image xrefvia V AE
+decoder by xref=DV AE(zref)
+Stage 3: Coverless Stego Image Generation at Transmitter
+6:Encode secret image xsinto latent space zsusing V AE
+encoder by zs=EV AE(xs)
+7:Perform forward diffusion to obtain noisy latent zTusing
+EDICT by zT=EDICT(zs;;0;T)
+8:Apply deterministic latent noise perturbation to obtain z0
+T
+byz0
+T=fn(zT)
+9:Perform reverse denoising under Kpubandxrefguid-
+ance to obtain stego latent zstego byzstego =
+EDICT(z0
+T;;Kpub;xref;T;0)
+10:Decode zstego using V AE decoder to generate stego image
+xstego byxstego =DV AE(zstego)
+Stage 4: JSCC-based Semantic Transmission
+11:Encode stego image xstego into semantic feature Sby
+semantic encoder using S=Esem(xstego)
+12:TransmitSthrough AWGN channel to obtain S0
+13:DecodeS0to reconstruct stego image ^xstego by semantic
+decoder using ^xstego=Dsem(S0)
+Stage 5: Secret Image Recovery at Receiver
+14:Encode received stego image ^xstego into latent represen-
+tation ^zstego
+15:Perform forward diffusion under Kpub and xref
+to obtain perturbed noisy latent ^z0
+Tby^z0
+T=
+EDICT( ^zstego;;Kpub;xref;0;T)
+16:Restore noisy latent ^zTvia inverse perturbation by ^zT=
+f 1
+n(^z0
+T)
+17:Perform reverse denoising to recover secret latent ^z0by
+^z0=EDICT( ^zT;;T;0)
+18:Decode ^z0to obtain reconstructed secret image ^xs
+Stage 6: Optional Task-oriented Enhancement
+19:Invoke optional task-speciﬁc enhancement modules to
+obtain enhanced image ^x
+sby^x
+s=H(^xsjR)
+The public semantic key ensures the reasonable generation
+of stego image, while the implicit feature preserves struc-
+tural constraint to enable the semantic reconstruction in
+spatial organization. These conditions are analyzed by agentic
+AI to jointly guide the diffusion-based image generation
+process.
+A. LLM-Driven Public Semantic Key Generation
+In this work, the public semantic key does not depend on
+the content of private semantic key. Instead, it is directlygenerated by agentic AI after perceptual analysis of the secret
+image. The purpose of the public semantic key is not to carry
+reversible information, but to provide a semantically plausible
+generation context that can be naturally integrated into the
+diffusion process. This design ensures that the generating stego
+image follows a statistically normal semantic distribution and
+does not raise suspicion from an eavesdropper. Speciﬁcally,
+agentic AI invokes a LLM as a generative tool to produce the
+public key sequence in an autoregressive manner [53], [54].
+At the`-th layer, the representation of public prompts q`is
+updated as
+q0
+`= CSA 
+LN(q` 1)
++q` 1; (1)
+q`= MLP 
+LN(q0
+`)
++q0
+`; (2)
+where CSA() denotes the causal self-attention operator, LN()
+is the layer normalization, q0
+`is the intermediate representation
+after attention, and MLP() denotes the position-wise feed-
+forward network. During decoding, the prompt distribution ^Ki
+is computed from the ﬁnal hidden representation [55] at the
+last layerLas
+^Ki= Softmax 
+WpubLN(qi
+L)
+; i= 1;:::;T; (3)
+where ^Kiis the probability vector over the public vocabulary
+at positioni,Wpubis the output projection matrix that maps
+hidden states to vocabulary logits, and Softmax() is applied
+to the vocabulary dimension. From ^Ki,Kiis sampled at
+each position, yielding the ﬁnal generated public semantic key
+Kpub= (K1;K2;:::;KT).
+B. Adaptive Implicit Feature Extraction
+Semantic-text-key-only guidance often results in generated
+images whose structural layout deviates noticeably from that
+of the secret image, which may increase the suspicion of
+eavesdroppers [46]. To address this issue, the implicit feature
+xfeatis introduced as an extra constraint. Agentic AI relies
+on its perception ability to extract the deep semantic feature,
+which reﬂects the underlying spatial distribution of the secret
+image. The implicit feature not only guides the generation
+of the reference image to remain structurally aligned with the
+secret image, thereby preventing excessive visual divergence in
+the generated stega image, but also preserves critical structural
+cues for accurate reconstruction of the secret image at the
+receiver. Note that the implicit feature is set public, since the
+extracted structure carries no sensitive semantic information.
+For the common scenario, agentic AI extracts semantic
+segmentation map as the implicit feature, such as the general
+background and main object. When agentic AI detects that
+the secret image involves high-ﬁdelity scenarios such as face
+detection, the implicit feature extraction process is further
+reﬁned toward deeper structural abstraction, progressing from
+pose perception to ﬁne-grained skeleton reconstruction. In this
+setting, agentic AI leverages the accurate modeling of local
+geometric conﬁgurations and inter-keypoint relationships to
+extract the implicit feature xfeat, which is a skeleton graph
+jointly formed by connected edges [56].
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 6 ===
+MENG et al.: SECURE INTELLICISE WIRELESS NETWORK: AGENTIC AI FOR COVERLESS SemSteCom 8111
+IV. D IGITAL TOKEN CONTROLLED REFERENCE
+IMAGE GENERATION
+The reference image embeds the implicit semantic feature
+into speciﬁc visual content to provide a controllable condi-
+tion for the stego image generation, which is obtained by
+a reference generator. The agentic AI considers two steps
+to obtain the controllable reference images, including digital
+token initialized latent noise and the ControlNet-based diffu-
+sion generation.
+A. Digital Token Initialized Latent Noise
+Motivated by [46], we introduce digital token, a user-deﬁned
+numerical sequence with variable length, to deterministically
+initialize the reference image generation. Each digital token
+leads to one speciﬁc reference image. This mapping rela-
+tionship ensures that only the legitimate receiver with correct
+digital token can generate relative reference image, and recover
+the original secret image. By selecting different digital tokens,
+users can encrypt the secret image into various stego images
+without introducing any private semantic key or other sensitive
+information.
+Algorithm 2 ControlNet-Based Diffusion for Reference Image
+Generation
+Training Phase:
+1:repeat
+2: Sample a training image x0q(x) and its paired
+implicit feature xfeat
+3: Compute text-condition embeddings ct=ftext(Kpub)
+4: Compute structural-condition embeddings
+5: cf=ffeat(xfeat)
+6: Obtain the latent vector z0byzs=EV AE(xs)
+7: Sample diffusion step tUf1;:::;Tgand noise
+N(0;I)
+8: Construct the noisy latent variable
+9: zt=ptz0+p1 t
+10: Compute the controlled block output yvia zero-
+convolution injection by (5)
+11: Predict noise ^using the ControlNet backbone by (8)
+12: Compute the denoising objective Lby (6)
+13: Update c;z1;z2via gradient descent while keeping
+frozen
+14:until converged
+Inference Phase
+Input: xfeat,Kpuband digital token controlled noise zD
+15:Initialize the sampling latent zT=zD
+16:fort=T;T 1;:::; 1do
+17: Predict noise by (8)
+18: Update latent by DDIM sampling by (7)
+19:end for
+20:Decode the ﬁnal latent to obtain the reference image xref
+byxref=D(z0)
+21:return reference image xref
+As agentic AI receives the digital token k, it converts the
+numbers into a random seed through the hash function H()
+by
+s=H(k): (4)Using this seed, agentic AI samples the initial latent noise
+zDfrom a standard Gaussian distribution as zDN (0;I),
+where zD= Randn(s), and Randn(s) represents Gaussian
+noise sampling under seed s. By ﬁxing the start point of the
+diffusion process based on the digital token, agentic AI ensures
+the entire generation trajectory is deterministic and repro-
+ducible. Given the same token, both the legitimate transmitter
+and receiver can reconstruct an identical latent initialization
+without exchanging any additional private information.
+B. ControlNet-Based Diffusion for Reference Image
+Generation
+To ensure that the reference image xrefstrictly follows the
+structural constraints provided by the implicit feature xfeat,
+agentic AI invokes ControlNet as a structure-conditioning
+injector in the reference image generator. It allows the ref-
+erence image to retain the structure of secret image while the
+visual pattern is determined by the public semantic key Kpub.
+The ControlNet is implemented as a trainable side-branch
+attached to the frozen U-Net backbone of the diffusion model
+[57]. To preserve the pretrained generative priors, the param-
+eters of the original U-Net remain ﬁxed, while agentic
+AI clones all encoding blocks and middle blocks into a
+parallel trainable branch with parameters c. This branch
+is dedicated to extracting structural representations from the
+implicit feature xfeat, which are progressively injected into
+the frozen U-Net through zero-initialized convolution layers
+Z(;  z). The controlled output yof a U-Net block at diffusion
+steptis expressed as
+y=F(zt; ) +Z
+F 
+zt+Z(c;  z1); c
+; z2
+; (5)
+whereF(; ) denotes the Kpubguided transformation of a
+speciﬁc block in the frozen U-Net, and F(; c)represents
+the trainable xfeat guided transformation in the ControlNet
+branch. The zero-convolution layers, parameterized by z1
+andz2, are initialized to zero, ensuring that conditions
+are gradually introduced during training, thereby maintaining
+generative stability.
+Although the intermediate feature yis not directly super-
+vised, it participates in the subsequent U-Net forward
+propagation and ultimately inﬂuences the noise prediction
+(). Consequently, the parameters of ControlNet are opti-
+mized implicitly through the standard diffusion objective:
+L=Ez0;t;xfeat;Kpub;N (0;1)h
+j (zt;t;xfeat;Kpub)j2
+2i
+;
+(6)
+whereis the noise predictor modiﬁed by the ControlNet
+branch. Through back propagation, the trainable parameters
+c,z1, and z2are updated, while the backbone parameters
+remain ﬁxed. At the inference stage, starting from the token
+initialized latent variable zD, agentic AI iteratively samples
+the reference image using the Denoising Diffusion Implicit
+Models (DDIM) strategy [58] fromttot 1as
+zt 1=pt 1zt p1 t^pt+p
+1 t 1^;(7)
+^=(zt;t;xfeat;Kpub); (8)
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 7 ===
+8112 IEEE TRANSACTIONS ON COGNITIVE COMMUNICATIONS AND NETWORKING, VOL. 12, 2026
+Fig. 3. The diagram for conditional diffusion model-based coverless steganography module, where the sampling is based on EDICT and the diffusion process
+is guided by reference images and public text. The noise perturbation is achieved by ﬂipping speciﬁc coordinates of latent vector, which are determined by
+digital token and perturbation strength.
+whereis the noise scheduling coefﬁcient. Finally, agentic
+AI decodes z0through the V AE decoder D()to obtain the
+reference image xref=D(z0). The whole process is shown
+inAlgorithm 2.
+V. C ONDITIONAL DIFFUSION MODEL -BASED
+COVERLESS STEGANOGRAPHY
+The conditional diffusion model-based coverless steganog-
+raphy module is employed to realize secure embedding of
+secret images into generated stego images without relying
+on traditional cover carriers. To achieve this objective, the
+agentic AI adopts an EDICT-based exact invertible process
+to eliminate sampling errors, a digital token-driven latent per-
+turbation to enhanced security, and a decoupled cross-attention
+mechanism to precisely control the generative trajectory. The
+detailed diagram is shown in Figure 3.
+A. EDICT-Based Invertible Sampling and Diffusion Process
+To ensure high-ﬁdelity transmission of secret semantics in
+complex channel environments, the Exact Diffusion Inversion
+via Coupled Transformations (EDICT) [59] is incorporated
+into the generative logic of agentic AI, which mitigates
+sampling errors caused by linearization approximation during
+DDIM sampling. Unlike traditional single-chain paths, agentic
+AI maintains a pair of coupled latent variable sequences
+(zt;ut). By leveraging the reversibility of afﬁne coupling
+layers, this dual-track design shown in (9)and (10) mathe-
+matically enforces exact alignment between the forward and
+reverse processes.
+zt 1=tzt+t(ut;t;c); (9)
+ut 1=tut+t(zt 1;t;c); (10)wheredenotes the noise component predicted by the
+agent based on current state and conditions c.tandt
+are coefﬁcients derived from the noise schedule. The state
+utis used to assist the update of zt, while the updated
+intermediate state zt 1serves as the basis to update utin an
+alternating fashion. This design ensures that the complex non-
+linear noise prediction term relies solely on the coupled
+counterpart rather than the variable being updated. Conse-
+quently, this transformation remains afﬁne with respect to the
+target variable, allowing agentic AI to perform mathematically
+exact inversion by simple calculation, which fundamentally
+eliminates the linearization errors in diffusion processes.
+To prevent the two coupled latent sequences from evolving
+independently, agentic AI strategically introduces a mixing
+layer between the coupling updates. This layer acts as a
+synchronization mechanism, forcing an information interaction
+between the primary and assistant chains. Agentic AI executes
+this mixing operation using a linear weighted combination,
+deﬁned as z0
+t=pzt+(1 p)ut, wherepis a mixing coefﬁcient
+between 0 and 1. By regulating this parameter, agentic AI
+balances the independence of chains with the necessary mutual
+information ﬂow. To maintain the stability of the system,
+agentic AI dynamically adjusts the coefﬁcient paccording to
+the transmission environment and speciﬁc scenarios.
+Based on this reversible EDICT sampling method, agentic
+AI achieves the steganographic process through two symmet-
+ric phases. By combining the forward deterministic noising
+process and sampling denoising diffusion, agentic AI guar-
+antees that the trajectory from the secret image to the noise
+representation is entirely deterministic and lossless.
+1) Forward Deterministic Noising: In the forward stage,
+Agentic AI performs deterministic noising to map the secret
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 8 ===
+MENG et al.: SECURE INTELLICISE WIRELESS NETWORK: AGENTIC AI FOR COVERLESS SemSteCom 8113
+image coupled state (z0;u0)to the latent noise (zt;ut)
+overTsteps. As described in (11), agentic AI ﬁrst calcu-
+lates the mixed states to obtain the intermediate variables
+(zinter
+t+1;uinter
+t+1)by inverting the mixing layer, and then reverses
+the afﬁne coupling transformation to compute the ﬁnal states
+(zt+1;ut+1).
+uinter
+t+1 = (ut (1 p)zt)=p; (11-1)
+zinter
+t+1 = (zt (1 p)uinter
+t+1)=p; (11-2)
+ut+1=t+1uinter
+t+1 !t+1(zinter
+t+1;t+ 1); (11-3)
+zt+1=t+1zinter
+t+1 !t+1(ut+1;t+ 1); (11-4)
+wheret= 1
+tand!t=t 1
+t.
+2) Sampling Denoising Diffusion: In the backward stage,
+agentic AI executes the sampling denoising diffusion to gen-
+erate the stego latent vector from the perturbed noise vector
+z0
+T, which inversely applies the Tsteps of forward noising as
+follow:
+z0inter
+t =tz0
+t+t(u0
+t;t); (12-1)
+u0inter
+t =tu0
+t+t(z0inter
+t;t); (12-2)
+z0
+t 1=pz0inter
+t + (1 p)u0inter
+t; (12-3)
+u0
+t 1=pu0inter
+t + (1 p)z0
+t 1: (12-4)
+B. Deterministic Latent Noise Perturbation
+Following the execution of the deterministic forward noising
+process in (11), the agentic AI-based transmitter obtains the
+latent noise zTof the secret image xs. To strengthen the secu-
+rity of the proposed method, the digital token also serves as
+a password to perturb the latent state [46]. This design reuses
+the user-deﬁned token and only needs to transmit it once,
+which effectively eliminates the risk of information leakage
+associated with frequent secret key exchanges. Utilizing the
+seed in (4), agentic AI constructs a binary perturbation mask
+M2 f0; 1gCHWthrough a pseudo-random generation
+process.
+1) Digital Token-Guided Latent Noise Inversion: At the
+transmitter side, the mask is added to zTto obtain z0
+Tby
+z0
+T=zT(1 M(s; )) zTM(s; ); (13)
+whereis the perturbation strength coefﬁcient. A large coefﬁ-
+cient leads to a strong perturbation. Since the agent employs a
+standard Gaussian distribution during the initial noising phase,
+this inversion operation preserves the statistical properties of
+the latent space.
+2) Symmetric Restoration of Recovery Stego Vector: At the
+receiver side, agentic AI performs a symmetric restoration of
+the latent state. After recovering the stego latent vector ^z0
+T
+guided by semantic features, the agentic AI-based receiver
+uses the same digital token distributed by the key management
+center to calculate the mask M. The restoration process is
+formulated as:
+^zT=^z0
+T(1 M(s; )) ^z0
+TM(s; ): (14)
+The symmetric inverse process ensures the legitimate receiver
+can perfectly restore ^zT.C. Public Semantic Key and Reference Image Guided Stego
+Image Generation
+To ensure that the accurate and expected secret image can
+be reconstructed from the stego image, agentic AI adapts
+the decoupled cross-attention mechanism into the framework.
+Speciﬁcally, agentic AI initiates an encoding process to pre-
+pare the multimodal inputs. For the textual guidance, the
+public semantic key is processed by the text encoder of CLIP
+ftext()[60] to obtain the text embeddings ptextas
+ptext=ftext(Kpub): (15)
+For the visual guidance, agentic AI leverages an image encoder
+to extract the high-ﬁdelity global image feature vfrom the
+reference image xrefas
+v=fimage(xref); (16)
+To effectively translate this static global embedding into a
+dynamic sequence that the diffusion model can utilize, agentic
+AI employs a trainable projection network. It can ensure the
+dimension of image feature is aligned with that of the text
+features [61]. It consists of a linear projection layer followed
+by layer normalization [62]. The processed image embeddings
+through this transformation are expressed as
+pimg=LN(Wprojv+bproj); (17)
+where Wproj andbproj represent the weight and bias of the
+linear layer, respectively.
+Subsequently, agentic AI utilizes the decoupled cross-
+attention mechanism to integrate these multimodal features
+into the U-Net [63] intermediate layers. Unlike traditional
+cross-attention strategies [64], agentic AI independently com-
+putes the attention maps for text features and image features
+in separate attention layers to prevent interference, rather than
+competing in a single shared space. The text guided attention
+[65] is shown as
+Ztext=Attention(Q text;Ktext;Vtext)
+=Softmax 
+QtextKtext>
+p
+d!
+Vtext: (18)
+The keys, values, and query used above are obtained by
+projecting text feature ptextas
+Qtext=ztWQ; Ktext=ptextWK; Vtext=ptextWV;
+(19)
+whereWQ,WK, andWVare trainable parameters, and tis
+the sampling step. The image guided attention counterpart is
+as follows:
+Zimg=Attention(Q img;Kimg;Vimg)
+=Softmax 
+QimgKimg>
+p
+d!
+Vimg; (20)
+Qimg=ztWQ; Kimg=pimgWK; Vimg=pimgWV:
+(21)
+Finally, agentic AI decouples these two distinct ﬂows
+as conditions for the diffusion model. The conditional
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 9 ===
+8114 IEEE TRANSACTIONS ON COGNITIVE COMMUNICATIONS AND NETWORKING, VOL. 12, 2026
+Algorithm 3 Public Semantic Key and Reference Image
+Guided Stego Image Generation
+Training Phase:
+1:repeat
+2: Sample training image x0q(x)
+3: EncodeKpubandxrefto obtain embeddings ptextand
+pimgby (15)–(17)
+4: Sample diffusion step tUf1;:::;Tgand noise
+N(0;I)
+5: Encode image x0and construct noisy latent zt
+6: Compute the attention feature Ztext andZimg by
+(18)–(21)
+7: Obtain decoupled cross-attention Zconby (22)
+8: Predict image-text pairs noise ^(zt;t;K pub;xref)
+9: Compute the loss function L=k ^k2
+2
+10: Update the projection network parameters while freez-
+ing diffusion backbone
+11:until converged
+Inference Phase
+Input: xs,Kpub,xref
+12:Encode secret image xsinto latent representation z0
+13:Initialize coupled latent states (z0;u0)
+14:fort= 0toT 1do
+15: Compute the noise latent vector (zt;ut)using forward
+EDICT process by (11)
+16:end for
+17:fort=Tto1do
+18: PredictKpub-only noise (ut;t;K pub)
+19: Predict xref-conditioned noise (ut;t;K pub;xref)
+using the trained projection network:
+20: Compute conditional noise of utwith image guidance
+weight[66]:
+21:
+~(u)
+t;c= (1 )(ut;t;K pub)
++(ut;t;K pub;xref)
+22: Compute the intermediate state zinter
+t by (25)
+23: Compute conditional noise ~(z)
+t;cofzton the coupled
+chain with the same steps as ~(u)
+t;c
+24: Compute the ﬁnal conditional noise in tstep by (24):
+25: Update sampling result zt 1by (23)
+26:end for
+27:Decode zstego to obtain stego image xstego
+28:return stego image xstego
+latent vector Zcon fed into the subsequent layer is
+deﬁned as
+Zcon=Ztext+Zimg
+= SoftmaxQtextK>
+textp
+d
+Vtext
++ Softmax 
+QimgK>
+imgp
+d!
+Vimg: (22)
+By freezing the original weights of the conditional diffu-
+sion model and only updating the parameters of the visualpath, agentic AI effectively preserves the original generative
+capabilities while embedding the speciﬁc characteristics of the
+reference image. The detailed training and inference processes
+are shown in Algorithm 3.
+Combining the EDICT sampling and the decoupled cross-
+attention mechanism together, the sampling of stego image in
+the transmitter can be rewritten as a conditional process as:
+zt 1=t 
+pzt+ (1 p)ut
++t~t;c; (23)
+~t;c=p(ut;t;K pub;xref)
++ (1 p)(zinter
+t;t;K pub;xref); (24)
+zinter
+t=tzt+t(ut;t;K pub;xref); (25)
+where ~t;cis the noise prediction in tstep.
+VI. S IMULATION RESULTS AND ANALYSIS
+A. Simulation Parameters
+1) Datasets: We use UniStega [46] datasets to verify the
+performance of AgentSemSteCom. UniStega is composed
+of three subsets designed to represent different semantic
+steganography scenarios, with a total of 100 images and rel-
+ative prompts. The images are collected from multiple public
+datasets, including COCO [67], AFHQ [68], and CelebA-HQ
+[69], as well as other online sources. All images are processed
+through center cropping and uniformly resized as 512512.
+The prompts are generated by BLIP [55] and Llama2 [70].
+In our experiment, we consider images of three different
+classes. We use the UniStega-Content to simulate the common
+steganography scene, which focuses on the natural images of
+general objects and backgrounds. UniStega-Style is used to
+simulate the stylized scene, which abstracts the real objects
+into artistic creations on speciﬁc themes. For facial scenes,
+which require high-precision recovery of human identities, we
+use facial-image subset from UniStega-Similar. We also make
+minor adjustments to some inaccurate public semantic keys.
+2) Parameter Settings: In the AgentSemSteCom, all the
+modules are pre-trained, with the detailed parameters as
+follows.
+The Implicit Feature Extraction Module: The One-
+Former model [71] is employed to output semantic
+segmentation map as the implicit feature in the common
+scenario. The OpenPose model [72] is employed to
+generate skeleton in the facial scenario. The style scenario
+is only controlled by the public semantic key without any
+implicit feature.
+The Reference Image Generation Module: We employ
+PicX-Real1as an independent diffusion-based generator.
+Unlike the diffusion model used in the steganographic
+hiding and recovery processes, PicX-Real is speciﬁcally
+adopted to synthesize reference images with stable visual
+appearance and high realism. As the reference image is
+jointly controlled by the extracted implicit feature and
+the digital token, ControlNet is employed to inject the
+implicit feature into the diffusion process to explicitly
+impose structural constraints.
+1https://huggingface.co/GraydientPlatformAPI/picx-real
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 10 ===
+MENG et al.: SECURE INTELLICISE WIRELESS NETWORK: AGENTIC AI FOR COVERLESS SemSteCom 8115
+TABLE II
+PERFORMANCE OF AGENT SEMSTECOMUNDER DIFFERENT CLASSES OF IMAGES AND SNR S, W HERE THE MSE I SSCALED BY 10 2
+The Coverless Steganography Module: We use the Sta-
+ble Diffusion v1.52in the forward and reverse diffusion
+process, with the 50 EDICT steps and 0.05 noise pertur-
+bation strength . The mixing coefﬁcient of EDICT is set
+to 0.93. Also, we introduce a parameter, edit strength, to
+deﬁne the proportion of diffusion steps applied during the
+reverse diffusion stages. In the practical simulation, we
+set it to 0.5 to balance the semantic steganographic effect
+and numerical drift, which is caused by the accumulation
+of ﬂoating-point rounding errors in diffusion steps. The
+IPAdapter-plus is employed for guidance injection of
+reference image with its weight factor set to 1.
+The Semantic Transmission Module: AgentSemSte-
+Com is veriﬁed under the AWGN channel ranging from
+5 dB to 20 dB SNR in both analog and digital SemCom
+framework, where the coefﬁcient of physical channel h
+is set to 1. For the analog SemCom, we use SwinJSCC
+[73] as backbone trained on the CelebA-HQ dataset under
+an additive white Gaussian noise (AWGN) channel. The
+channel bandwidth parameter is set to C=48, and the
+trained SNR is ﬁxed at 10 dB. For the digital SemCom
+framework, we utilize MDJCM [74] trained on DIV2K
+dataset [75] with modulation order of 64 and SNR at
+10 dB.
+The Task-oriented Enhancement Module: We employ
+the CodeFormer [76] to enhance the texture and detail
+of facial image. This module leverages a learned discrete
+codebook prior to cast face restoration as a code predic-
+tion task, which relies on a transformer-based prediction
+network. The model is trained on FFHQ [77] dataset with
+512*512 input. In our experiment, the ﬁdelity weight is
+set to 0.5 to balance the perceptual quality and identity
+ﬁdelity.
+B. Evaluation Metrics and Comparison Schemes
+1) Evaluation Metrics: To comprehensively evaluate the
+performance of AgentSemSteCom, we employ PSNR and
+MSE to quantify pixel-level reconstruction accuracy, while
+SSIM evaluates structural consistency between the recon-
+structed image and the reference. LPIPS [78] is further
+employed to measure perceptual similarity in deep feature
+space.
+2) Comparison Scheme: To validate the effectiveness and
+superiority of AgentSemSteCom, we compare it with SemSte-
+Diff [43]. It is noted that, SemSteDiff requires updating the
+private semantic key for each transmitted image.
+2https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5
+Fig. 4. Visualization results of recovery images over different SNRs, where
+the public key is “a wild boar walking through a lush green ﬁeld”.
+C. Simulation Results
+1) Performance of the Proposed AgentSemSteCom Scheme:
+a) Generalization performance under different image
+classes: To measure the effectiveness of AgentSemSteCom,
+we evaluate it in images of three classes mentioned before,
+under SNR = 5; 10;15;20dB respectively. Table IIshows
+the quantitative results of four metrics. In general, AgentSem-
+SteCom maintains stable pixel-level reconstruction accuracy
+across different task requirements and SNRs, for almost all
+PSNR exceeds 20 dB and MSE remains on the order of 10 2.
+At SNR = 5 dB, the facial class demonstrates remarkable
+robustness, achieving a PSNR of 22.73 dB and an SSIM of
+0.6989. Also, the style class manages to keep the LPIPS at a
+low 0.3850 and MSE at 0:72110 2, showcasing the effec-
+tiveness of agentic reasoning in preserving hidden intent under
+severe channel distortion. As the channel quality improves
+toward SNR = 20 dB, the metrics across all classes converge
+to high-ﬁdelity reconstruction, with the facial class reaching a
+peak PSNR of 26.29 dB and a signiﬁcantly reﬁned LPIPS
+of 0.2127. The positive correlation between SNR growth
+and metric improvement is deeply related to noise-sensitive
+EDICT-based diffusion process. During the semantic feature
+extraction and channel transmission, certain high-frequency
+components of the secret image may be ignored or distorted,
+which inﬂuence the deterministic reverse trajectory. Figure 4
+shows visualized comparison results of recovery images across
+different SNRs.
+Moreover, the performance difference among image classes
+is caused by the different implicit features. As shown in
+Table II, the facial class consistently achieves the best recon-
+struction quality across all SNR levels, for the OpenPose-based
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 11 ===
+8116 IEEE TRANSACTIONS ON COGNITIVE COMMUNICATIONS AND NETWORKING, VOL. 12, 2026
+Fig. 5. Visualization results of AgentSemSteCom under different classes of images, which include common steganography images, facial images and style
+images. The images are collected at SNR = 10 dB.
+Fig. 6. Comparison between AgentSemSteCom and SemSteDiff, which is simulated towards common steganography images.
+skeletal landmarks provides geometric structure among facial
+components. Such constraints enable the EDICT-based dif-
+fusion process to accurately preserve identity-related spatial
+conﬁgurations, resulting in higher PSNR and SSIM and lower
+MSE. In comparison, the common steganography class shows
+relatively lower reconstruction result, which is limited by
+semantic segment image that captures global semantic region
+rather than detailed local structures. The style class shows the
+performance without reference image guidance, the PSNR is
+comparable to the counterpart of facial class. This indicates
+that the LLM-generated public semantic key is sufﬁcient for
+AgentSemSteCom in speciﬁc situation. To better understand
+the effect of different implicit feature, Figure 5shows the
+visualization of steganography across three classes at SNR =
+10dB.
+b) Performance comparison with SemSteDiff: Figure 6
+illustrates the performance of AgentSemSteCom across digital
+and analog SemCom frameworks, and the comparison between
+our scheme and SemSteDiff in analog SemCom towards
+image of common steganography class. In terms of pixel-
+level reconstruction accuracy, the PSNR and MSE curves
+demonstrate that AgentSemSteCom signiﬁcantly outperforms
+the SemSteDiff baseline. Speciﬁcally, at SNR = 5 dB,
+AgentSemSteCom achieves a PSNR of 19.71 dB and a
+lower MSE of 1:20710 2, while SemSteDiff maintains
+18.04 dB and 1:7310 2. This effect is primarily due to
+the EDICT-based exact inversion process, which effectively
+mitigates cumulative sampling errors and enables the system
+to mathematically restore the original secret image. In contrast,
+the previous SemSteDiff can only generate semantic-similar
+Fig. 7. Visualization results of AgentSemSteCom and SemSteDiff, where the
+private key for SemSteDiff is “a sheep standing in a ﬁeld next to a wooden
+fence”, the public key for both schemes is “a horse standing in a ﬁeld next
+to a wooden fence”. The comparison images are collected at SNR = 10 dB.
+images guided by public and private semantic keys, lack-
+ing the precision for exact reconstruction, which is clearly
+displayed in Figure 7. For the perception, AgentSemSteCom
+achieves a higher structural similarity, with an SSIM of
+0.5643 at 10 dB, compared to SemSteDiff, which has an
+SSIM of 0.5183. The improved performance is attributed
+to the OneFormer-based segmentation maps, which guide
+the recovered image aligning with the original layout. How-
+ever, such strong structural constraints can overly restrict the
+generative ﬂexibility of the diffusion process, which may
+introduce minor local inconsistencies in visual appearance. As
+indicated by the LPIPS curves, SemSteDiff’s pure semantic
+guidance allows for more harmonious image synthesis without
+rigid structural boundaries, resulting in a lower perceptual
+distance of 0.4046 compared to AgentSemSteCom of 0.5022 at
+SNR = 5 dB.
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 12 ===
+MENG et al.: SECURE INTELLICISE WIRELESS NETWORK: AGENTIC AI FOR COVERLESS SemSteCom 8117
+Fig. 8. Performance improvement of AgentSemSteCom with the task-oriented enhancement module, which is simulated towards facial images.
+Fig. 9. Visualization results of AgentSemSteCom with the task-oriented
+enhancement module under different SNRs.
+c) Performance improvement of optional task-oriented
+enhancement module: Figures 8 and 9 present the performance
+improvement of AgentSemSteCom in the facial class follow-
+ing the integration of the CodeFormer restoration module.
+This optional task-oriented enhancement module demonstrates
+the intelligent adaptability of our agentic framework, where
+the receiver autonomously invokes specialized tools to com-
+plement semantic reconstruction in the low-SNR region. At
+SNR = 5 dB, the improvement is comprehensive across
+all evaluation metrics: the PSNR and SSIM increase from
+22.74 dB and 0.6989 to 23.15 dB and 0.7244, while the
+MSE and LPIPS decrease from 0:56610 2and 0.4042 to
+0:51410 2and 0.2928, respectively. As the SNR increases,
+the enhancement module primarily contributes to perceptual
+improvement, while its impact on pixel-level ﬁdelity becomes
+limited. For instance, at SNR = 20 dB, the enhanced PSNR
+reaches 25.59 dB, which is lower than the 26.29 dB achieved
+by baseline. The LPIPS value consistently performs better
+with the enhancement module. This divergence depends on the
+generative nature of CodeFormer, which leverages a discrete
+codebook prior to emphasize perceptual realism rather than
+strict pixel-wise consistency with the original secret image.
+2) Security Evaluation:
+a) The visualization of stego images with different dig-
+ital tokens: The security of the proposed AgentSemSteCom
+Fig. 10. Visualization of stego image generation with different digital tokens.
+framework ﬁrst enables by the digital token. A single secret
+image can be mapped to multiple visually distinct stego
+images by varying the token, without introducing any other
+information. Speciﬁcally, Figure 10 shows the result of dif-
+ferent digital tokens including 9000, 76576, and 6718 at
+SNR = 10 dB, with edit strength of 0.5, under PicX-Real
+model. The stego images exhibit noticeable differences in local
+facial attributes such as eye shape, nose geometry, and mouth
+contours, but the global structural conﬁguration remains stable
+due to the landmark-based constraints. Moreover, agentic AI
+can further increase this diversity by autonomously selecting
+style-adaptive generative tools from a shared model library.
+This design allows users to generate different steganographic
+outputs from identical source content while the absence of
+explicit private semantic keys avoids suspicious key exchange
+behavior, which maintains a private keyless communication
+paradigm.
+b) Security evaluation under eavesdropping scenarios:
+To further assess the security performance of AgentSemSte-
+Com, we model two categories of eavesdroppers, common
+eavesdroppers who intercept channel information to attempt
+traditional cracking, and agentic AI-based eavesdroppers capa-
+ble of invoking local generative models to reconstruct the
+hidden content. We consider the worst case scenario for our
+evaluation, assuming the eavesdroppers have speciﬁc param-
+eters of the legitimate semantic decoder, which is typically
+difﬁcult to obtain in practical wireless environments. For
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 13 ===
+8118 IEEE TRANSACTIONS ON COGNITIVE COMMUNICATIONS AND NETWORKING, VOL. 12, 2026
+Fig. 11. Comparison between legitimate receiver and eavesdroppers, which is simulated towards facial images.
+Fig. 12. Visualization results of legitimate receiver and eavesdroppers.
+agentic AI-based eavesdropper, we assume that both the public
+semantic key Kpuband the implicit feature xfeat are leaked,
+and eavesdroppers have accurately inferred the implementation
+logic of our framework. Under these assumptions, three eaves-
+droppers with different capabilities are modeled as follows:
+Eavesdropper 1: The intelligent eavesdropper only pos-
+sesses the semantic decoder without any key information.
+Eavesdropper 2: The agentic AI-based eavesdropper
+possesses the semantic decoder and the public semantic
+key and implicit feature, attempting to recover the secret
+image using an incorrect digital token and the available
+pre-trained LAMs.
+Eavesdropper 3: The agentic AI-based eavesdropper
+possesses the semantic decoder and the public semantic
+key and implicit feature, attempting to recover the secret
+image without any digital token by directly invoking pre-
+trained LAMs.
+Figure 11 shows the quantitative curves of legitimate
+receiver and eavesdroppers towards images of facial class.
+Compared to the legitimate receiver, a signiﬁcant performance
+gap is observed across all eavesdropping scenarios. Eaves-
+dropper 2, attempting to recover the image with an incorrect
+token, suffers the most severe performance degradation, with
+a PSNR as low as 18.60 dB at SNR = 5 dB while the
+legitimate receiver achieves 23.16 dB. Eavesdropper 3, who
+attempts recovery without any token, performs slightly better
+at 20.86 dB than Eavesdropper 2. As SNR increases, the PSNR
+of legitimate receiver exceeds 26 dB, whereas agentic AI-
+based eavesdroppers remain around 20 dB, which strongly
+indicates that a wrong token causes the EDICT process to
+collapse into a chaotic state. The MSE, SSIM and LPIPS
+support the same conclusion. Eavesdropper 1 exhibits sim-
+ilar trends in PSNR and MSE as the other eavesdroppers.
+However, a slight gap between the legitimate receiver and
+Eavesdropper 1 is observable in SSIM and LPIPS, with Eaves-
+dropper 1 unexpectedly achieving higher structural similarity
+and lower perceptual distance than the legitimate receiver.
+Speciﬁcally, its SSIM reaches 0.7335, outperforming thelegitimate receiver’s value of 0.7249, while its LPIPS is
+reduced to 0.2926, similar to 0.2939 of receiver. This phe-
+nomenon validates the effectiveness of our steganographic
+scheme, for the eavesdropper 1 only possesses the semantic
+decoder, it reconstructs the stego image, which is designed to
+be a high-quality, natural-looking face that effectively conceals
+the secret information. The legitimate receiver undertakes a
+more complex task of mathematically recovering the original
+secret image through the noisy channel, rendering it inherently
+more sensitive to noise at 5 dB.
+Figure 12 presents the visual comparison of the recovered
+images for the legitimate receiver and the three eavesdropping
+scenarios at SNR = 10 dB. The legitimate receiver achieves
+a faithful and high-ﬁdelity reconstruction of the secret face.
+Eavesdropper 1 just recovers the stego image. Eavesdrop-
+per 2 with an incorrect digital token 856427, reconstructs
+with severe structural distortion and chaotic linear artifacts.
+The wrong perturbation mask and reference image leads to
+excessive sharpening, broken facial contours, and semanti-
+cally incoherent details, where the original facial features
+are entirely overwhelmed by noise. Eavesdropper 3 recovers
+without any digital token, showing an over-smoothed artifacts,
+characterized by blurry and indistinct color patches. The
+absence of the token-determined latent initialization makes the
+diffusion model fail to recover accurate information in high-
+frequency domain.
+To further evaluate the covertness of the proposed scheme
+against eavesdroppers, a classical deep learning-based ste-
+ganalysis network XuNet [79] is employed to detect whether
+the transmitted images contains secret information. The net-
+work is tasked with distinguishing between the natural original
+images and the generated stego images, which are trained for
+500 epochs. As shown in Table III, the traditional cover-based
+steganography approaches such as Baluja [80], suffer from a
+high detection vulnerability with an accuracy of 95.12%, and
+invertible neural network-based approaches like ISN [81] and
+HiNet [82] reduce the detection rate to 56.23 % and 55.71%,
+respectively. Notably, the proposed AgentSemSteCom scheme
+achieves a detection accuracy of 50.91%, which reﬂects the
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 14 ===
+MENG et al.: SECURE INTELLICISE WIRELESS NETWORK: AGENTIC AI FOR COVERLESS SemSteCom 8119
+TABLE III
+THESTEGANALYSIS DETECTION ACCURACY OF XUNET[79], W HERE
+THE DETECTION ACCURACY ISREPORTED AS THE AVERAGE OVER 10
+INDEPENDENT RUNS WITHDIFFERENT RANDOM SEEDS
+Fig.
+13. Comparison of AgentSemSteCom with different noise perturbation
+strengths.
+Fig.
+14. Visualization of AgentSemSteCom with different noise perturbation
+strengths.
+generated stego images are statistically indistinguishable from
+natural image distributions, proving that AgentSemSteCom
+exhibits superior anti-steganalysis capabilities and can effec-
+tively confuse eavesdroppers in intellicise wireless networks.
+c) The trade-off between security and covertness: The
+noise perturbation strength determines the scale of latent
+noise components that are deterministically inversed. As illus-
+trated in Figure 13, an increase in this parameter signiﬁcantly
+enhances the security of the steganography by widening the
+performance gap between the legitimate receiver and potential
+eavesdroppers. Speciﬁcally, as scales from 0.01 to 0.5, the
+PSNR for the eavesdropper 2 plummets from 23.94 dB to
+7.83 dB, indicating a total collapse of unauthorized recovery.
+Figure 14shows the visualization result of the stego image
+and recovered results correspond to of 0.01, 0.05, 0.1, and
+0.5 at 10 dB SNR. As increases, the reconstructed results
+of agentic AI-based eavesdroppers is highly disordered as the
+last column. However, this enhanced security is achieved at the
+cost of degraded visual naturalness. For the legitimate receivershown in the third column, a large of 0.5 induces obvious
+artifacts. Speciﬁcally, the high-frequency facial details, such as
+ﬁne lines and wrinkles, are over-emphasized and transformed
+into unnaturally sharp contours. Meanwhile, the corresponding
+stego images in the ﬁrst column show an engraved appearance,
+with diminished natural texture in skin regions, which could
+increase the suspicion risk of eavesdroppers. These obser-
+vations indicate that although a large perturbation strength
+maximizes resistance against unauthorized recovery, it simulta-
+neously degrades the covertness of stego image. Consequently,
+agentic receiver must adaptively select a moderate perturbation
+strength to strike balance between security and covertness,
+ensuring that the stego image is irrecoverable while preserving
+a visually natural appearance.
+VII. C ONCLUSION
+In this paper, the AgentSemSteCom scheme was pro-
+posed to address the security challenges in intellicise wireless
+networks. The framework integrates the autonomous seman-
+tic extraction, digital token-controlled reference generation,
+conditional diffusion model-based coverless steganography,
+JSCC-based semantic codec, and optional task-oriented
+enhancement modules. By leveraging agentic AI’s capabili-
+ties in perception and reasoning, the system eliminates the
+traditional dependence on private semantic keys and original
+cover images, thereby realizing a more secure and ﬂexible
+“invisible” encryption paradigm. Speciﬁcally, AgentSemSte-
+Com handles the noising and sampling process within the
+latent space, where the coordination of public semantic
+keys and implicit structural features ensures controllable and
+high-ﬁdelity generation. To guarantee the invertible of dif-
+fusion, we incorporated EDICT into the generative logic,
+effectively mitigating semantic drift caused by linearization
+errors in standard diffusion processes. Furthermore, a digital
+token-based security mechanism was implemented to provide
+dual-stage protection through deterministic noise initialization
+and latent perturbation, ensuring that only legitimate receivers
+can reconstruct the secret content. Experimental results on
+the open-source datasets demonstrated the superiority of
+the proposed AgentSemSteCom scheme in terms of pixel-
+level accuracy and structural consistency over the benchmark
+scheme. The autonomous invocation of task-oriented enhance-
+ment tools further highlighted the framework’s adaptability to
+diverse task requirements and channel conditions.
+Future work will investigate step-efﬁcient-denoising-based
+coverless steganography to meet stringent latency demands
+in high-speed mobility scenarios. Additionally, we aim to
+combine model compression techniques, such as knowledge
+distillation, quantization, and ﬁne-tuning, to address compu-
+tational and energy constraints inherent in space-air-ground
+integrated networks.
+REFERENCES
+[1] R. Meng et al., “Intellicise wireless networks meet agentic AI: A security
+and privacy perspective,” 2026, arXiv:2602.15290.
+[2] W. Yining et al., “Intellicise model transmission for semantic commu-
+nication in intelligence-native 6G networks,” China Commun., vol. 21,
+no. 7, pp. 95–112, Jul. 2024.
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 15 ===
+8120 IEEE TRANSACTIONS ON COGNITIVE COMMUNICATIONS AND NETWORKING, VOL. 12, 2026
+[3] R. Meng et al., “Generative AI for physical-layer authentication,”
+IEEE Wireless Commun., early access, Mar. 9, 2025, doi: 10.1109/
+MWC.2026.3666169.
+[4] P. Zhang et al., “Intellicise wireless networks from semantic commu-
+nications: A survey, research issues, and challenges,” IEEE Commun.
+Surveys Tuts., vol. 27, no. 3, pp. 2051–2084, Jun. 2025.
+[5] R. Meng et al., “Image steganography for securing intellicise wire-
+less networks: ‘Invisible encryption’ against eavesdroppers,” 2025,
+arXiv:2505.04467.
+[6] P. Zhang et al., “Towards semantic-based agent communication net-
+works: Vision, technologies, and challenges,” 2026, arXiv:2603.24328.
+[7] B. Xu, R. Meng, Y . Chen, X. Xu, C. Dong, and H. Sun, “Latent seman-
+tic diffusion-based channel adaptive de-noising SemCom for future
+6G systems,” in Proc. GLOBECOM - IEEE Global Commun. Conf.,
+Dec. 2023, pp. 1229–1234.
+[8] R. Meng et al., “Semantic radio access networks: Architecture, state-
+of-the-art, and future directions,” IEEE Trans. Cognit. Commun. Netw.,
+vol. 12, pp. 7076–7097, 2025.
+[9] E. Bourtsoulatze, D. Burth Kurka, and D. G ¨und¨uz, “Deep joint source-
+channel coding for wireless image transmission,” IEEE Trans. Cognit.
+Commun. Netw., vol. 5, no. 3, pp. 567–579, Sep. 2019.
+[10] J. Dai et al., “Nonlinear transform source-channel coding for seman-
+tic communications,” IEEE J. Sel. Areas Commun., vol. 40, no. 8,
+pp. 2300–2316, Aug. 2022.
+[11] L. Teng et al., “Conquering high packet-loss erasure: MoE
+Swin transformer-based video semantic communication,” 2025,
+arXiv:2508.01205.
+[12] P. Zhang et al., “Model division multiple access for semantic
+communications,” Frontiers Inf. Technol. &Electron. Eng., vol. 24,
+no. 6, pp. 801–812, 2023.
+[13] Y . Wang et al., “Feature importance-aware task-oriented semantic
+transmission and optimization,” IEEE Trans. Cognit. Commun. Netw.,
+vol. 10, no. 4, pp. 1175–1189, Aug. 2024.
+[14] H. Lu, R. Meng, X. Xu, Y . Liu, P. Zhang, and D. Niyato,
+“Important bit preﬁx M-ary quadrature amplitude modulation for seman-
+tic communications,” 2025, arXiv:2508.11351.
+[15] H. Cao, R. Meng, X. Xu, S. Han, and P. Zhang, “Importance-aware
+robust semantic transmission for LEO satellite–ground communication,”
+IEEE Internet Things J., vol. 13, no. 5, pp. 9665–9681, Mar. 2026.
+[16] H. Liang, C. Dong, W. An, Z. Bao, X. Xu, and R. Meng, “Semantic-
+importance-aware communication over MIMO fading channels,” IEEE
+Internet Things J., vol. 12, no. 18, pp. 38540–38555, Sep. 2025.
+[17] S. Tang, Q. Yang, L. Fan, X. Lei, A. Nallanathan, and G. K. Kara-
+giannidis, “Contrastive learning-based semantic communications,” IEEE
+Trans. Commun., vol. 72, no. 10, pp. 6328–6343, Oct. 2024.
+[18] D. Fan, R. Meng, S. Gao, and X. Xu, “KGRAG-SC: Knowledge graph
+RAG-assisted semantic communication,” in Proc. lEEE Int. Conf. Cloud
+Comput. Technol. Sci. (CloudCom), 2025, pp. 1–7.
+[19] B. Xu et al., “Semantic prior aided channel-adaptive equalizing
+and de-noising semantic communication system with latent diffusion
+model,” IEEE Trans. Wireless Commun. , vol. 24, no. 6, pp. 4614–4630,
+Jun. 2025.
+[20] S. Tang et al., “Retrieval-augmented generation for GenAI-enabled
+semantic communications,” IEEE Wireless Commun., vol. 33, no. 1,
+pp. 259–268, Feb. 2026.
+[21] R. Zhang et al., “Generative AI agents with large language model for
+satellite networks via a mixture of experts transmission,” IEEE J. Sel.
+Areas Commun., vol. 42, no. 12, pp. 3581–3596, Dec. 2024.
+[22] R. Meng et al., “A survey of secure semantic communications,” J. Netw.
+Comput. Appl., vol. 239, Jul. 2025, Art. no. 104181.
+[23] T. M. Getu, G. Kaddoum, and M. Bennis, “Semantic communication: A
+survey on research landscape, challenges, and future directions,” Proc.
+IEEE, vol. 112, no. 11, pp. 1649–1685, Nov. 2024.
+[24] Z. Zhang, R. Meng, S. Gao, H. Gao, and X. Xu, “SREC: Encrypted
+semantic super-resolution enhanced communication,” in Proc. lEEE Int.
+Conf. Cloud Comput. Technol. Sci. (CloudCom), 2025, pp. 1–7.
+[25] Q. Tuan, D. Won, T. Son, T. P. Truong, and S. Cho, “Security and
+privacy challenges in semantic communication networks,” in Proc. Int.
+Conf. Artif. Intell. Inf. Commun. (ICAIIC), 2025, pp. 0032–0035.
+[26] T.-Y . Tung and D. Gunduz, “Deep joint source-channel and encryption
+coding: Secure semantic communications,” in Proc. ICC -IEEE Int.
+Conf. Commun., May 2023, pp. 5620–5625.
+[27] R. Meng et al., “Secure semantic communication with homomorphic
+encryption,” 2025, arXiv:2501.10182.
+[28] R. Kaewpuang et al., “Cooperative resource management in quantum
+key distribution (QKD) networks for semantic communication,” IEEE
+Internet Things J., vol. 11, no. 3, pp. 4454–4469, Feb. 2024.[29] X. Li et al., “Physical layer security for wireless-powered ambient
+backscatter cooperative communication networks,” IEEE Trans. Cognit.
+Commun. Netw., vol. 9, no. 4, pp. 927–939, Aug. 2023.
+[30] W. Chen, S. Shao, Q. Yang, Z. Zhang, and P. Zhang, “A superposition
+code-based semantic communication approach with quantiﬁable and
+controllable security,” 2024, arXiv:2401.13980.
+[31] J. Dai, H. Fan, Z. Zhao, Y . Sun, and Z. Yang, “Secure resource allocation
+for integrated sensing and semantic communication system,” in Proc.
+IEEE Int. Conf. Commun. Workshops (ICC Workshops), Jun. 2024,
+pp. 1225–1230.
+[32] R. Zhao, Q. Qin, N. Xu, G. Nan, Q. Cui, and X. Tao, “SemKey:
+Boosting secret key generation for RIS-assisted semantic communication
+systems,” in Proc. IEEE 96th Veh. Technol. Conf. (VTC-Fall), Sep. 2022,
+pp. 1–5.
+[33] R. Xu, G. Li, Z. Yang, J. Kang, X. Zhang, and J. Li, “Covert UA V data
+transmission via semantic communication: A DRL-driven joint position
+and power optimization method,” in Proc. IEEE/CIC Int. Conf. Commun.
+China (ICCC), China, Aug. 2024, pp. 66–71.
+[34] Y . Wang, Y . Hu, H. Du, T. Luo, and D. Niyato, “Multi-agent rein-
+forcement learning for covert semantic communications over wireless
+networks,” in Proc. ICASSP - IEEE Int. Conf. Acoust., Speech Signal
+Process. (ICASSP), Jun. 2023, pp. 1–5.
+[35] Y . Liu et al., “Learning-based power control for secure covert seman-
+tic communication,” in Proc. Int. Wireless Commun. Mobile Comput.
+(IWCMC), May 2025, pp. 257–262.
+[36] X. Li et al., “Covert communications with enhanced physical layer
+security in RIS-assisted cooperative networks,” IEEE Trans. Wireless
+Commun., vol. 24, no. 7, pp. 5605–5619, Jul. 2025.
+[37] Y . Long, Z. Yang, Z. Wang, Z. Zhou, Y . Huang, and L. Zhou,
+“SCF-stega: Controllable linguistic steganography based on semantic
+communications framework,” in Proc. ICASSP - IEEE Int. Conf. Acoust.,
+Speech Signal Process. (ICASSP), Apr. 2025, pp. 1–5.
+[38] Z. Li, O. Huan, W. Zhang, and T. Luo, “Multi-modal task-oriented secure
+semantic communication: A hide-and-deceive approach,” in Proc. 10th
+Int. Conf. Comput. Commun. (ICCC), Dec. 2024, pp. 1477–1482.
+[39] S. Tang, Y . Chen, Q. Yang, R. Zhang, D. Niyato, and Z. Shi,
+“Towards secure semantic communications in the presence of intelligent
+eavesdroppers,” 2025, arXiv:2503.23103.
+[40] S. Ni, G. Liu, S. Xiang, A. Li, L. Zhou, and Y . Qian, “Controllable
+steganography for robust and efﬁcient semantic communication
+systems,” IEEE Commun. Mag., vol. 64, no. 1, pp. 160–166, Jan. 2026.
+[41] Y . Huo, S. Xiang, X. Luo, and X. Zhang, “Image semantic steganogra-
+phy: A way to hide information in semantic communication,” IEEE
+Trans. Circuits Syst. Video Technol., vol. 35, no. 2, pp. 1951–1960,
+Feb. 2025.
+[42] W. Chen, Q. Yang, S. Shao, Z. Shi, J. Chen, and X. Shen, “Can
+knowledge improve security? A coding-enhanced jamming approach
+for semantic communication,” IEEE J. Sel. Areas Commun., vol. 44,
+pp. 1765–1780, 2026.
+[43] S. Gao et al., “SemSteDiff: Generative diffusion model-based coverless
+semantic steganography communication,” IEEE Trans. Mobile Comput.,
+early access, Mar. 30, 2026, doi: 10.1109/TMC.2026.3678288.
+[44] S. Tang et al., “Rethinking secure semantic communications in the
+age of generative and agentic AI: Threats and opportunities,” 2026,
+arXiv:2601.01791.
+[45] R. Zhang et al., “Interactive AI with retrieval-augmented generation for
+next generation networking,” IEEE Netw., vol. 38, no. 6, pp. 414–424,
+Nov. 2024.
+[46] Y . Yang et al., “DiffStega: Towards universal training-free coverless
+image steganography with diffusion models,” 2024, arXiv:2407.10459.
+[47] R. Zhang et al., “Generative AI for space-air-ground integrated
+networks,” IEEE Wireless Commun., vol. 31, no. 6, pp. 10–20,
+Dec. 2024.
+[48] H. Gao et al., “Agentic AI-enhanced semantic communications: Foun-
+dations, architecture, and applications,” 2025, arXiv:2512.23294.
+[49] F. Jiang, C. Pan, K. Wang, P. Michiardi, O. A. Dobre, and M. Debbah,
+“From large AI models to agentic AI: A tutorial on future intelligent
+communications,” IEEE J. Sel. Areas Commun., vol. 44, pp. 3507–3540,
+2026.
+[50] B. Wang et al., “Efﬁcient semantic-aware encryption for semantic com-
+munication in intelligent connected vehicles,” IEEE Wireless Commun.
+Lett., vol. 14, no. 11, pp. 3495–3499, Nov. 2025.
+[51] S. Zhang et al., “Large models for aerial edges: An edge-cloud model
+evolution and communication paradigm,” IEEE J. Sel. Areas Commun.,
+vol. 43, no. 1, pp. 21–35, Jan. 2025.
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 16 ===
+MENG et al.: SECURE INTELLICISE WIRELESS NETWORK: AGENTIC AI FOR COVERLESS SemSteCom 8121
+[52] Y . Liu et al., “LAMeTA: Intent-aware agentic network optimiza-
+tion via a large AI model-empowered two-stage approach,” 2025,
+arXiv:2505.12247.
+[53] R. Zhang et al., “Toward agentic AI: Generative information
+retrieval inspired intelligent communications and networking,” 2025,
+arXiv:2502.16866.
+[54] Y . Liu et al., “Hierarchical micro-segmentations for zero-trust services
+via large language model (LLM)-enhanced graph diffusion,” 2024,
+arXiv:2406.13964.
+[55] J. Li, D. Li, C. Xiong, and S. C. H. Hoi, “BLIP: Bootstrapping language-
+image pre-training for uniﬁed vision-language understanding and
+generation,” in Proc. Int. Conf. Mach. Learn., 2022, pp. 12888–12900.
+[56] Z. Cao, T. Simon, S.-E. Wei, and Y . Sheikh, “Realtime multi-person 2D
+pose estimation using part afﬁnity ﬁelds,” in Proc. IEEE Conf. Comput.
+Vis. Pattern Recognit. (CVPR), Jul. 2017, pp. 7291–7299.
+[57] L. Zhang and M. Agrawala, “Adding conditional control to text-to-
+image diffusion models,” in Proc. IEEE/CVF Int. Conf. Comput. Vis.,
+Oct. 2023, pp. 3836–3847.
+[58] J. Song, C. Meng, and S. Ermon, “Denoising diffusion implicit models,”
+2020, arXiv:2010.02502.
+[59] B. Wallace, A. Gokul, and N. Naik, “EDICT: Exact diffusion inversion
+via coupled transformations,” in Proc. IEEE/CVF Conf. Comput. Vis.
+Pattern Recognit., Jun. 2023, pp. 22532–22541.
+[60] A. Radford et al., “Learning transferable visual models from natural
+language supervision,” in Proc. Int. Conf. Mach. Learn., vol. 139, 2021,
+pp. 8748–8763.
+[61] H. Ye, J. Zhang, S. Liu, X. Han, and W. Yang, “IP-adapter: Text
+compatible image prompt adapter for text-to-image diffusion models,”
+2023, arXiv:2308.06721.
+[62] J. Lei Ba, J. Ryan Kiros, and G. E. Hinton, “Layer normalization,” 2016,
+arXiv:1607.06450.
+[63] O. Ronneberger, P. Fischer, and T. Brox, “U-Net: Convolutional net-
+works for biomedical image segmentation,” in Proc. 18th Int. Conf. Med.
+Image Comput. Comput.-Assist. Intervent., vol. 9351. Cham, Switzer-
+land: Springer, 2015, pp. 234–241.
+[64] X. Cheng, R. Meng, X. Xu, H. Gao, P. Zhang, and D. Niyato,
+“APEG: Adaptive physical layer authentication with channel extrapo-
+lation and generative AI,” IEEE Trans. Inf. Forensics Security, vol. 21,
+pp. 1257–1272, 2026.
+[65] A. Vaswani et al., “Attention is all you need,” in Proc. Adv. Neural Inf.
+Process. Syst., vol. 30, 2017, pp. 5998–6008.
+[66] J. Ho and T. Salimans, “Classiﬁer-free diffusion guidance,” 2022,
+arXiv:2207.12598.
+[67] T. Lin et al., “Microsoft COCO: Common objects in context,” in Proc.
+Eur. Conf. Comput. Vis., 2014, pp. 740–755.
+[68] Y . Choi, Y . Uh, J. Yoo, and J.-W. Ha, “StarGAN v2: Diverse image
+synthesis for multiple domains,” in Proc. IEEE/CVF Conf. Comput. Vis.
+Pattern Recognit. (CVPR), Jun. 2020, pp. 8188–8197.
+[69] T. Karras, T. Aila, S. Laine, and J. Lehtinen, “Progressive grow-
+ing of GANs for improved quality, stability, and variation,” 2018,
+arXiv:1710.10196.
+[70] H. Touvron et al., “Llama 2: Open foundation and ﬁne-tuned chat
+models,” 2023, arXiv:2307.09288.
+[71] J. Jain, J. Li, M. Chiu, A. Hassani, N. Orlov, and H. Shi, “OneFormer:
+One transformer to rule universal image segmentation,” in Proc.
+IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR), Vancouver,
+BC, Canada, Jun. 2023, pp. 2989–2998.
+[72] T. Simon, H. Joo, I. Matthews, and Y . Sheikh, “Hand keypoint detection
+in single images using multiview bootstrapping,” in Proc. IEEE Conf.
+Comput. Vis. Pattern Recognit. (CVPR), Jul. 2017, pp. 1145–1153.
+[73] K. Yang, S. Wang, J. Dai, X. Qin, K. Niu, and P. Zhang, “SwinJSCC:
+Taming Swin transformer for deep joint source-channel coding,” IEEE
+Trans. Cognit. Commun. Netw., vol. 11, no. 1, pp. 90–104, Feb. 2025.
+[74] G. Zhang, P. Yang, Y . Cai, Q. Hu, and G. Yu, “From analog
+to digital: Multi-order digital joint coding-modulation for semantic
+communication,” IEEE Trans. Commun., vol. 73, no. 6, pp. 4257–4271,
+Jun. 2025.
+[75] E. Agustsson and R. Timofte, “NTIRE 2017 challenge on single image
+super-resolution: Dataset and study,” in Proc. IEEE Conf. Comput. Vis.
+Pattern Recognit. Workshops (CVPRW), Jul. 2017, pp. 1122–1131.
+[76] K. Chan, C. Li, C. C. Loy, and S. Zhou, “Towards robust blind face
+restoration with codebook lookup transformer,” in Proc. Adv. Neural
+Inf. Process. Syst. 35, 2022, pp. 30599–30611.
+[77] T. Karras, S. Laine, and T. Aila, “A style-based generator architecture
+for generative adversarial networks,” in Proc. IEEE/CVF Conf. Comput.
+Vis. Pattern Recognit. (CVPR), Jun. 2019, pp. 4401–4410.[78] R. Zhang, P. Isola, A. A. Efros, E. Shechtman, and O. Wang, “The
+unreasonable effectiveness of deep features as a perceptual metric,”
+inProc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., Jun. 2018,
+pp. 586–595.
+[79] G. Xu, H.-Z. Wu, and Y .-Q. Shi, “Structural design of convolutional
+neural networks for steganalysis,” IEEE Signal Process. Lett. , vol. 23,
+no. 5, pp. 708–712, May 2016.
+[80] S. Baluja, “Hiding images within images,” IEEE Trans. Pattern Anal.
+Mach. Intell., vol. 42, no. 7, pp. 1685–1697, Jul. 2020.
+[81] S.-P. Lu, R. Wang, T. Zhong, and P. L. Rosin, “Large-capacity
+image steganography based on invertible neural networks,” in Proc.
+IEEE/CVF Conf. Comput. Vis. Pattern Recognit. (CVPR), Jun. 2021,
+pp. 10816–10825.
+[82] J. Jing, X. Deng, M. Xu, J. Wang, and Z. Guan, “HiNet: Deep image
+hiding by invertible network,” in Proc. IEEE/CVF Int. Conf. Comput.
+Vis. (ICCV), Oct. 2021, pp. 4733–4742.
+Rui Meng (Member, IEEE) received the B.S. degree
+in information engineering and the Ph.D. degree in
+information and communication engineering from
+Beijing University of Posts and Telecommunications
+(BUPT) in 2018 and 2024, respectively.
+He is currently a Post-Doctoral Fellow with
+BUPT. He is also the Deputy Director of the Satellite
+Internet Testing Center, Xiong’an Aerospace Infor-
+mation Research Institute. As the ﬁrst author, he
+contributed a book chapter. As a key contributor,
+he completed several technical research reports for
+the IMT-2030 (6G) Promotion Group. He has published more than 40
+peer-reviewed articles, two of which (both as ﬁrst author) were selected
+as cover articles. His research interests include next-generation networks,
+wireless security, semantic communications, communication and AI (ComAI),
+and intelligent and concise (intellicise) wireless networks. He served as
+the Workshop Co-Chair for IEEE GLOBECOM and IEEE IUCC, a TPC
+Member for IEEE GLOBECOM, IEEE WCNC, IEEE WCSP, and IEEE
+ICCC, and a Lead Guest Editor for IoT. He also serves as a reviewer for
+more than 20 international academic journals, including IEEE J OURNAL
+ONSELECTED AREAS IN COMMUNICATIONS , IEEE C OMMUNICATIONS
+SURVEYS AND TUTORIALS , IEEE T RANSACTIONS ON WIRELESS COM-
+MUNICATIONS , IEEE T RANSACTIONS ON INFORMATION FORENSICS AND
+SECURITY , and IEEE W IRELESS COMMUNICATIONS , having conducted over
+150 reviews. He serves as the Secretary for the Semantic Communication
+Professional Committee of China Institute of Communications.
+Song Gao received the B.S. degree in electri-
+cal information engineering from Dalian Maritime
+University in 2024. She is currently pursuing the
+Ph.D. degree in information and communication
+engineering with Beijing University of Posts and
+Telecommunications, Beijing, China.
+Her research interests include wireless security
+and semantic communications.
+Bingxuan Xu (Graduate Student Member, IEEE)
+received the B.S. degree in communication engi-
+neering from Beijing University of Posts and
+Telecommunications (BUPT), Beijing, China, in
+2022, where she is currently pursuing the Ph.D.
+degree in information and communication engineer-
+ing.
+Her research interests include next-generation
+semantic communications, diffusion models, and
+posterior sampling.
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 
+=== PAGE 17 ===
+8122 IEEE TRANSACTIONS ON COGNITIVE COMMUNICATIONS AND NETWORKING, VOL. 12, 2026
+Xiaodong Xu (Senior Member, IEEE) received the
+B.S. degree in information and communication engi-
+neering and the master’s degree in communication
+and information system from Shandong University
+in 2001 and 2004, respectively, and the Ph.D. degree
+in circuit and system from BUPT, in 2007.
+He is currently a Professor with BUPT and a
+member of IMT-2030 (6G) Experts Panel. He has
+co-authored nine books/chapters and more than 120
+journal and conference papers. He is also the inven-
+tor or co-inventor of 51 granted patents. His research
+interests include semantic communications, intellicise communication system,
+moving networks, mobile edge computing, and caching.
+Jianqiao Chen received the Ph.D. degree from
+Beijing University of Posts and Telecommunica-
+tions, Beijing, China, in 2021.
+He was a Post-Doctoral Researcher with the Peng
+Cheng Laboratory, Shenzhen, China. He is currently
+a Researcher with the ZGC Institute of Ubiquitous-
+X Innovation and Applications and Beijing Key
+Laboratory of 6G DOICT Converged and Cloud-
+Native Mobile Information Networks, Beijing. He
+has authored/co-authored more than 30 journal and
+conference papers. He is also the inventor or co-
+inventor of more than ten granted patents. His research interests include
+semantic communication, channel modeling, sparse signal processing, and
+communication and intelligence integration technology.
+Nan Ma (Member, IEEE) received the B.S. and
+Ph.D. degrees from Beijing University of Posts
+and Telecommunications (BUPT), China, in 2002
+and 2007, respectively.
+He is currently a Professor with the School
+of Information and Communication Engineer-
+ing, BUPT. His research interests include wire-
+less communication testing theory and semantic
+communication.
+Pei Xiao (Senior Member, IEEE) is currently
+a Professor of wireless communications with the
+Institute for Communication Systems (ICS), Univer-
+sity of Surrey. He is also the Technical Manager
+of 5GIC/6GIC, leading the research team in the
+new physical layer work area, and coordinat-
+ing/supervising research activities across all the
+work areas. Prior to this, he was at Newcastle
+University and Queen’s University Belfast. He also
+held positions at Nokia Networks, Finland. He has
+published extensively in the ﬁelds of communication
+theory and signal processing for wireless communications, and is an inventor
+on over 15 recent patents addressing bottleneck problems in 5G/6G systems.
+Ping Zhang (Fellow, IEEE) received the Ph.D.
+degree in circuits and systems from BUPT, Beijing,
+China, in 1990.
+He was a Chief Scientist of the National Basic
+Research Program (973 Program) and an expert of
+the Information Technology Division of National
+High-Tech Research and Development Program (863
+Program). He is currently a Professor with BUPT,
+the Director of the State Key Laboratory of Network-
+ing and Switching Technology, and a member of the
+IMT-2020 (5G) Experts Panel and the Experts Panel
+for China’s 6G development. He is an Academician of Chinese Academy
+of Engineering. His research interests include wireless communication. He
+is a member of the Consultant Committee on International Cooperation of
+National Natural Science Foundation of China.
+Rahim Tafazolli (Fellow, IEEE) is the only Regius
+Professor of electronic engineering at the University
+of Surrey, and a Professor of mobile and satellite
+communications. He is the Director of the Institute
+for Communication Systems (ICS) and the Director
+and the Founder of the 5G Innovation Centre (5GIC).
+For over 30 years, he has been actively engaged in
+research, publishing more than 1000 technical papers
+and editing two books.
+Prof. Tafazolli has acted as a technical and
+strategic advisor to several mobile communication
+companies and has recently served as a member for U.K. Government’s
+Department for Digital, Culture, Media and Sport (DCMS). He is currently a
+member of the DCMS Advisory Council on Diversiﬁcation. He represents the
+U.K. Space Agency (UKSA) as an expert delegate to European Space Agency
+(ESA) on satellite 5G matters. In 2014, he served as a Technical Advisor to
+the then-Mayor of London, Boris Johnson, for the “London Infrastructure
+Investment Plan 2050.” He has also served as an Editor for Wiley’s 5G
+Reference Guide.
+Authorized licensed use limited to: IIIT Manipur. Downloaded on September 03,2026 at 15:28:26 UTC from IEEE Xplore.  Restrictions apply. 

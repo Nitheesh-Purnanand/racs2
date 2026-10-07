@@ -1,0 +1,929 @@
+=== PAGE 1 ===
+RACS — Final Project
+Overview
+Retrieval-Augmented Coverless Semantic
+Steganography
+Purpose:  Compact, complete project specification for an LLM or developer . It defines the original
+AgentSemSteCom system, the RACS modification, architecture, token/security design, implementation
+boundaries, evaluation, risks, hypotheses, and success criteria. It intentionally removes repetition from the longer
+overview .
+1. Project Definition
+RACS (Retrieval-Augmented Coverless Semantic Steganography)  starts from the 2026 IEEE paper “Secure
+Intellicise W ireless Network: Agentic AI for Coverless Semantic Steganography Communication.”
+The paper's AgentSemSteCom  combines:
+agentic semantic extraction,
+implicit structural features,
+diffusion-based reference-image generation,
+EDICT -based reversible dif fusion,
+digital-token security ,
+semantic communication,
+wireless transmission,
+optional task-oriented enhancement.
+Problem
+The original system generates a reference image through an expensive dif fusion process. RACS investigates:
+=== PAGE 2 ===
+Can retrieval-based reference-image acquisition provide suf ficiently compatible semantic and structural
+conditioning for reversible coverless steganography while reducing the computational cost of reference
+generation?
+RACS does not assume retrieval is better . It is a quality-security-robustness-ef ficiency comparison.
+Core modification
+AgentSemSteCom:  
+Secret → Kpub + Xfeat → diffusion generation → Xref  
+RACS:
+Secret → Kpub + Xfeat → retrieval → reranking  
+      → token-controlled selection → optional light editing → Xref  
+The downstream EDICT , token perturbation, semantic communication, channel and recovery pipeline should initially
+remain unchanged.
+2. Original AgentSemSteCom
+2.1 End-to-end flow
+=== PAGE 3 ===
+Secret Xs  
+  ↓ 
+Agentic semantic analysis  
+  ↓ 
+Kpub + Xfeat  
+  ↓ 
+Diffusion/DDIM reference generation  
+  ↓ 
+Xref 
+  ↓ 
+EDICT + token perturbation  
+  ↓ 
+Xstego 
+  ↓ 
+Semantic communication  
+  ↓ 
+Wireless channel  
+  ↓ 
+Semantic decoder  
+  ↓ 
+Reconstructed stego  
+  ↓ 
+EDICT inversion + inverse token perturbation  
+  ↓ 
+Recovered secret  
+2.2 Stage 1 — Semantic extraction
+Public semantic key:
+Kpub = fLLM(Xs)  
+Kpub  describes what the secret image contains.
+Implicit structural feature:
+Xfeat = G(Xs, R)  
+Xfeat  describes structural/layout information. The paper discusses:
+semantic segmentation for common images,
+OpenPose skeletal landmarks for facial images,
+=== PAGE 4 ===
+style-related conditions where explicit reference features are not required.
+Core distinction:
+Kpub  = semantic/content information  
+Xfeat = structural/layout information  
+2.3 Stage 2 — Reference generation
+The original reference generator uses dif fusion/DDIM, structural conditioning such as ControlNet, IP Adapter-plus, and the
+digital token.
+Token → deterministic Gaussian noise  
+Kpub  ───────────────┐  
+Xfeat ───────────────┤  
+                     ↓  
+               Diffusion/DDIM  
+                     ↓  
+              Reference latent  
+                     ↓  
+                    VAE  
+                     ↓  
+                    Xref  
+This is the main computational stage RACS replaces.
+2.4 Stage 3 — Coverless steganography
+Reported components:
+Stable Dif fusion v1.5,
+EDICT ,
+coupled latent trajectories,
+token-controlled latent perturbation,
+VAE.
+Conceptually:
+=== PAGE 5 ===
+Secret 
+ ↓ 
+VAE encoder  
+ ↓ 
+Secret latent  
+ ↓ 
+Forward diffusion  
+ ↓ 
+Noisy latent  
+ ↓ 
+Token-controlled perturbation  
+ ↓ 
+EDICT reverse process conditioned by Kpub + Xref  
+ ↓ 
+VAE decoder  
+ ↓ 
+Stego image  
+EDICT is important because the process is intended to be reversible/invertible for secret recovery .
+2.5 Digital token
+The original token has two roles:
+Token
+ ├─→ reference-generation seed  
+ └─→ latent perturbation/security control  
+The token therefore provides dual-stage protection.
+2.6 Stage 4 — Semantic communication
+Analog setup:
+SwinJSCC,
+AWGN,
+SNR 5/10/15/20 dB,
+h = 1 ,
+C = 48 ,
+training SNR = 10 dB.
+Digital setup:
+=== PAGE 6 ===
+MDJCM,
+DIV2K,
+modulation order 64,
+SNR 10 dB.
+2.7 Stage 5 — Receiver
+Received representation  
+ ↓ 
+Semantic decoder  
+ ↓ 
+Reconstructed stego  
+ ↓ 
+Reference conditions  
+ ↓ 
+EDICT inversion  
+ ↓ 
+Inverse token perturbation  
+ ↓ 
+Recovered secret  
+2.8 Optional enhancement
+The paper uses CodeFormer for optional facial enhancement:
+FFHQ,
+512×512,
+fidelity weight 0.5.
+3. Original Parameters and
+Results
+Component Reported configuration
+Diffusion Stable Dif fusion v1.5
+EDICT steps 50
+Perturbation strength η 0.05
+EDICT mixing coef ficient 0.93
+Edit strength 0.5
+=== PAGE 7 ===
+Component Reported configuration
+Reference guidance IPAdapter-plus
+IPAdapter weight 1
+Analog SemCom SwinJSCC
+Digital SemCom MDJCM
+Channel AWGN
+SNR 5, 10, 15, 20 dB
+Channel coef ficient h = 1
+Analog bandwidth C = 48
+Digital modulation 64
+Facial enhancement CodeFormer
+CodeFormer fidelity 0.5
+Metrics
+Metric Direction
+PSNR Higher
+SSIM Higher
+MSE Lower
+LPIPS Lower
+Reported reference values
+Facial, 5 dB:
+PSNR = 22.73 dB  
+SSIM = 0.6989  
+Facial, 20 dB:
+PSNR = 26.29 dB  
+LPIPS = 0.2127  
+Style, 5 dB:
+MSE   = 0.721 × 10^-2  
+LPIPS = 0.3850  
+AgentSemSteCom vs SemSteDif f, common images, 5 dB:
+PSNR: 19.71 vs 18.04 dB  
+MSE:  1.207×10^-2 vs 1.73×10^-2  
+=== PAGE 8 ===
+At 10 dB:
+SSIM: 0.5643 vs 0.5183  
+CodeFormer , facial, 5 dB:
+             Before     After  
+PSNR         22.74      23.15  
+SSIM          0.6989      0.7244  
+MSE           0.566e-2    0.514e-2  
+LPIPS         0.4042      0.2928  
+At 20 dB, enhanced PSNR is 25.59 dB versus baseline 26.29 dB, demonstrating why multiple metrics are necessary .
+Security baseline
+Correct token → PSNR 25.37 dB  
+Wrong token   → PSNR 18.91 dB  
+Security gap  → 6.46 dB  
+4. RACS Architecture
+4.1 Main pipeline
+=== PAGE 9 ===
+Secret Xs  
+  ↓ 
+Semantic extraction → Kpub  
+Structure extraction → Xfeat  
+  ↓ 
+Retrieval query  
+  ↓ 
+CLIP/VLM embedding  
+  ↓ 
+FAISS image index  
+  ↓ 
+Top-K candidates  
+  ↓ 
+Semantic + structural reranking  
+  ↓ 
+High-quality candidate pool  
+  ↓ 
+Digital token  
+  ↓ 
+Deterministic candidate selection  
+  ↓ 
+Optional lightweight editing  
+  ↓ 
+Xref 
+  ↓ 
+Existing EDICT + token perturbation  
+  ↓ 
+Xstego 
+  ↓ 
+Existing semantic communication  
+  ↓ 
+Wireless channel  
+4.2 Receiver
+=== PAGE 10 ===
+Received semantic representation  
+  ↓ 
+Semantic decoder  
+  ↓ 
+Reconstructed stego  
+  ↓ 
+Same query/configuration  
+  ↓ 
+Same database + embedding + FAISS  
+  ↓ 
+Same ranking  
+  ↓ 
+Correct token  
+  ↓ 
+Same Xref  
+  ↓ 
+EDICT inversion  
+  ↓ 
+Inverse token perturbation  
+  ↓ 
+Secret 
+5. Retrieval Database
+The research plan proposes a manageable LAION subset , initially around 50k–100k images , with smaller subsets
+appropriate for development.
+Each image should have:
+image_id  
+image
+CLIP/VLM embedding  
+semantic metadata/caption if available  
+structural representation  
+optional steganographic-suitability features  
+Indexing is of fline:
+Corpus → embedding model → embeddings → FAISS index  
+=== PAGE 11 ===
+Online processing should mainly be:
+query embedding  
++ nearest-neighbour search  
++ reranking  
++ optional editing  
+This separation is essential to the ef ficiency argument.
+6. Retrieval and Reranking
+6.1 First retrieval layer
+Secret 
+ ↓ 
+Kpub / semantic description  
+ ↓ 
+CLIP text or multimodal embedding  
+ ↓ 
+FAISS
+ ↓ 
+Top-K
+CLIP provides semantic similarity but does not guarantee:
+same pose,
+same geometry ,
+same layout,
+same object arrangement,
+same texture,
+steganographic suitability .
+Therefore CLIP-only retrieval is the baseline, not the final design.
+6.2 Structural reranking
+Candidate score:
+=== PAGE 12 ===
+Score(I) =
+    α × Ssemantic(I)  
+  + β × Sstructural(I)  
+Possible extension:
+Score(I) =
+    α Ssemantic  
+  + β Sstructural  
+  + γ Ssteganographic  
+Structural representations may include:
+segmentation,
+edges/layout,
+depth,
+object arrangement,
+pose landmarks,
+facial landmarks.
+The original paper's structural-feature results motivate this component.
+7. Digital Token in RACS
+The token should be retained but its reference-acquisition role changes.
+Original:
+Token → diffusion noise seed  
+RACS:
+Top-K candidates  
+      ↓ 
+Token
+      ↓ 
+deterministic mapping  
+      ↓ 
+selected candidate  
+Example conceptual mapping:
+=== PAGE 13 ===
+index = H(token) mod K  
+The exact mapping must be fixed.
+Quality constraint
+Never use:
+Token → arbitrary database image  
+Use:
+Query
+ ↓ 
+Top-K relevant candidates  
+ ↓ 
+quality filtering/reranking  
+ ↓ 
+valid candidate pool  
+ ↓ 
+token selection  
+The token provides controlled diversity/security while preserving candidate quality .
+Security hypothesis
+If the valid candidate pool has size K:
+P(correct reference | no token) ≈ 1/K  
+and a simple uncertainty measure is:
+log2(K) bits  
+This is only a research model, not a complete security proof. A full analysis must consider token entropy , database
+knowledge, ranking knowledge, candidate filtering, side information, and attacker capabilities.
+8. VLM / Agentic Reranking
+A stronger RACS variant can use a VLM/agent after F AISS:
+=== PAGE 14 ===
+FAISS
+ ↓ 
+Top-K
+ ↓ 
+structural filtering  
+ ↓ 
+VLM/agent evaluation  
+ ↓ 
+fixed ranking  
+ ↓ 
+token-controlled selection  
+The VLM can consider:
+semantic compatibility ,
+structure/layout,
+visual similarity ,
+editing requirement,
+possible steganographic suitability .
+Important protocol rule
+Do not put a nondeterministic cloud LLM directly in the critical transmitter/receiver selection path.
+Prefer:
+VLM → candidate scores  
+     ↓ 
+fixed deterministic ranking  
+     ↓ 
+token → deterministic selection  
+using a shared/frozen/local model or deterministic scoring process.
+Compare:
+RACS-Base  
+vs 
+RACS-Agent
+to determine whether the added intelligence justifies its cost.
+=== PAGE 15 ===
+9. Optional Lightweight
+Editing
+Retrieval may find an image that is semantically good but structurally imperfect.
+Retrieved image + Xfeat  
+        ↓  
+light image-to-image / structure-guided editing  
+        ↓  
+improved Xref  
+Possible directions:
+SDEdit-style partial dif fusion,
+lightweight image-to-image adjustment,
+structure-guided editing.
+The editing stage must remain substantially cheaper than full reference generation.
+Compare:
+Retrieval  
+vs 
+Retrieval + editing  
+vs 
+Full generation  
+on both quality and latency .
+10. Optional Retrieve-or-
+Generate
+RACS can retain dif fusion as a fallback:
+=== PAGE 16 ===
+Secret 
+ ↓ 
+Retrieve  
+ ↓ 
+Candidate quality  
+ ├─ good → retrieve  
+ └─ poor → diffusion generation  
+Potential systems:
+Always Generate  
+Always Retrieve  
+Retrieve + Edit  
+Retrieve-or-Generate  
+The hybrid architecture is useful because it applies expensive generation only when retrieval is inadequate.
+11. Scientific Comparison
+Boundary
+The first RACS comparison should change only reference acquisition .
+Keep:
+Secret images       → same  
+Kpub extraction     → same  
+Xfeat extraction    → same  
+EDICT               → same  
+Token perturbation  → same  
+Semantic Comms      → same  
+Channel             → same  
+Recovery            → same  
+Metrics             → same  
+Change:
+Reference acquisition:  
+diffusion generation → retrieval  
+=== PAGE 17 ===
+This is essential for attribution.
+12. Research Hypotheses
+H1 — Efficiency
+Retrieval reduces:
+reference latency ,
+GPU computation,
+memory ,
+potentially energy .
+H2 — Quality
+A suf ficiently compatible retrieved reference, optionally edited, can maintain acceptable:
+PSNR,
+SSIM,
+MSE,
+LPIPS.
+H3 — Security
+Token-controlled selection can preserve a meaningful correct-token/wrong-token recovery gap.
+H4 — Robustness
+RACS remains usable at:
+5, 10, 15, 20 dB  
+even if performance dif fers from AgentSemSteCom.
+13. Evaluation Framework
+Systems
+At minimum:
+=== PAGE 18 ===
+1. AgentSemSteCom  
+2. RACS Retrieval-only  
+3. RACS Retrieval + Light Editing  
+4. RACS Retrieve-or-Generate  
+Optional intelligent variant:
+5. RACS + VLM/Agent Reranking  
+Image classes
+Use the baseline categories where applicable:
+common 
+facial 
+style
+SNR
+5 dB 
+10 dB
+15 dB
+20 dB
+Quality
+PSNR ↑ 
+SSIM ↑ 
+MSE ↓
+LPIPS ↓ 
+14. Efficiency Evaluation
+This is the major new evaluation dimension.
+Measure:
+=== PAGE 19 ===
+Reference acquisition
+T_generation  
+T_retrieval  
+T_reranking  
+T_editing  
+End-to-end latency
+semantic extraction  
++ reference acquisition  
++ steganography  
++ communication  
++ recovery
+Memory
+Peak GPU memory for:
+generation,
+retrieval,
+VLM/reranking,
+editing,
+full pipeline.
+Computation
+Where feasible:
+FLOPs,
+diffusion steps,
+model forward passes.
+Optional:
+energy ,
+CPU utilization,
+GPU utilization.
+Do not claim RACS is faster until measured.
+=== PAGE 20 ===
+15. Security and Steganalysis
+Security
+At minimum:
+Correct token  
+Wrong token  
+No token  
+Measure:
+PSNR 
+SSIM 
+MSE 
+LPIPS
+Compare against the original security baseline:
+25.37 dB correct-token PSNR  
+18.91 dB wrong-token PSNR  
+6.46 dB gap  
+Also analyze new attack surfaces created by the retrieval database.
+Steganalysis
+If feasible, compare normal/reference images with stego images using:
+XuNet,
+SRNet.
+Possible metrics:
+detection accuracy ,
+AUC,
+false-positive rate,
+false-negative rate.
+Lower detectability is preferable.
+=== PAGE 21 ===
+16. Required Ablations
+Retrieval
+CLIP semantic retrieval  
+vs 
+CLIP + structural reranking  
+Token
+without token selection  
+vs 
+with token selection  
+VLM
+without VLM  
+vs 
+VLM reranking  
+Editing
+retrieval only  
+vs 
+retrieval + editing  
+Fallback
+always retrieve  
+vs 
+retrieve-or-generate  
+Candidate pool
+Vary T op-K and measure:
+=== PAGE 22 ===
+K → retrieval quality  
+  → reconstruction quality  
+  → security  
+  → latency  
+The exact K values should be selected after the retrieval prototype works; candidate-pool size af fects both performance
+and the token-security interpretation.
+17. Fair Experimental Matrix
+For every test image:
+Reference method  
+ ├─ Generation  
+ ├─ Retrieval  
+ └─ Retrieval + Editing  
+          ↓  
+      Same EDICT  
+          ↓  
+      Same channel  
+          ↓  
+      Same recovery  
+          ↓  
+PSNR / SSIM / MSE / LPIPS  
++ latency / memory / security  
+Repeat across:
+image class × SNR × reference method × token condition  
+Use the same:
+dataset,
+secret images,
+preprocessing,
+Kpub extraction,
+Xfeat extraction,
+EDICT configuration,
+token perturbation,
+semantic communication,
+channel,
+=== PAGE 23 ===
+evaluation code.
+18. Reproducibility Constraint
+Transmitter and receiver must share or reproduce exactly:
+Database version  
+Embedding model/checkpoint  
+Preprocessing  
+FAISS index  
+Ranking function/weights  
+Top-K
+Token mapping  
+Editing parameters  
+EDICT parameters  
+Required invariant:
+Xref_transmitter == Xref_receiver  
+If the references dif fer, EDICT recovery can fail.
+Reference selection should therefore be deterministic even when an intelligent VLM is used for candidate scoring.
+19. Project Structure
+=== PAGE 24 ===
+RACS/
+├── data/  
+│   ├── secret_images/  
+│   ├── retrieval_images/  
+│   └── metadata/  
+├── semantic/  
+│   ├── semantic_extraction/  
+│   └── structure_extraction/  
+├── retrieval/  
+│   ├── embedding/  
+│   ├── faiss_index/  
+│   ├── ranking/  
+│   └── token_selection/  
+├── reference/  
+│   ├── retrieval/  
+│   └── lightweight_editing/  
+├── steganography/  
+│   ├── vae/  
+│   ├── edict/  
+│   └── token_perturbation/  
+├── communication/  
+│   ├── awgn/  
+│   ├── swinjscc/  
+│   └── digital_semcom/  
+├── security/  
+│   ├── wrong_token/  
+│   ├── no_token/  
+│   └── steganalysis/  
+├── evaluation/  
+│   ├── psnr.py  
+│   ├── ssim.py  
+│   ├── mse.py  
+│   ├── lpips.py  
+│   ├── latency.py  
+│   └── memory.py  
+└── experiments/  
+    ├── baseline/  
+    ├── retrieval/  
+    ├── ablation/  
+    └── results/  
+=== PAGE 25 ===
+20. Risks and Mitigations
+Risk Consequence Mitigation
+Semantic retrieval is
+structurally poorLower EDICT
+recovery qualityStructural reranking, T op-K, editing
+Token selection harms
+qualityBad XrefSelect only from high-quality candidate
+pool
+Editing is too expensiveEfficiency advantage
+disappearsBenchmark against full generation
+Tx/Rx reference mismatch Recovery failure Deterministic shared configuration
+Retrieval database creates
+attack surfaceNew security
+weaknessAvoid explicit IDs where possible;
+analyze attacker knowledge
+Retrieval-only fails on
+unusual imagesLarge quality drop Retrieve-or-generate fallback
+21. Potential Research
+Contributions
+Only claim contributions actually implemented and validated.
+1. Retrieval-based reference-image acquisition for coverless semantic steganography .
+2. Semantic + structural multimodal reference reranking.
+3. Token-controlled deterministic reference selection.
+4. Adaptive retrieve-or-generate reference acquisition.
+5. Comprehensive quality-security-ef ficiency comparison between retrieval and dif fusion generation.
+22. What Counts as a
+Successful Result?
+RACS does not have to beat AgentSemSteCom on every metric.
+A scientifically useful result may be:
+=== PAGE 26 ===
+PSNR      slightly lower  
+SSIM      similar  
+LPIPS     similar  
+Security  similar  
+Latency   substantially lower  
+Memory    lower  
+Another useful result may be:
+Retrieval-only:  
+fast but quality drops  
+Retrieval + editing:  
+moderate cost and recovered quality  
+Hybrid: 
+retrieval for easy cases,  
+generation for difficult cases  
+23. Negative Results Are
+Valid
+Example:
+Retrieval = 8× faster  
+but 
+PSNR decreases strongly  
+SSIM decreases  
+EDICT recovery becomes unstable  
+This supports the conclusion that pure semantic retrieval is insuf ficient for compatible reversible reference conditioning.
+That can motivate:
+structure-aware retrieval  
+→ light editing  
+→ retrieve-or-generate  
+=== PAGE 27 ===
+The goal is not to force a positive result; it is to identify the quality-ef ficiency trade-of f and its causes.
+24. Final Research Questions
+The completed project must answer:
+Quality
+Does retrieval preserve reconstruction quality?
+How much do PSNR, SSIM, MSE and LPIPS change?
+Which image classes benefit/fail?
+Efficiency
+How much reference latency is saved?
+How much GPU memory is saved?
+How much computation is saved?
+What is the cost of VLM reranking?
+What is the cost of editing?
+Security
+Does the correct token enable recovery?
+Does a wrong token fail?
+What happens without a token?
+Does the retrieval database introduce new attack surfaces?
+Robustness
+How does performance change from 5–20 dB?
+Which classes are most af fected?
+Retrieval
+How does T op-K af fect quality?
+Does structural reranking help?
+Does VLM reranking justify its cost?
+Does token selection preserve quality?
+Adaptive architecture
+When should the system retrieve?
+When should it edit?
+=== PAGE 28 ===
+When should it fall back to generation?
+25. Final Result Tables
+Quality
+System SNR PSNR ↑ SSIM ↑ MSE ↓ LPIPS ↓
+AgentSemSteCom
+RACS Retrieval
+RACS + Editing
+RACS Hybrid
+Efficiency
+System Reference T imeTotal T imeGPU Memory Computation
+AgentSemSteCom
+RACS Retrieval
+RACS + Editing
+RACS Hybrid
+Security
+System Correct T oken Wrong T oken Gap
+AgentSemSteCom
+RACS
+Do not invent values before experiments.
+26. Final Architecture in One
+View
+=== PAGE 29 ===
+                    RACS TRANSMITTER  
+                         Secret Xs  
+                            |  
+                +-----------+-----------+  
+                |                       |  
+                v                       v  
+             Kpub                     Xfeat  
+                |                       |  
+                +-----------+-----------+  
+                            |  
+                    Retrieval Query  
+                            |  
+                     CLIP / VLM  
+                            |  
+                         FAISS  
+                            |  
+                         Top-K  
+                            |  
+                Semantic + Structural  
+                      Reranking  
+                            |  
+                   Valid Candidate Pool  
+                            |  
+                      Digital Token  
+                            |  
+                 Deterministic Selection  
+                            |  
+                 Optional Light Editing  
+                            |  
+                           Xref  
+                            |  
+                   EDICT + Token Mask  
+                            |  
+                         Xstego  
+                            |  
+                  Semantic Communication  
+                            |  
+                      AWGN / Channel  
+                            |  
+                       RECEIVER  
+                            |  
+                  Semantic Reconstruction  
+=== PAGE 30 ===
+                            |  
+                 Same Retrieval Procedure  
+                            |  
+                       Same Xref  
+                            |  
+                     EDICT Inversion  
+                            |  
+                  Inverse Token Mask  
+                            |  
+                    Recovered Secret  
+27. Final Mental Model
+Existing system
+SECRET 
+ ↓ 
+SEMANTIC + STRUCTURE  
+ ↓ 
+GENERATE REFERENCE  
+ ↓ 
+EDICT
+ ↓ 
+SEMANTIC COMMUNICATION  
+ ↓ 
+CHANNEL 
+ ↓ 
+EDICT RECOVERY  
+ ↓ 
+SECRET 
+RACS
+=== PAGE 31 ===
+SECRET 
+ ↓ 
+SEMANTIC + STRUCTURE  
+ ↓ 
+RETRIEVE  
+ ↓ 
+RERANK 
+ ↓ 
+TOKEN SELECT  
+ ↓ 
+OPTIONAL EDIT  
+ ↓ 
+EDICT
+ ↓ 
+SEMANTIC COMMUNICATION  
+ ↓ 
+CHANNEL 
+ ↓ 
+RETRIEVE SAME REFERENCE  
+ ↓ 
+EDICT RECOVERY  
+ ↓ 
+SECRET 
+One-sentence definition
+RACS is a retrieval-augmented coverless semantic steganography framework that replaces the
+computationally expensive dif fusion-based reference-image generation stage of AgentSemSteCom with
+deterministic multimodal retrieval and optional lightweight structural editing, while preserving the
+downstream EDICT -based hiding/recovery and semantic communication pipeline for a direct quality ,
+security , robustness, and ef ficiency comparison.
+28. Immediate
+Implementation Direction
+The next document is the RACS Implementation Plan . It must derive its phases directly from this specification.
+=== PAGE 32 ===
+The implementation should proceed from:
+Environment  
+ ↓ 
+VAE / latent understanding  
+ ↓ 
+Diffusion understanding  
+ ↓ 
+Retrieval database  
+ ↓ 
+CLIP 
+ ↓ 
+FAISS
+ ↓ 
+Token selection  
+ ↓ 
+Structural retrieval  
+ ↓ 
+EDICT
+ ↓ 
+RACS + EDICT  
+ ↓ 
+AWGN / semantic communication  
+ ↓ 
+VLM 
+ ↓ 
+Light editing  
+ ↓ 
+Retrieve-or-generate  
+ ↓ 
+Security / steganalysis  
+ ↓ 
+Ablations / final experiments  
+The first scientific version must remain:
+same downstream pipeline  
++ 
+different reference acquisition  
+so every measured improvement or degradation can be attributed to RACS.
+=== PAGE 33 ===
