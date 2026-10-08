@@ -1,0 +1,43 @@
+{
+  "prompt": "a photograph of an astronaut riding a horse",
+  "guidance_scale": 7.5,
+  "seed": 42,
+  "records": [
+    {
+      "input": "data/secret_images/test_001.png",
+      "output": "experiments/results/phase3_img2img_test_001_s0.25.png",
+      "prompt": "a photograph of an astronaut riding a horse",
+      "strength": 0.25,
+      "num_inference_steps": 30,
+      "guidance_scale": 7.5,
+      "seed": 42,
+      "seconds": 5.824,
+      "peak_vram_gb": 2.604,
+      "mean_abs_diff_vs_input": 10.45
+    },
+    {
+      "input": "data/secret_images/test_001.png",
+      "output": "experiments/results/phase3_img2img_test_001_s0.5.png",
+      "prompt": "a photograph of an astronaut riding a horse",
+      "strength": 0.5,
+      "num_inference_steps": 30,
+      "guidance_scale": 7.5,
+      "seed": 42,
+      "seconds": 6.687,
+      "peak_vram_gb": 2.604,
+      "mean_abs_diff_vs_input": 19.864
+    },
+    {
+      "input": "data/secret_images/test_001.png",
+      "output": "experiments/results/phase3_img2img_test_001_s0.75.png",
+      "prompt": "a photograph of an astronaut riding a horse",
+      "strength": 0.75,
+      "num_inference_steps": 30,
+      "guidance_scale": 7.5,
+      "seed": 42,
+      "seconds": 9.054,
+      "peak_vram_gb": 2.604,
+      "mean_abs_diff_vs_input": 38.066
+    }
+  ]
+}
