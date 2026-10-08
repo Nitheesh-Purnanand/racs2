@@ -59,7 +59,7 @@ Start small and **frozen**. Recommended source: **COCO val2017** — 5,000 image
 5 captions each, so Phase 5 gets free text for the cross-modal CLIP experiment.
 
 ```powershell
-# into a scratch dir on D: (gitignored later / deleted in Step 4)
+# into a scratch dir on D: (deleted in Step 5 once the corpus is verified)
 $raw = "D:\racs2\data\_raw_coco"
 New-Item -ItemType Directory -Force -Path $raw | Out-Null
 
