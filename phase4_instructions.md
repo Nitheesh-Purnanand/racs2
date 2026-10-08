@@ -25,7 +25,7 @@ try { (Invoke-WebRequest -UseBasicParsing http://images.cocodataset.org/zips/val
 
 > **Target size**: 1,000 images. As 512×512 PNGs that is roughly **0.4–0.8 GB** on
 > disk. The raw COCO download is ~1 GB more (delete the zip + raw copies once the
-> canonical corpus is built, per Step 4).
+> canonical corpus is built, per Step 5).
 
 Current state: `data/retrieval_images/` exists but is **empty**, and there is no
 `data/metadata/` yet. That is what this phase fills in.
@@ -212,8 +212,8 @@ A small, dependency-light loader (stdlib + PIL only):
   - `records()` -> iterator over index records in canonical order
   - `get(image_id) -> record`
   - `load(image_id) -> PIL.Image` (RGB)
+  - `iter_images()` — yields `(record, PIL.Image)` in canonical order
   - `version()` -> `corpus_version`
-- `iter_images(corpus)` — yields `(record, PIL.Image)` in canonical order.
 
 **It should work like this:**
 ```python
