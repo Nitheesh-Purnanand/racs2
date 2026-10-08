@@ -191,6 +191,8 @@ def main(argv=None) -> int:
     section("9. Contact sheet")
     if args.no_grid:
         print("  skipped (--no-grid)")
+    elif not ids:
+        print("  skipped (empty corpus)")
     else:
         loaded = [corpus.load(i) for i in ids[: args.grid_n]]
         sheet = contact_sheet(loaded)
