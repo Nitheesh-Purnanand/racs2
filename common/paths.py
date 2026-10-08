@@ -25,6 +25,9 @@ PROJECT_ROOT: Path = Path(__file__).resolve().parent.parent
 DATA_DIR: Path = PROJECT_ROOT / "data"
 SECRET_IMAGES_DIR: Path = DATA_DIR / "secret_images"
 RETRIEVAL_IMAGES_DIR: Path = DATA_DIR / "retrieval_images"
+METADATA_DIR: Path = DATA_DIR / "metadata"
+IMAGE_INDEX_PATH: Path = METADATA_DIR / "image_index.json"
+RAW_CORPUS_DIR: Path = DATA_DIR / "_raw_coco"
 
 EXPERIMENTS_DIR: Path = PROJECT_ROOT / "experiments"
 RESULTS_DIR: Path = EXPERIMENTS_DIR / "results"
@@ -42,6 +45,7 @@ for _dir in (
     DATA_DIR,
     SECRET_IMAGES_DIR,
     RETRIEVAL_IMAGES_DIR,
+    METADATA_DIR,
     EXPERIMENTS_DIR,
     RESULTS_DIR,
     CACHE_DIR,

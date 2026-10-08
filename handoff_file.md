@@ -25,8 +25,8 @@ diffusion (tens of seconds per reference).
 | 1 | Environment & skeleton (`configs/base.yaml`, seed, device) | ✅ Complete |
 | 2 | VAE + latent space round-trip | ✅ Complete |
 | 3 | Diffusion & generation cost (SD v1.5 baseline) | ✅ Complete |
-| 4 | **Build the retrieval image database** | ⏳ **Next** |
-| 5 | CLIP embeddings | pending |
+| 4 | Build the retrieval image database | ✅ Complete |
+| 5 | CLIP embeddings | ⏳ **Next** |
 | 6 | FAISS retrieval | pending |
 
 Full checklists and gate answers live in `project_status.md` §2 and the phase briefs in
@@ -39,6 +39,8 @@ Full checklists and gate answers live in `project_status.md` §2 and the phase b
 - img2img on our own image: `mean|diff|` grows 10.5 → 19.9 → 38.1 at strength 0.25/0.5/0.75.
 - Gate answer: one diffusion reference costs ~13–21 s vs a retrieval query ≈ a fraction
   of a second; that gap is the RACS efficiency argument.
+- Retrieval corpus: **1,000** COCO val2017 images, canonical **512×512 RGB** PNGs,
+  **429.3 MB**; `corpus_version = cc20af21...89aff`. Build+verify PASS.
 
 ---
 
@@ -80,11 +82,12 @@ Artifacts land in `experiments/results/`.
 ```
 common/      paths, seed, device, hf_lowmem
 configs/     base.yaml
-data/        secret_images/ (test_001..005) · retrieval_images/ (EMPTY → Phase 4)
+data/        secret_images/ (test_001..005) · retrieval_images/ (1000 PNGs, gitignored) · metadata/image_index.json
+retrieval/   schema.py (index schema), corpus.py (loader)
 evaluation/  metrics.py (mse/psnr/ssim)
 models/      vae.py, sd_pipeline.py
-scripts/     phase1_verify.py, phase2_vae.py, phase3_diffusion.py, phase3_img2img.py
-experiments/results/   phase2_*_compare.png, phase3_*.png, phase3_timings.json, phase3_img2img.json
+scripts/     phase1_verify.py, phase2_vae.py, phase3_diffusion.py, phase3_img2img.py, phase4_build_corpus.py, phase4_verify.py
+experiments/results/   phase2_*_compare.png, phase3_*.png, phase3_timings.json, phase3_img2img.json, phase4_corpus_grid.png
 docs/        RACS_ROADMAP.md, PROJECT_UNDERSTANDING.md, CONCURRENCY.md, phase_briefs/
 cache/ temp/ pip_cache/   (gitignored)
 ```
@@ -98,23 +101,25 @@ cache/ temp/ pip_cache/   (gitignored)
   by restoring the ref to HEAD `174204f`; history intact back to `e9e0b78`.
 - Remote: `https://github.com/Nitheesh-Purnanand/racs2.git`. Local `main` is ahead of
   `origin/main` (origin last saw `147b359`), so a `git push` is pending whenever desired.
-- `.gitignore` currently ignores `.venv temp pip_cache cache`. `__pycache__/` and
-  `experiments/results/phase3_run.log` are NOT ignored and show as untracked noise.
+- `.gitignore` currently ignores `.venv temp pip_cache cache`, plus the large corpus
+  dirs and build noise (`data/_raw_coco/`, `data/retrieval_images/`, `__pycache__/`,
+  `*.pyc`, `*.log`).
 
 ---
 
-## 7. Immediate next steps — Phase 4 (Retrieval Image Database)
+## 7. Immediate next steps — Phase 5 (CLIP Embeddings)
 
-> **Full build guide**: `phase4_instructions.md` (written 2026-10-08). Follow that
-> end-to-end; the summary below is just the shape of it.
+> Phase 4 is **done**: corpus built and verified. Full build guide was
+> `phase4_instructions.md`.
 
-Goal: a corpus RACS retrieves from, shared verbatim by Tx and Rx.
+Goal: image + text embeddings over the 1,000-image corpus (semantic similarity).
 
-1. Curate ~**1,000 images** into `data/retrieval_images/` (COCO / ImageNet / Unsplash subset).
-2. Build `data/metadata/image_index.json`: `image_id`, `image_path`, optional caption.
-3. Write a corpus loader that iterates the index.
-4. Plan growth 1k → 5k → 10k.
-5. **Gate**: working corpus + metadata + a loader that iterates it.
+1. Load CLIP (`ViT-B/32` via `transformers` or `open_clip`).
+2. Exp 1: text→embedding, related vs unrelated prompts.
+3. Exp 2: image→embedding, nearest images.
+4. Exp 3: cross-modal: text query → most similar corpus images.
+5. Embed the whole corpus; save embeddings to disk (row order == `image_index.json` order).
+6. **Gate**: embeddings exist; CLIP = semantic similarity ≠ structural compatibility.
 
 Invariant to preserve: identical database, preprocessing, embedding model, and index on
 both ends, or `Xref_tx ≠ Xref_rx` and recovery fails.
@@ -127,5 +132,6 @@ both ends, or `Xref_tx ≠ Xref_rx` and recovery fails.
   build (empty timestep slice) and was dropped; keep strength > 0.
 - `configs/base.yaml` `generation.prompt` is a placeholder SD prompt — replace with the
   paper's example `Kpub` if known (mechanics unchanged).
+- `.gitignore` now ignores `.venv temp pip_cache cache` plus `data/_raw_coco/`,
+  `data/retrieval_images/`, `__pycache__/`, `*.pyc`, `*.log`.
 - `imp_code/` and several `temp/` pip dirs are leftover junk; safe to prune.
-- Prefer adding `__pycache__/` and `*.log` to `.gitignore` before the next commit.

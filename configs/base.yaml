@@ -11,3 +11,12 @@ generation:
   # sweep values used by the timing experiment:
   steps_sweep: [20, 30, 50]
   seeds_sweep: [42, 123]
+retrieval:
+  corpus_dir: "data/retrieval_images"
+  metadata_dir: "data/metadata"
+  index_path: "data/metadata/image_index.json"
+  corpus_size: 1000          # frozen target; grow 1k -> 5k -> 10k later
+  subset_seed: 42            # deterministic which images are picked
+  canonical_size: 512        # stored image edge, matches SD/EDICT later
+  resize_mode: "shortest_side_then_center_crop"   # documented, not implicit
+  source: "coco_val2017"

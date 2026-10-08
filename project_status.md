@@ -2,7 +2,7 @@
 
 > **Location**: `d:\racs2\project_status.md`  
 > **Last Updated**: 2026-10-08  
-> **Current Phase**: Phase 4 (Retrieval Image Database) — instructions written, ready to build
+> **Current Phase**: Phase 4 complete — Phase 5 (CLIP Embeddings) is next
 
 ---
 
@@ -23,6 +23,7 @@
 | **Phase 1 — Environment & Skeleton** | ✅ Completed | `configs/base.yaml`, `common/seed.py`, `common/device.py`, `scripts/phase1_verify.py`. All 7 checks pass. |
 | **Phase 2 — VAE & Latent Space** | ✅ Completed | `common/paths.py`, `evaluation/metrics.py`, `models/vae.py`, `scripts/phase2_vae.py`. Round-trip verified on 5 images (PSNR ~32.8 dB avg). |
 | **Phase 3 — Diffusion & Generation Cost** | ✅ Completed | `common/hf_lowmem.py`, `models/sd_pipeline.py`, `scripts/phase3_diffusion.py`. SD v1.5 loads fp16 on the 6 GB GPU; 6-point timing sweep + 5 verification checks pass. |
+| **Phase 4 — Retrieval Image Database** | ✅ Completed | `retrieval/schema.py`, `retrieval/corpus.py`, `scripts/phase4_build_corpus.py`, `scripts/phase4_verify.py`. 1,000-image COCO val2017 corpus (512×512 RGB), versioned `image_index.json`, loader + integrity/determinism checks pass. |
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -94,11 +95,13 @@ d:\racs2\
 ├── scripts/              # phase1_verify.py, phase2_vae.py, phase3_diffusion.py
 ├── data/
 │   ├── secret_images/    # test_001.png .. test_005.png
-│   └── retrieval_images/ # (empty; Phase 4)
+│   ├── retrieval_images/ # 1,000 canonical 512x512 PNGs (Phase 4, gitignored)
+│   └── metadata/         # image_index.json (versioned retrieval index)
+├── retrieval/            # schema.py (index schema), corpus.py (loader)
 ├── evaluation/           # metrics.py (mse/psnr/ssim)
 ├── models/               # vae.py (SD VAE loader + roundtrip), sd_pipeline.py (SD v1.5)
 ├── experiments/
-│   └── results/          # phase2_*_compare.png, phase3_*.png, phase3_timings.json
+│   └── results/          # phase2_*_compare.png, phase3_*.png, phase3_timings.json, phase4_corpus_grid.png
 ├── cache/                # HuggingFace/diffusers/torch caches (on D:)
 ├── docs/                 # Briefs, concurrency guidelines, roadmap
 ├── phase1/               # Phase 1 PDFs
@@ -107,6 +110,26 @@ d:\racs2\
 ├── racs2_implementation_plan.md
 ├── racs2_complete_analysis.md
 └── project_status.md      # This file
+```
+
+---
+
+### Phase 4 gate results (2026-10-08)
+
+```
+[✓] Corpus built deterministically (subset_seed=42 -> same 1000 ids)
+[✓] data/retrieval_images/ holds exactly 1000 canonical 512x512 RGB PNGs
+[✓] data/metadata/image_index.json written (schema_version=1, count=1000)
+[✓] Every indexed path exists; no duplicate image_ids
+[✓] corpus_version recomputed == stored
+[✓] Sampled (20) sha256 digests match the index
+[✓] Loader iterates in stable order across loads
+[✓] VERIFICATION RESULT: PASS
+
+images       : 1000
+bytes on disk: 429.3 MB (mean 429.3 kB/image)
+corpus_version: cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff
+contact sheet: experiments/results/phase4_corpus_grid.png
 ```
 
 > Folders marked "(Phase N)" are created when that phase begins, per the plan's
@@ -130,6 +153,15 @@ d:\racs2\
 ---
 
 ## 5. Change Log
+
+### [2026-10-08] - Phase 4 Complete (Retrieval Image Database)
+
+- **Built** the frozen retrieval corpus from COCO val2017: 1,000 images, deterministic subset (`subset_seed=42`), canonical 512×512 RGB PNGs, **429.3 MB** on disk.
+- **Added** `retrieval/schema.py` (Step 6): the versioned index schema (`schema_version=1`), `corpus_version` (sha256 over the ordered `image_id` list), per-image `sha256`, atomic write, and `validate_index`.
+- **Added** `retrieval/corpus.py` (Step 7): deterministic loader (`ids`, `records`, `get`, `load`, `iter_images`, `version`) using only stdlib + Pillow.
+- **Added** `scripts/phase4_build_corpus.py` (Step 5) and `scripts/phase4_verify.py` (Step 8). Verified PASS: schema valid, 1000/1000 files present and RGB 512×512, no duplicate ids, stable order across loads, `corpus_version` recompute matches, sampled sha256 match; contact sheet → `experiments/results/phase4_corpus_grid.png`.
+- **`corpus_version`** = `cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff`.
+- **Config**: `configs/base.yaml` gained a `retrieval:` block; `common/paths.py` gained `METADATA_DIR`, `IMAGE_INDEX_PATH`, `RAW_CORPUS_DIR`. Large corpus/raw dirs are now gitignored.
 
 ### [2026-10-08] - Phase 4 Instructions Written
 
@@ -191,6 +223,8 @@ d:\racs2\
 - [x] **Step 6**: Run, confirm the Phase 2 checklist (latent `[1,4,64,64]`), move to Phase 3.
 - [x] **Step 7 (Phase 3)**: Write `phase3_instructions.md` (SD v1.5 generation + timing/VRAM experiment).
 - [x] **Step 8 (Phase 3)**: Build `models/sd_pipeline.py` + `scripts/phase3_diffusion.py`, run the timing sweep.
+- [x] **Step 9 (Phase 4)**: Write `phase4_instructions.md` (retrieval image database).
+- [x] **Step 10 (Phase 4)**: Build `retrieval/schema.py`, `retrieval/corpus.py`, `scripts/phase4_build_corpus.py`, `scripts/phase4_verify.py`; build + verify the 1,000-image corpus.
 
 **Phase 3 gate question** — *Why is diffusion generation expensive?* Generation runs
 SD's U-Net `N` times, once per denoising step, and twice per step when CFG is on
@@ -211,5 +245,6 @@ hold 10 GB) before running anything that loads a diffusion model. `common/hf_low
 removes the 3.2 GB checkpoint-mmap requirement, but weights still need to be
 materialised once.
 
-See `phase3_instructions.md` for the full Phase 3 task detail and acceptance gate.
-The next phase is **Phase 4 — Building the Retrieval Image Database**.
+See `phase3_instructions.md` and `phase4_instructions.md` for the full task detail and
+acceptance gates. The next phase is **Phase 5 — CLIP Embeddings** (image + text
+embeddings over the 1,000-image corpus; no retrieval index yet).
