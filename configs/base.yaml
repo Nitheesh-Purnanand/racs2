@@ -1,0 +1,4 @@
+seed: 42
+image_size: 512
+device: "cuda"
+dtype: "float16"
