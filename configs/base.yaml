@@ -2,3 +2,12 @@ seed: 42
 image_size: 512
 device: "cuda"
 dtype: "float16"
+
+generation:
+  prompt: "a photograph of an astronaut riding a horse"   # TODO: replace with the paper's example Kpub
+  num_inference_steps: 30
+  guidance_scale: 7.5
+  scheduler: "ddim"
+  # sweep values used by the timing experiment:
+  steps_sweep: [20, 30, 50]
+  seeds_sweep: [42, 123]

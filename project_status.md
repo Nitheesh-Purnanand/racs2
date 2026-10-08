@@ -2,7 +2,7 @@
 
 > **Location**: `d:\racs2\project_status.md`  
 > **Last Updated**: 2026-10-08  
-> **Current Phase**: Phase 2 complete — Phase 3 (Diffusion & Generation Cost) is next
+> **Current Phase**: Phase 3 complete — Phase 4 (Retrieval Image Database) is next
 
 ---
 
@@ -22,7 +22,7 @@
 | **Environment & Dependencies** | ✅ Completed | venv + PyTorch 2.6.0+cu124 (CUDA working). Temp/pip cache redirected to D:. |
 | **Phase 1 — Environment & Skeleton** | ✅ Completed | `configs/base.yaml`, `common/seed.py`, `common/device.py`, `scripts/phase1_verify.py`. All 7 checks pass. |
 | **Phase 2 — VAE & Latent Space** | ✅ Completed | `common/paths.py`, `evaluation/metrics.py`, `models/vae.py`, `scripts/phase2_vae.py`. Round-trip verified on 5 images (PSNR ~32.8 dB avg). |
-| **Phase 3 — Diffusion & Generation Cost** | ⏳ Pending | Pending Phase 2 gate (now met). Needs SD v1.5 pipeline + timing experiment. |
+| **Phase 3 — Diffusion & Generation Cost** | ✅ Completed | `common/hf_lowmem.py`, `models/sd_pipeline.py`, `scripts/phase3_diffusion.py`. SD v1.5 loads fp16 on the 6 GB GPU; 6-point timing sweep + 5 verification checks pass. |
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -52,20 +52,46 @@ SSIM : mean=0.935447   (min=0.933472, max=0.936783)
 
 ---
 
+### Phase 3 gate results (2026-10-08)
+
+```
+[✓] SD v1.5 pipeline loads fp16 on the 6 GB GPU without OOM (6.3 s cold load)
+[✓] DDIM scheduler active, attention slicing enabled
+[✓] Cold start (download + warm-up) completes
+[✓] Wall-clock time + peak VRAM measured for 3 step counts x 2 seeds
+[✓] sec/step is roughly constant across step counts (0.267 -> 0.260 s/step)
+[✓] Reference images saved for the example prompt (6 sweep + 2 verification PNGs)
+[✓] experiments/results/phase3_timings.json written and well-formed
+[✓] Peak VRAM 2.61 GB (budget 6 GB)
+[✓] Verification PASS (determinism, seed effect, steps effect, guidance effect, non-trivial)
+
+steps  seed      sec   s/step   peakGB
+   20    42     5.33    0.267     2.61
+   20   123     5.33    0.267     2.61
+   30    42     7.90    0.263     2.61
+   30   123     7.89    0.263     2.61
+   50    42    13.01    0.260     2.61
+   50   123    13.07    0.262     2.61
+
+mean seconds/step = 0.264   => one 50-step reference costs ~13 s
+```
+
+---
+
 ## 3. Directory Structure
 
 ```
 d:\racs2\
-├── common/               # seed.py, device.py, paths.py
+├── common/               # seed.py, device.py, paths.py, hf_lowmem.py
 ├── configs/              # base.yaml
-├── scripts/              # phase1_verify.py, phase2_vae.py
+├── scripts/              # phase1_verify.py, phase2_vae.py, phase3_diffusion.py
 ├── data/
 │   ├── secret_images/    # test_001.png .. test_005.png
 │   └── retrieval_images/ # (empty; Phase 4)
 ├── evaluation/           # metrics.py (mse/psnr/ssim)
-├── models/               # vae.py (SD VAE loader + roundtrip)
+├── models/               # vae.py (SD VAE loader + roundtrip), sd_pipeline.py (SD v1.5)
 ├── experiments/
-│   └── results/          # phase2_test_00{1..5}_compare.png
+│   └── results/          # phase2_*_compare.png, phase3_*.png, phase3_timings.json
 ├── cache/                # HuggingFace/diffusers/torch caches (on D:)
 ├── docs/                 # Briefs, concurrency guidelines, roadmap
 ├── phase1/               # Phase 1 PDFs
@@ -97,6 +123,19 @@ d:\racs2\
 ---
 
 ## 5. Change Log
+
+### [2026-10-08] - Phase 3 Complete (+ Windows memory fix)
+
+- **Root cause of the `MemoryError` / `OSError 1455` ("paging file is too small") when loading SD v1.5**: safetensors maps checkpoints copy-on-write on Windows, so the **whole file** counts against the system commit limit (RAM + page file). The UNet is 3.2 GB, but free commit on this 16 GB box (page file capped at ~16 GB because `C:` is full) was often < 1 GB.
+- **Added** `common/hf_lowmem.py`: a `safetensors` shim that maps checkpoints **read-only** (`mmap.ACCESS_READ`, file-backed ⇒ no commit charge) and hands out zero-copy views; it also provides `safe_open`/`Slice` compatibility for transformers and falls back to stock safetensors on any error. Installed before `diffusers`/`transformers` import in `models/sd_pipeline.py` and `models/vae.py`.
+- **Updated** `models/sd_pipeline.py`: loads with `device_map='cuda'` so fp16 weights stream straight to VRAM instead of being materialised in host RAM; frees memory between candidate repos; reports free commit on failure; retries without `device_map` if a build rejects it.
+- **Wrote** `scripts/phase3_diffusion.py`: timing/VRAM sweep (3 step counts × 2 seeds) + 5 verification checks (determinism, seed/steps/guidance effects, non-triviality).
+- **Verified**: full sweep passes; load 6.3 s, ~0.264 s/step, peak VRAM 2.61 GB, verification PASS. Artifacts: `experiments/results/phase3_*.png`, `phase3_timings.json`.
+- **Environment note**: a leaking IDE language-server process was holding ~10.7 GB of commit; freeing it restored ~5 GB of headroom. See section 6.
+
+### [2026-10-08] - Phase 3 Instructions Written
+
+- **Created** `phase3_instructions.md` from the implementation plan's Phase 3 (Diffusion & Generation Cost): pre-flight HF/disk check, `configs/base.yaml` generation block, `models/sd_pipeline.py`, `scripts/phase3_diffusion.py`, timing/VRAM sweep, JSON schema, and the gate question.
 
 ### [2026-10-08] - Phase 2 Complete
 
@@ -138,6 +177,26 @@ d:\racs2\
 - [x] **Step 4**: Write `models/vae.py` (load SD v1.5 VAE, fp16 on GPU).
 - [x] **Step 5**: Add 4 more images to `data/secret_images/` and write `scripts/phase2_vae.py`.
 - [x] **Step 6**: Run, confirm the Phase 2 checklist (latent `[1,4,64,64]`), move to Phase 3.
-- [ ] **Step 7 (Phase 3)**: Write `phase3_instructions.md` (SD v1.5 generation + timing/VRAM experiment).
+- [x] **Step 7 (Phase 3)**: Write `phase3_instructions.md` (SD v1.5 generation + timing/VRAM experiment).
+- [x] **Step 8 (Phase 3)**: Build `models/sd_pipeline.py` + `scripts/phase3_diffusion.py`, run the timing sweep.
 
-See `phase2_instructions.md` for the full task detail and acceptance gate.
+**Phase 3 gate question** — *Why is diffusion generation expensive?* Generation runs
+SD's U-Net `N` times, once per denoising step. Measured here: 50 steps × 0.260 s/step
+= **13.0 s** and **2.61 GB** peak VRAM for one 512×512 reference image, versus a
+retrieval query that should cost a fraction of a second. That ~13 s gap is the
+efficiency argument for RACS.
+
+**Machine hygiene (important on this box)**: the model load needs ~2 GB of free
+*commit charge*. Keep an eye on it with:
+
+```powershell
+Get-CimInstance Win32_OperatingSystem | Select-Object @{n='FreeCommitGB';e={[math]::Round($_.FreeVirtualMemory/1MB,2)}}
+```
+
+If it is under ~2 GB, close/restart memory-heavy apps (an IDE language server can
+hold 10 GB) before running anything that loads a diffusion model. `common/hf_lowmem.py`
+removes the 3.2 GB checkpoint-mmap requirement, but weights still need to be
+materialised once.
+
+See `phase3_instructions.md` for the full Phase 3 task detail and acceptance gate.
+The next phase is **Phase 4 — Building the Retrieval Image Database**.

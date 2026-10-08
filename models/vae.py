@@ -34,7 +34,13 @@ if str(_PROJECT_ROOT) not in sys.path:
 # Ensure the HuggingFace cache is redirected to D: before diffusers/hub import.
 import common.paths  # noqa: F401  (import for side effect)
 
-from diffusers import AutoencoderKL
+# Read-only checkpoint mappings, installed before diffusers binds
+# `safetensors.safe_open`/`load_file` (see common/hf_lowmem.py for why).
+import common.hf_lowmem  # noqa: F401,E402
+
+common.hf_lowmem.install()
+
+from diffusers import AutoencoderKL  # noqa: E402
 
 from common.device import get_device
 
