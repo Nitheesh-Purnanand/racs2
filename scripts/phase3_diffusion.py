@@ -170,6 +170,35 @@ def main() -> None:
     nontrivial = pixel_std(a) > 1.0
     print(f"[non-trivial] pixel std {pixel_std(a):.2f} > 1.0     -> {nontrivial}")
 
+    # 7f. Guidance *cost*: classifier-free guidance runs the U-Net twice per step
+    # (conditional + unconditional), so turning CFG off should roughly halve the
+    # time. Compare against the same (steps, seed) already measured with CFG on.
+    print()
+    g1_img, g1_secs, g1_peak = timed_generate(pipe, prompt, 30, 1.0, 42)
+    cfg_on = next((r for r in records if r["num_inference_steps"] == 30 and r["seed"] == 42), None)
+    guidance_cost = {
+        "num_inference_steps": 30,
+        "seed": 42,
+        "cfg_off": {"guidance_scale": 1.0, "seconds": round(g1_secs, 3), "seconds_per_step": round(g1_secs / 30, 4)},
+        "cfg_on": None,
+        "speedup_no_cfg": None,
+    }
+    if cfg_on is not None:
+        guidance_cost["cfg_on"] = {
+            "guidance_scale": guidance,
+            "seconds": cfg_on["seconds"],
+            "seconds_per_step": cfg_on["seconds_per_step"],
+        }
+        guidance_cost["speedup_no_cfg"] = round(cfg_on["seconds"] / g1_secs, 2)
+        print(
+            f"[guidance cost] 30 steps: CFG off (1.0) {g1_secs:.2f}s vs "
+            f"CFG on ({guidance}) {cfg_on['seconds']:.2f}s "
+            f"-> {guidance_cost['speedup_no_cfg']:.2f}x faster without CFG"
+        )
+    else:  # pragma: no cover - only if the sweep config changed
+        print(f"[guidance cost] 30 steps: CFG off (1.0) {g1_secs:.2f}s (no matching CFG-on run to compare)")
+    g1_img.save(RESULTS_DIR / "phase3_verify_nocfg_seed42_steps30.png")
+
     a.save(RESULTS_DIR / "phase3_verify_base_seed42_steps20.png")
     e.save(RESULTS_DIR / "phase3_verify_nocfg_seed42_steps20.png")
 
@@ -188,6 +217,12 @@ def main() -> None:
             )
         print(f"\nmean seconds/step = {sum(sps)/len(sps):.3f}  (cost model: time ~= steps x s/step)")
         print(f"max peak VRAM     = {max(r['peak_vram_gb'] for r in records):.2f} GB")
+        if guidance_cost["cfg_on"] is not None:
+            print(
+                f"guidance cost     = {guidance_cost['cfg_on']['seconds_per_step']:.3f} s/step with CFG, "
+                f"{guidance_cost['cfg_off']['seconds_per_step']:.3f} s/step without "
+                f"({guidance_cost['speedup_no_cfg']:.2f}x)"
+            )
 
     payload = {
         "prompt": prompt,
@@ -195,6 +230,7 @@ def main() -> None:
         "steps_sweep": steps_sweep,
         "seeds_sweep": seeds_sweep,
         "records": records,
+        "guidance_cost": guidance_cost,
         "verification": {
             "determinism_same_seed_identical": det_ok,
             "seed_changes_output": seed_ok,
