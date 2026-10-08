@@ -105,6 +105,9 @@ cache/ temp/ pip_cache/   (gitignored)
 
 ## 7. Immediate next steps — Phase 4 (Retrieval Image Database)
 
+> **Full build guide**: `phase4_instructions.md` (written 2026-10-08). Follow that
+> end-to-end; the summary below is just the shape of it.
+
 Goal: a corpus RACS retrieves from, shared verbatim by Tx and Rx.
 
 1. Curate ~**1,000 images** into `data/retrieval_images/` (COCO / ImageNet / Unsplash subset).

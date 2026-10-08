@@ -2,7 +2,7 @@
 
 > **Location**: `d:\racs2\project_status.md`  
 > **Last Updated**: 2026-10-08  
-> **Current Phase**: Phase 3 complete — Phase 4 (Retrieval Image Database) is next
+> **Current Phase**: Phase 4 (Retrieval Image Database) — instructions written, ready to build
 
 ---
 
@@ -130,6 +130,10 @@ d:\racs2\
 ---
 
 ## 5. Change Log
+
+### [2026-10-08] - Phase 4 Instructions Written
+
+- **Created** `phase4_instructions.md` from the implementation plan's Phase 4 (Build the Retrieval Image Database): pre-flight disk/connectivity checks, dependency confirmation (no new deps), corpus-source choice (COCO val2017, URLs verified HTTP 200), `configs/base.yaml` `retrieval` block, `retrieval/corpus.py` loader, `scripts/phase4_build_corpus.py` + `scripts/phase4_verify.py`, the versioned `data/metadata/image_index.json` schema (`corpus_version` + per-image `sha256`), the 10-item acceptance checklist, and the gate question.
 
 ### [2026-10-08] - Phase 3 Complete (+ Windows memory fix)
 
