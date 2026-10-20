@@ -28,7 +28,7 @@ embedding:
   image_size: 224                            # CLIP native input; corpus 512 is resized
   batch_size: 32
   text_batch_size: 64
-  dtype: "float16"                           # fall back to "float32" if determinism fails
+  dtype: "float32"                           # batch-size-invariant; fp16 differs ~7e-4 across batch sizes
   normalize: true                            # L2-normalise -> cosine == inner product
   device: "cuda"
   embeddings_path: "experiments/results/phase5_corpus_embeddings.npz"

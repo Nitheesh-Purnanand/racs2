@@ -26,8 +26,8 @@ diffusion (tens of seconds per reference).
 | 2 | VAE + latent space round-trip | ✅ Complete |
 | 3 | Diffusion & generation cost (SD v1.5 baseline) | ✅ Complete |
 | 4 | Build the retrieval image database | ✅ Complete |
-| 5 | CLIP embeddings | 🟡 **Code complete, run blocked on CLIP download** |
-| 6 | FAISS retrieval | pending |
+| 5 | CLIP embeddings | ✅ Complete (verification PASS) |
+| 6 | FAISS retrieval | ⏳ **Next** |
 
 Full checklists and gate answers live in `project_status.md` §2 and the phase briefs in
 `docs/phase_briefs/`.
@@ -85,9 +85,14 @@ configs/     base.yaml
 data/        secret_images/ (test_001..005) · retrieval_images/ (1000 PNGs, gitignored) · metadata/image_index.json
 retrieval/   schema.py (index schema), corpus.py (loader)
 evaluation/  metrics.py (mse/psnr/ssim)
-models/      vae.py, sd_pipeline.py
-scripts/     phase1_verify.py, phase2_vae.py, phase3_diffusion.py, phase3_img2img.py, phase4_build_corpus.py, phase4_verify.py
-experiments/results/   phase2_*_compare.png, phase3_*.png, phase3_timings.json, phase3_img2img.json, phase4_corpus_grid.png
+models/      vae.py, sd_pipeline.py, clip_encoder.py, clip-vit-base-patch32/ (weights, gitignored)
+scripts/     phase1_verify.py, phase2_vae.py, phase3_diffusion.py, phase3_img2img.py,
+             phase4_build_corpus.py, phase4_verify.py, phase5_fetch_model.py,
+             phase5_clip.py, phase5_verify.py
+experiments/results/   phase2_*_compare.png, phase3_*.png, phase3_timings.json,
+             phase3_img2img.json, phase4_corpus_grid.png,
+             phase5_corpus_embeddings.npz/.json, phase5_experiments.json,
+             phase5_verify.json, phase5_*.png
 docs/        RACS_ROADMAP.md, PROJECT_UNDERSTANDING.md, CONCURRENCY.md, phase_briefs/
 cache/ temp/ pip_cache/   (gitignored)
 ```
@@ -101,43 +106,55 @@ cache/ temp/ pip_cache/   (gitignored)
   by restoring the ref to HEAD `174204f`; history intact back to `e9e0b78`.
 - Remote: `https://github.com/Nitheesh-Purnanand/racs2.git`. Local `main` is ahead of
   `origin/main` (origin last saw `147b359`), so a `git push` is pending whenever desired.
-- `.gitignore` currently ignores `.venv temp pip_cache cache`, plus the large corpus
-  dirs and build noise (`data/_raw_coco/`, `data/retrieval_images/`, `__pycache__/`,
-  `*.pyc`, `*.log`).
+- `.gitignore` ignores `.venv temp pip_cache cache`, the large corpus dirs, the local
+  CLIP model (`models/clip-vit-base-patch32/`), and build noise
+  (`data/_raw_coco/`, `data/retrieval_images/`, `__pycache__/`, `*.pyc`, `*.log`).
 
 ---
 
-## 7. Immediate next steps — Phase 5 (CLIP embeddings)
+## 7. Phase 5 result and next steps — Phase 6 (FAISS retrieval)
 
-> Phase 5 is **implemented and synthetically validated**. The only missing step is the
-> 605 MB CLIP checkpoint download, which the current network cannot sustain (~10–75 KB/s,
-> Wi-Fi signal 33%). No CLIP weights exist elsewhere on this machine.
+> Phase 5 is **complete and verified**. 1,000 × 512 float32 unit-norm CLIP vectors are
+> on disk and aligned 1:1 with `image_index.json`.
 
-Files already built:
-- `models/clip_encoder.py` — frozen CLIP ViT-B/32 wrapper (`CLIPModel` + `CLIPProcessor`),
-  fp16 default, float32 L2-normalised outputs, batched, `hf_lowmem` before `transformers`.
-- `scripts/phase5_clip.py` — experiments 1–3, semantic-vs-structural gate demo, full
-  1,000-image pass, caption embeddings, atomic `.npz` + manifest + experiments JSON.
-- `scripts/phase5_verify.py` — offline gate (shape, dtype, finite, norms, row order,
-  provenance, re-encode determinism, caption→image top-1, retrieval sanity).
-- `configs/base.yaml` — `embedding:` block.
-- `phase5_instructions.md` — full build guide.
+Phase 5 gate results:
 
-To finish (when bandwidth allows):
-
-```powershell
-cd d:\racs2
-$env:HF_HUB_DISABLE_XET = "1"          # Xet stalled at 0 bytes on this network
-.venv\Scripts\python.exe scripts\phase5_clip.py      # downloads CLIP, runs experiments, embeds corpus
-.venv\Scripts\python.exe scripts\phase5_verify.py    # offline gate; expect PASS
+```
+model          : openai/clip-vit-base-patch32 (local: models/clip-vit-base-patch32)
+weight sha256  : a63082132ba4f97a80bea76823f544493bffa8082296d62d71581a4feff1576f
+vectors        : (1000, 512) float32, L2-normalised
+throughput     : 18.2 s (~55 img/s)
+exp1           : within-topic 0.7791 vs across-topic 0.5423
+caption->image : top-1 0.476 (chance 0.001)
+determinism    : re-encode max|diff| 2.53e-07 (float32)
+retrieval      : nearest non-self mean 0.7707, max 0.8794
+gate demo      : CLIP cosine 0.643 vs edge IoU 0.199
+verification   : PASS
 ```
 
-Expected artifacts: `experiments/results/phase5_corpus_embeddings.npz` plus manifest,
-`phase5_experiments.json`, three PNG grids, and a PASS from the verifier.
+Artifacts: `experiments/results/phase5_corpus_embeddings.npz` (3.82 MB), its manifest,
+`phase5_experiments.json`, `phase5_verify.json`, and three PNG grids.
+
+**Protocol note**: float32 is required. fp16 differed by ~7e-4 between batch sizes, which
+would make Tx/Rx vectors non-identical. Do not switch back to fp16.
+
+**Model fetch**: `scripts/phase5_fetch_model.py` is the reliable path on this network
+(`huggingface_hub`'s single-stream download resets). It resumes from
+`pytorch_model.bin.parts.json` and verifies the SHA-256.
+
+**Next: Phase 6 — FAISS retrieval**
+1. `retrieval/build_index.py`: load the embedding rows from
+   `phase5_corpus_embeddings.npz`, build a FAISS `IndexFlatIP`, save it with the
+   `image_ids` array and `corpus_version`.
+2. `retrieval/retrieve.py`: `retrieve(query_embedding, top_k=10)` -> ordered
+   `(image_id, score)` pairs.
+3. Sweep K = 1, 5, 10, 20, 50; log candidate ids and scores; visualise top-K grids.
+4. Gate: semantically similar images are retrieved; the pipeline is
+   `query -> CLIP -> FAISS -> Top-K`.
 
 Invariant to preserve: identical database, preprocessing, embedding model, and index on
-both ends, or `Xref_tx ≠ Xref_rx` and recovery fails. Row order in the `.npz` must stay
-identical to `image_index.json`.
+both ends, or `Xref_tx ≠ Xref_rx` and recovery fails. Row order in the `.npz` and the
+FAISS index must stay identical to `image_index.json`.
 
 ---
 
@@ -147,6 +164,10 @@ identical to `image_index.json`.
   build (empty timestep slice) and was dropped; keep strength > 0.
 - `configs/base.yaml` `generation.prompt` is a placeholder SD prompt — replace with the
   paper's example `Kpub` if known (mechanics unchanged).
-- `.gitignore` now ignores `.venv temp pip_cache cache` plus `data/_raw_coco/`,
-  `data/retrieval_images/`, `__pycache__/`, `*.pyc`, `*.log`.
+- `.gitignore` ignores `.venv temp pip_cache cache`, `data/_raw_coco/`,
+  `data/retrieval_images/`, `models/clip-vit-base-patch32/`, `__pycache__/`, `*.pyc`, `*.log`.
+- **CLIP is float32 by protocol.** fp16 CLIP changed embeddings by ~7e-4 between batch
+  sizes, which would break Tx/Rx vector identity. Do not switch back to fp16.
+- `models/clip-vit-base-patch32/` holds the 605 MB checkpoint. If it is missing, refetch
+  with `scripts/phase5_fetch_model.py`; it resumes and verifies SHA-256.
 - `imp_code/` and several `temp/` pip dirs are leftover junk; safe to prune.

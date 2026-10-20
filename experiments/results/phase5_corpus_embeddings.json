@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "model_id": "openai/clip-vit-base-patch32",
+  "model_source": "models/clip-vit-base-patch32",
+  "model_path": "models/clip-vit-base-patch32",
+  "weight_sha256": "a63082132ba4f97a80bea76823f544493bffa8082296d62d71581a4feff1576f",
+  "embedding_dim": 512,
+  "count": 1000,
+  "corpus_version": "cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff",
+  "index_sha256": "7b02b77cbbfb4a649d32465c8d0fcafaa71770d76d799eeec4c270331cebc19b",
+  "preprocess": "resize_shortest_side_224_bicubic -> center_crop_224 -> clip_mean_std",
+  "image_size": 224,
+  "dtype_stored": "float32",
+  "normalized": true,
+  "device_used": "cuda",
+  "dtype_compute": "float32",
+  "seconds_total": 18.709,
+  "images_per_second": 53.451,
+  "created_utc": "2026-10-20T09:18:54Z"
+}

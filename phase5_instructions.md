@@ -89,7 +89,7 @@ embedding:
   image_size: 224                            # CLIP's native input (corpus is 512, resized)
   batch_size: 32
   text_batch_size: 64
-  dtype: "float16"                           # fall back to "float32" if the determinism check fails
+  dtype: "float32"                           # reproducible across batch sizes (fp16 differs ~7e-4)
   normalize: true                            # L2-normalise -> cosine == inner product
   device: "cuda"
   embeddings_path: "experiments/results/phase5_corpus_embeddings.npz"
@@ -292,6 +292,9 @@ single-pair coincidence. Report the full 8x8 matrix in the JSON and one line lik
 {
   "schema_version": 1,
   "model_id": "openai/clip-vit-base-patch32",
+  "model_source": "models/clip-vit-base-patch32",
+  "model_path": "models/clip-vit-base-patch32",
+  "weight_sha256": "a63082132ba4f97a80bea76823f544493bffa8082296d62d71581a4feff1576f",
   "embedding_dim": 512,
   "count": 1000,
   "corpus_version": "cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff",
@@ -354,8 +357,10 @@ cd d:\racs2
 .venv\Scripts\python.exe scripts\phase5_verify.py    # offline gate
 ```
 
-The first run downloads ViT-B/32 (~600 MB) into `D:\racs2\cache\huggingface`. Expect a
-few minutes: model load, up to ~80 experiment encodings, then 1,000 images (roughly
+The fetch helper writes ViT-B/32 (~600 MB) into `models/clip-vit-base-patch32/`
+(gitignored). Without the helper, the Hub caches it under
+`D:\racs2\cache\huggingface`. Expect a few minutes: model load, up to ~80 experiment
+encodings, then 1,000 images (roughly
 20-30 images/s on the RTX 3050 in fp16).
 
 ### ✅ Checklist (all must pass):

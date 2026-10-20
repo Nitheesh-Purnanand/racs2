@@ -1,0 +1,111 @@
+{
+  "pass": true,
+  "checks": [
+    {
+      "check": "image_ids length == manifest count",
+      "pass": true,
+      "detail": "1000 vs 1000"
+    },
+    {
+      "check": "embeddings rows == image_ids length",
+      "pass": true,
+      "detail": "1000 vs 1000"
+    },
+    {
+      "check": "embedding dim matches manifest",
+      "pass": true,
+      "detail": "512 vs 512"
+    },
+    {
+      "check": "stored dtype is float32",
+      "pass": true,
+      "detail": "float32"
+    },
+    {
+      "check": "caption embeddings shape matches",
+      "pass": true,
+      "detail": "(1000, 512)"
+    },
+    {
+      "check": "all embeddings finite",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "unit-norm vectors (max dev < 1e-4)",
+      "pass": true,
+      "detail": "max dev 1.19e-07"
+    },
+    {
+      "check": "vector count == corpus count",
+      "pass": true,
+      "detail": "1000 vs 1000"
+    },
+    {
+      "check": "row order matches image_index.json",
+      "pass": true,
+      "detail": "0 mismatches"
+    },
+    {
+      "check": "image_ids are unique",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "manifest corpus_version == live corpus",
+      "pass": true,
+      "detail": "cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff vs cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff"
+    },
+    {
+      "check": "manifest index_sha256 == live index",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "npz corpus_version == manifest",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "manifest records a model_id",
+      "pass": true,
+      "detail": "openai/clip-vit-base-patch32"
+    },
+    {
+      "check": "manifest records preprocessing",
+      "pass": true,
+      "detail": "resize_shortest_side_224_bicubic -> center_crop_224 -> clip_mean_std"
+    },
+    {
+      "check": "stored vectors reproducible (max|diff| <= 1e-4)",
+      "pass": true,
+      "detail": "max|diff| 2.53e-07 using float32"
+    },
+    {
+      "check": "embedding dim matches model",
+      "pass": true,
+      "detail": "512 vs 512"
+    },
+    {
+      "check": "caption->image top-1 far above chance (>= 0.05)",
+      "pass": true,
+      "detail": "0.476"
+    },
+    {
+      "check": "nearest non-self similarity < 1.0",
+      "pass": true,
+      "detail": "max 0.8794"
+    },
+    {
+      "check": "nearest non-self similarity sensible (> 0.3)",
+      "pass": true,
+      "detail": "mean 0.7707"
+    }
+  ],
+  "count": 1000,
+  "embedding_dim": 512,
+  "model_id": "openai/clip-vit-base-patch32",
+  "corpus_version": "cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff",
+  "mean_nearest_non_self_similarity": 0.7706817746162414,
+  "failures": []
+}

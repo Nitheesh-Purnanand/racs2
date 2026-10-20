@@ -179,6 +179,19 @@ def resolve_path(value: str) -> Path:
     return path if path.is_absolute() else (_ROOT / path)
 
 
+def display_path(value) -> str | None:
+    """Project-relative POSIX path when possible, for portable provenance."""
+    if not value:
+        return None
+    try:
+        path = Path(str(value))
+        if path.is_absolute():
+            return path.relative_to(_ROOT).as_posix()
+    except Exception:  # noqa: BLE001
+        pass
+    return str(value).replace("\\", "/")
+
+
 # ---------------------------------------------------------------------------
 # Experiment 1: text -> text similarity
 # ---------------------------------------------------------------------------
@@ -601,8 +614,8 @@ def main(argv=None) -> int:
     manifest = {
         "schema_version": 1,
         "model_id": model_id,
-        "model_source": encoder.model_source,
-        "model_path": str(encoder.model_path) if getattr(encoder, "model_path", None) else None,
+        "model_source": display_path(encoder.model_source),
+        "model_path": display_path(encoder.model_path),
         "weight_sha256": weight_sha,
         "embedding_dim": int(encoder.embedding_dim),
         "count": int(len(ids_all)),

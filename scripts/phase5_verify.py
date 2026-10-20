@@ -186,6 +186,7 @@ def main(argv=None) -> int:
             device=device,
             dtype=dtype,
             local_files_only=True,
+            model_path=cfg.get("model_path"),
         )
         print(f"  encoder: {encoder}")
 
