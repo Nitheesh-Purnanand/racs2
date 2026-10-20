@@ -1,7 +1,7 @@
 # RACS2 — Session Handoff
 
 > **Last updated**: 2026-10-20
-> **Repo**: `D:\racs2` · branch `main` · HEAD `2d71c7b`
+> **Repo**: `D:\racs2` · branch `main` · HEAD `1c74b2c`
 > **Purpose**: one-page state transfer so a fresh agent/session can continue without re-reading the whole repo.
 > **Companion doc**: `project_status.md` (long-lived status + change log). Read it for full history.
 
@@ -41,6 +41,8 @@ Full checklists and gate answers live in `project_status.md` §2 and the phase b
   of a second; that gap is the RACS efficiency argument.
 - Retrieval corpus: **1,000** COCO val2017 images, canonical **512×512 RGB** PNGs,
   **429.3 MB**; `corpus_version = cc20af21...89aff`. Build+verify PASS.
+- CLIP ViT-B/32: **1,000 × 512** float32 vectors, 18.2 s (~55 img/s), caption→image
+  top-1 **0.476**, within-topic **0.779** vs across **0.542**, verify PASS.
 
 ---
 
