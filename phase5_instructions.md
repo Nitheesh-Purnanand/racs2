@@ -333,8 +333,9 @@ The gate script. It must run **offline** (no model download) and check:
 6. normalisation: ||embeddings[i]||_2 ≈ 1 (max deviation < 1e-4)
 7. provenance: manifest corpus_version == corpus.version(); index_sha256 matches
 8. determinism: re-encode 8 sampled images with the same encoder and compare to the
-   stored rows. PASS if max|diff| <= 1e-4. If it fails only in fp16, rerun those 8 in
-   float32 and report which mode is stable.
+   stored rows. PASS if max|diff| <= 1e-4 **in the same dtype**. Re-encode the sample
+   with the same batch size the corpus used, or use float32 (the default), which is
+   batch-size invariant. fp16 differs by ~7e-4 between batch sizes.
 9. cross-modal sanity: encode the 1,000 captions (or reuse caption_embeddings),
    compute cosine against the image matrix, and report caption->image top-1 accuracy.
    Assert it is well above chance (chance = 0.001); expect a large number.
@@ -361,12 +362,12 @@ The fetch helper writes ViT-B/32 (~600 MB) into `models/clip-vit-base-patch32/`
 (gitignored). Without the helper, the Hub caches it under
 `D:\racs2\cache\huggingface`. Expect a few minutes: model load, up to ~80 experiment
 encodings, then 1,000 images (roughly
-20-30 images/s on the RTX 3050 in fp16).
+20-60 images/s on the RTX 3050 in float32; 55 img/s measured).
 
 ### ✅ Checklist (all must pass):
 
 ```
-[ ] CLIP ViT-B/32 loads (fp16) and both modalities encode
+[ ] CLIP ViT-B/32 loads (float32) and both modalities encode
 [ ] Experiment 1: within-topic text similarity > across-topic
 [ ] Experiment 2: image nearest-neighbour grid saved and sensible
 [ ] Experiment 3: text query -> top-5 corpus images saved and sensible
@@ -424,9 +425,10 @@ Be ready to show it with your own numbers:
 
 - **Import order**: `common.paths` -> `common.hf_lowmem.install()` -> `transformers`.
   Skipping this can reintroduce the Windows `OSError 1455` commit-charge failure.
-- **fp16 determinism**: GPU fp16 reductions are usually reproducible but not guaranteed.
-  If the sample re-encode differs by more than 1e-4, switch `embedding.dtype` to
-  `float32` and regenerate. Protocol correctness beats a few seconds of speed.
+- **dtype / determinism**: fp16 CLIP is not batch-size invariant. Measured max|diff|
+  was ~7e-4 between batch 8 and batch 32, which would break vector identity. The config
+  therefore defaults to `float32`; it re-encodes to **2.5e-07**. Do not switch back to
+  fp16 for the protocol embeddings.
 - **Row alignment is the whole phase**: always iterate `corpus.records()` (or `ids()`),
   never a re-sorted path glob, when building the matrix.
 - **Storage**: 1,000 x 512 float32 is ~2 MB. Keep the `.npz` in git (small); the 429 MB

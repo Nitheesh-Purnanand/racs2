@@ -76,7 +76,8 @@ cd d:\racs2
 
 Key modules: `common/{paths,seed,device,hf_lowmem}.py`,
 `models/{vae,sd_pipeline}.py`, `evaluation/metrics.py`.
-Config: `configs/base.yaml` (seed 42, 512 px, fp16, DDIM, guidance 7.5).
+Config: `configs/base.yaml` (seed 42, 512 px; generation fp16, CLIP embeddings float32;
+DDIM, guidance 7.5).
 Artifacts land in `experiments/results/`.
 
 ---
