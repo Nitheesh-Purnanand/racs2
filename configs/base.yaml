@@ -20,3 +20,34 @@ retrieval:
   canonical_size: 512        # stored image edge, matches SD/EDICT later
   resize_mode: "shortest_side_then_center_crop"   # documented, not implicit
   source: "coco_val2017"
+
+embedding:
+  model_id: "openai/clip-vit-base-patch32"   # ViT-B/32: 512-d, ~600 MB, fast on 6 GB
+  model_path: "models/clip-vit-base-patch32" # self-contained download (scripts/phase5_fetch_model.py)
+  embedding_dim: 512
+  image_size: 224                            # CLIP native input; corpus 512 is resized
+  batch_size: 32
+  text_batch_size: 64
+  dtype: "float16"                           # fall back to "float32" if determinism fails
+  normalize: true                            # L2-normalise -> cosine == inner product
+  device: "cuda"
+  embeddings_path: "experiments/results/phase5_corpus_embeddings.npz"
+  manifest_path: "experiments/results/phase5_corpus_embeddings.json"
+  # Experiment 1: three topics x three paraphrases (group_sizes maps the split)
+  text_prompt_groups: [3, 3, 3]
+  text_prompts:
+    - "a dog playing fetch in a park"
+    - "a puppy running through grass"
+    - "a golden retriever catching a ball"
+    - "a red city bus on a street"
+    - "a bus driving through traffic"
+    - "a public transit bus at a stop"
+    - "a plate of pasta with tomato sauce"
+    - "a bowl of spaghetti on a table"
+    - "italian pasta served on a white plate"
+  # Experiment 3: free-text queries for cross-modal retrieval
+  text_queries:
+    - "a person riding a motorcycle"
+    - "a plate of food on a table"
+    - "a stop sign"
+    - "people playing a sport"

@@ -1,8 +1,8 @@
 # RACS2 — Project Status & Change Log
 
 > **Location**: `d:\racs2\project_status.md`  
-> **Last Updated**: 2026-10-08  
-> **Current Phase**: Phase 4 complete — Phase 5 (CLIP Embeddings) is next
+> **Last Updated**: 2026-10-20  
+> **Current Phase**: Phase 5 implemented (code complete) — gate run blocked on CLIP weight download
 
 ---
 
@@ -24,6 +24,7 @@
 | **Phase 2 — VAE & Latent Space** | ✅ Completed | `common/paths.py`, `evaluation/metrics.py`, `models/vae.py`, `scripts/phase2_vae.py`. Round-trip verified on 5 images (PSNR ~32.8 dB avg). |
 | **Phase 3 — Diffusion & Generation Cost** | ✅ Completed | `common/hf_lowmem.py`, `models/sd_pipeline.py`, `scripts/phase3_diffusion.py`. SD v1.5 loads fp16 on the 6 GB GPU; 6-point timing sweep + 5 verification checks pass. |
 | **Phase 4 — Retrieval Image Database** | ✅ Completed | `retrieval/schema.py`, `retrieval/corpus.py`, `scripts/phase4_build_corpus.py`, `scripts/phase4_verify.py`. 1,000-image COCO val2017 corpus (512×512 RGB), versioned `image_index.json`, loader + integrity/determinism checks pass. |
+| **Phase 5 — CLIP Embeddings** | 🟡 Code complete, run blocked | `models/clip_encoder.py`, `scripts/phase5_clip.py`, `scripts/phase5_verify.py`, `embedding:` config block. Pipeline validated end-to-end with a synthetic encoder. Real run needs the 605 MB CLIP ViT-B/32 checkpoint; the current network delivers ~10–75 KB/s, so the download is not viable yet. |
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -132,6 +133,48 @@ corpus_version: cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff
 contact sheet: experiments/results/phase4_corpus_grid.png
 ```
 
+---
+
+### Phase 5 implementation (2026-10-20)
+
+**Code is complete and validated; the real embedding pass is blocked on a model download.**
+
+Built:
+- `models/clip_encoder.py` — frozen CLIP wrapper (`CLIPModel` + `CLIPProcessor`), fp16/fp32,
+  image + text batching, float32 L2-normalised output, `hf_lowmem` installed before
+  `transformers`. Handles both the transformers 4 tensor return and the transformers 5
+  `BaseModelOutputWithPooling` return.
+- `scripts/phase5_clip.py` — experiments 1–3 (text similarity, image neighbours,
+  text→image), the semantic-vs-structural gate demo, the full 1,000-image pass,
+  optional caption embeddings, and atomic `.npz` + manifest + experiments JSON output.
+- `scripts/phase5_verify.py` — offline gate: shape/dtype, finite values, unit norms,
+  row order vs `image_index.json`, provenance (`corpus_version`, `index_sha256`),
+  re-encode determinism, caption→image top-1, retrieval sanity.
+- `configs/base.yaml` — `embedding:` block (ViT-B/32, 512-d, 224 px, fp16, prompts/queries).
+
+Validation so far:
+- `py_compile` passes for all three modules.
+- Full pipeline runs end-to-end with a synthetic 512-d encoder: all 1,000 rows, all
+  experiments, all grids, `.npz` (3.8 MB) and JSON artifacts are produced; only the
+  semantic assertions fail, as expected for random vectors.
+- `phase4_verify.py` re-run: PASS.
+
+Blocker:
+- `openai/clip-vit-base-patch32` needs a **605 MB** `pytorch_model.bin`.
+- The current network measures **~10–75 KB/s** to HuggingFace / AWS CDN / Cloudflare
+  (Wi-Fi signal 33%, 34 Mbps link, no proxy). That is an 8–16 hour download.
+- Xet downloads (`hf_xet`) stalled at 0 bytes; `HF_HUB_DISABLE_XET=1` starts but is
+  bound by the same bandwidth. No CLIP checkpoint exists elsewhere on the machine.
+- To finish when the network recovers:
+  ```powershell
+  $env:HF_HUB_DISABLE_XET = "1"
+  .venv\Scripts\python.exe scripts\phase5_clip.py
+  .venv\Scripts\python.exe scripts\phase5_verify.py
+  ```
+  HuggingFace resumes the partial blob automatically.
+
+---
+
 > Folders marked "(Phase N)" are created when that phase begins, per the plan's
 > "only create what the current phase needs" principle.
 
@@ -153,6 +196,26 @@ contact sheet: experiments/results/phase4_corpus_grid.png
 ---
 
 ## 5. Change Log
+
+### [2026-10-20] - Phase 5 Implemented (CLIP Embeddings), Run Blocked
+
+- **Added** `models/clip_encoder.py`: frozen CLIP ViT-B/32 wrapper over `transformers`
+  (`CLIPModel` + `CLIPProcessor`), fp16 by default, float32 L2-normalised outputs,
+  batched image/text encoding, `hf_lowmem` installed before `transformers`.
+- **Added** `scripts/phase5_clip.py`: experiments 1–3, the semantic-vs-structural gate
+  demo (edge IoU proxy), full 1,000-image pass, optional caption embeddings, atomic
+  `.npz` + manifest + `phase5_experiments.json` + three PNG grids.
+- **Added** `scripts/phase5_verify.py`: offline gate for shape/dtype/finite/norm,
+  row order, provenance, re-encode determinism, caption→image top-1 and retrieval sanity.
+- **Added** `embedding:` block (model id, dim, 224 px, batch sizes, dtype, prompts,
+  query list) to `configs/base.yaml`.
+- **Validated** the pipeline end-to-end with a synthetic 512-d encoder: all artifacts
+  written, expected semantic checks fail with random vectors.
+- **Blocked**: the 605 MB `openai/clip-vit-base-patch32` checkpoint cannot be downloaded
+  at the current ~10–75 KB/s. Xet stalls at 0 bytes; disabling Xet starts a slow HTTP
+  download. No CLIP checkpoint exists elsewhere on the machine.
+- **Not yet produced**: `phase5_corpus_embeddings.npz` and a PASS from
+  `scripts/phase5_verify.py`.
 
 ### [2026-10-08] - Phase 4 Complete (Retrieval Image Database)
 
@@ -225,6 +288,9 @@ contact sheet: experiments/results/phase4_corpus_grid.png
 - [x] **Step 8 (Phase 3)**: Build `models/sd_pipeline.py` + `scripts/phase3_diffusion.py`, run the timing sweep.
 - [x] **Step 9 (Phase 4)**: Write `phase4_instructions.md` (retrieval image database).
 - [x] **Step 10 (Phase 4)**: Build `retrieval/schema.py`, `retrieval/corpus.py`, `scripts/phase4_build_corpus.py`, `scripts/phase4_verify.py`; build + verify the 1,000-image corpus.
+- [x] **Step 11 (Phase 5)**: Write `phase5_instructions.md` (CLIP embeddings, artifacts, gate).
+- [x] **Step 12 (Phase 5)**: Build `models/clip_encoder.py`, `scripts/phase5_clip.py`, `scripts/phase5_verify.py`; add the `embedding:` config block; validate the full pipeline with a synthetic encoder.
+- [ ] **Step 13 (Phase 5)**: Download the CLIP ViT-B/32 checkpoint and run `scripts/phase5_clip.py` then `scripts/phase5_verify.py`. **Blocked by network (~10–75 KB/s).**
 
 **Phase 3 gate question** — *Why is diffusion generation expensive?* Generation runs
 SD's U-Net `N` times, once per denoising step, and twice per step when CFG is on
@@ -245,6 +311,8 @@ hold 10 GB) before running anything that loads a diffusion model. `common/hf_low
 removes the 3.2 GB checkpoint-mmap requirement, but weights still need to be
 materialised once.
 
-See `phase3_instructions.md` and `phase4_instructions.md` for the full task detail and
-acceptance gates. The next phase is **Phase 5 — CLIP Embeddings** (image + text
-embeddings over the 1,000-image corpus; no retrieval index yet).
+See `phase3_instructions.md`, `phase4_instructions.md`, and `phase5_instructions.md` for
+the full task detail and acceptance gates. **Phase 5 code is complete**; the remaining
+work is to download the CLIP checkpoint and run the two scripts to produce
+`experiments/results/phase5_corpus_embeddings.npz` and a verification PASS. Then Phase 6
+(FAISS retrieval) can begin.

@@ -60,6 +60,21 @@ Confirm:
 > model id, preprocessing, and embedding dimension must then be frozen in the manifest.
 > Do **not** switch implementations later — changing the encoder changes every vector.
 
+### Step 0b (only on a flaky network): fetch the checkpoint with the helper
+
+`huggingface_hub`'s resumable downloader can reset mid-transfer and discard the
+partial bytes, which makes a 605 MB checkpoint impossible on a poor link. If that
+happens, use the chunked downloader:
+
+```powershell
+.venv\Scripts\python.exe scripts\phase5_fetch_model.py --threads 12 --chunk-mb 2
+```
+
+It downloads 2 MB HTTP ranges in parallel, retries each chunk, resumes from
+`pytorch_model.bin.parts.json`, verifies the LFS SHA-256, and fetches the config
+and tokenizer files into `models/clip-vit-base-patch32/`. The encoder prefers
+`embedding.model_path` when that directory exists, so the run is fully offline.
+
 ---
 
 ## Step 2: Update `configs/base.yaml`
@@ -69,6 +84,7 @@ Add an `embedding` block so the encoder parameters live in one place:
 ```yaml
 embedding:
   model_id: "openai/clip-vit-base-patch32"   # ViT-B/32: 512-d, ~600 MB, fast on 6 GB
+  model_path: "models/clip-vit-base-patch32" # local self-contained download (see Step 0b)
   embedding_dim: 512
   image_size: 224                            # CLIP's native input (corpus is 512, resized)
   batch_size: 32
@@ -108,6 +124,7 @@ d:\racs2\
 ├── models/
 │   └── clip_encoder.py                 # CLIP load + image/text encoding
 ├── scripts/
+│   ├── phase5_fetch_model.py           # resilient chunked CLIP download (flaky networks)
 │   ├── phase5_clip.py                  # 3 experiments + embed the whole corpus
 │   └── phase5_verify.py                # alignment/determinism/sanity gate
 └── experiments/
@@ -331,6 +348,8 @@ Exit non-zero on any failed check. Save a small JSON summary next to the artifac
 
 ```powershell
 cd d:\racs2
+# optional, only if the normal HF download keeps resetting:
+.venv\Scripts\python.exe scripts\phase5_fetch_model.py --threads 12 --chunk-mb 2
 .venv\Scripts\python.exe scripts\phase5_clip.py      # downloads CLIP, runs 3 experiments, embeds corpus
 .venv\Scripts\python.exe scripts\phase5_verify.py    # offline gate
 ```

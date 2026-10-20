@@ -1,7 +1,7 @@
 # RACS2 — Session Handoff
 
-> **Last updated**: 2026-10-08 (evening)
-> **Repo**: `D:\racs2` · branch `main` · HEAD `174204f`
+> **Last updated**: 2026-10-20
+> **Repo**: `D:\racs2` · branch `main` · HEAD `08d50ff`
 > **Purpose**: one-page state transfer so a fresh agent/session can continue without re-reading the whole repo.
 > **Companion doc**: `project_status.md` (long-lived status + change log). Read it for full history.
 
@@ -26,7 +26,7 @@ diffusion (tens of seconds per reference).
 | 2 | VAE + latent space round-trip | ✅ Complete |
 | 3 | Diffusion & generation cost (SD v1.5 baseline) | ✅ Complete |
 | 4 | Build the retrieval image database | ✅ Complete |
-| 5 | CLIP embeddings | ⏳ **Next** |
+| 5 | CLIP embeddings | 🟡 **Code complete, run blocked on CLIP download** |
 | 6 | FAISS retrieval | pending |
 
 Full checklists and gate answers live in `project_status.md` §2 and the phase briefs in
@@ -107,22 +107,37 @@ cache/ temp/ pip_cache/   (gitignored)
 
 ---
 
-## 7. Immediate next steps — Phase 5 (CLIP Embeddings)
+## 7. Immediate next steps — Phase 5 (CLIP embeddings)
 
-> Phase 4 is **done**: corpus built and verified. Full build guide was
-> `phase4_instructions.md`.
+> Phase 5 is **implemented and synthetically validated**. The only missing step is the
+> 605 MB CLIP checkpoint download, which the current network cannot sustain (~10–75 KB/s,
+> Wi-Fi signal 33%). No CLIP weights exist elsewhere on this machine.
 
-Goal: image + text embeddings over the 1,000-image corpus (semantic similarity).
+Files already built:
+- `models/clip_encoder.py` — frozen CLIP ViT-B/32 wrapper (`CLIPModel` + `CLIPProcessor`),
+  fp16 default, float32 L2-normalised outputs, batched, `hf_lowmem` before `transformers`.
+- `scripts/phase5_clip.py` — experiments 1–3, semantic-vs-structural gate demo, full
+  1,000-image pass, caption embeddings, atomic `.npz` + manifest + experiments JSON.
+- `scripts/phase5_verify.py` — offline gate (shape, dtype, finite, norms, row order,
+  provenance, re-encode determinism, caption→image top-1, retrieval sanity).
+- `configs/base.yaml` — `embedding:` block.
+- `phase5_instructions.md` — full build guide.
 
-1. Load CLIP (`ViT-B/32` via `transformers` or `open_clip`).
-2. Exp 1: text→embedding, related vs unrelated prompts.
-3. Exp 2: image→embedding, nearest images.
-4. Exp 3: cross-modal: text query → most similar corpus images.
-5. Embed the whole corpus; save embeddings to disk (row order == `image_index.json` order).
-6. **Gate**: embeddings exist; CLIP = semantic similarity ≠ structural compatibility.
+To finish (when bandwidth allows):
+
+```powershell
+cd d:\racs2
+$env:HF_HUB_DISABLE_XET = "1"          # Xet stalled at 0 bytes on this network
+.venv\Scripts\python.exe scripts\phase5_clip.py      # downloads CLIP, runs experiments, embeds corpus
+.venv\Scripts\python.exe scripts\phase5_verify.py    # offline gate; expect PASS
+```
+
+Expected artifacts: `experiments/results/phase5_corpus_embeddings.npz` plus manifest,
+`phase5_experiments.json`, three PNG grids, and a PASS from the verifier.
 
 Invariant to preserve: identical database, preprocessing, embedding model, and index on
-both ends, or `Xref_tx ≠ Xref_rx` and recovery fails.
+both ends, or `Xref_tx ≠ Xref_rx` and recovery fails. Row order in the `.npz` must stay
+identical to `image_index.json`.
 
 ---
 

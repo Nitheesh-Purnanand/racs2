@@ -9,3 +9,4 @@ data/retrieval_images/
 __pycache__/
 *.pyc
 *.log
+models/clip-vit-base-patch32/
