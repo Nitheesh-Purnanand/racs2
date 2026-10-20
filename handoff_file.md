@@ -1,7 +1,7 @@
 # RACS2 — Session Handoff
 
 > **Last updated**: 2026-10-20
-> **Repo**: `D:\racs2` · branch `main` · HEAD `08d50ff`
+> **Repo**: `D:\racs2` · branch `main` · HEAD `2d71c7b`
 > **Purpose**: one-page state transfer so a fresh agent/session can continue without re-reading the whole repo.
 > **Companion doc**: `project_status.md` (long-lived status + change log). Read it for full history.
 
@@ -68,6 +68,8 @@ cd d:\racs2
 .venv\Scripts\python.exe scripts\phase2_vae.py           # VAE round-trip + metrics
 .venv\Scripts\python.exe scripts\phase3_diffusion.py     # timing/VRAM sweep (~2 min)
 .venv\Scripts\python.exe scripts\phase3_img2img.py       # img2img strength sweep
+.venv\Scripts\python.exe scripts\phase5_clip.py          # CLIP experiments + 1k embeddings
+.venv\Scripts\python.exe scripts\phase5_verify.py        # offline embedding gate
 ```
 
 Key modules: `common/{paths,seed,device,hf_lowmem}.py`,

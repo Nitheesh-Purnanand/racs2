@@ -5,7 +5,7 @@
   "canonical_size": 512,
   "resize_mode": "shortest_side_then_center_crop",
   "count": 1000,
-  "created_utc": "2026-10-08T17:51:37Z",
+  "created_utc": "2026-10-08T17:59:42Z",
   "images": [
     {
       "image_id": "coco_val2017_000000000724",
