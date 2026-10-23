@@ -1,7 +1,9 @@
 # RACS2 — Session Handoff
 
-> **Last updated**: 2026-10-20
-> **Repo**: `D:\racs2` · branch `main` · HEAD `1c74b2c`
+> **Last updated**: 2026-10-23
+> **Repo**: `D:\racs2` · branch `main` · HEAD `4af625a`
+> **Plan**: `racs2_implementation_plan.md` **v2 (baseline-first)**. Phases after 5 were
+> renumbered on 2026-10-23. Read the plan's Section 5 for the old-to-new map.
 > **Purpose**: one-page state transfer so a fresh agent/session can continue without re-reading the whole repo.
 > **Companion doc**: `project_status.md` (long-lived status + change log). Read it for full history.
 
@@ -24,10 +26,16 @@ diffusion (tens of seconds per reference).
 | :-- | :-- | :-- |
 | 1 | Environment & skeleton (`configs/base.yaml`, seed, device) | ✅ Complete |
 | 2 | VAE + latent space round-trip | ✅ Complete |
-| 3 | Diffusion & generation cost (SD v1.5 baseline) | ✅ Complete |
-| 4 | Build the retrieval image database | ✅ Complete |
-| 5 | CLIP embeddings | ✅ Complete (verification PASS) |
-| 6 | FAISS retrieval | ⏳ **Next** |
+| 3 | Diffusion & generation cost (SD v1.5) | ✅ Complete (now read as a lower bound) |
+| 4 | Build the retrieval image database | ✅ Complete, **banked** |
+| 5 | CLIP embeddings | ✅ Complete, **banked** |
+| 6 | Evaluation harness + 3-class test set | ⏳ **Next** |
+| 7-16 | **AgentSemSteCom reproduction** (baseline gate at 15) | ⏳ Not started |
+| 17-22 | RACS retrieval, RACS-Base, comparison | ⏳ Not started |
+| 23-33 | Variants, evaluation, write-up | ⏳ Not started |
+
+**Ordering rule**: the baseline is reproduced and frozen before any RACS component is wired
+into the pipeline. Phases 4-5 are not wasted work; they are consumed at Phase 17.
 
 Full checklists and gate answers live in `project_status.md` §2 and the phase briefs in
 `docs/phase_briefs/`.
@@ -117,10 +125,11 @@ cache/ temp/ pip_cache/   (gitignored)
 
 ---
 
-## 7. Phase 5 result and next steps — Phase 6 (FAISS retrieval)
+## 7. Where we are and what is next (plan v2)
 
-> Phase 5 is **complete and verified**. 1,000 × 512 float32 unit-norm CLIP vectors are
-> on disk and aligned 1:1 with `image_index.json`.
+> Phases 1-5 are **complete and verified**. Phase 4 (corpus) and Phase 5 (CLIP) are now
+> **banked**: built and verified, but consumed later at Phase 17 (FAISS). The critical path
+> now runs through the AgentSemSteCom baseline, not through retrieval.
 
 Phase 5 gate results:
 
@@ -147,15 +156,30 @@ would make Tx/Rx vectors non-identical. Do not switch back to fp16.
 (`huggingface_hub`'s single-stream download resets). It resumes from
 `pytorch_model.bin.parts.json` and verifies the SHA-256.
 
-**Next: Phase 6 — FAISS retrieval**
-1. `retrieval/build_index.py`: load the embedding rows from
-   `phase5_corpus_embeddings.npz`, build a FAISS `IndexFlatIP`, save it with the
-   `image_ids` array and `corpus_version`.
-2. `retrieval/retrieve.py`: `retrieve(query_embedding, top_k=10)` -> ordered
-   `(image_id, score)` pairs.
-3. Sweep K = 1, 5, 10, 20, 50; log candidate ids and scores; visualise top-K grids.
-4. Gate: semantically similar images are retrieved; the pipeline is
-   `query -> CLIP -> FAISS -> Top-K`.
+**Next: Phase 6 — evaluation harness and 3-class test set**
+1. Install `lpips`, `scipy`, `scikit-image`.
+2. Extend `evaluation/metrics.py` with LPIPS and a distribution `report()` helper.
+3. Build `data/test_set/{common,facial,style}`; freeze 100 images (20+ per class) in
+   `data/metadata/test_split.json` with per-file sha256 and a `split_version`.
+4. Write `data/metadata/tokens.json` (one fixed token per test image).
+5. Write `scripts/eval_report.py`, the single driver used by the baseline, RACS and the
+   comparison.
+6. Create `docs/DEVIATIONS.md` (the deviation register).
+
+**Then Phases 7-16: reproduce AgentSemSteCom**
+1. Phase 7: `Kpub` + `Xfeat` (LLM key, segmentation for common, pose skeleton for facial).
+2. Phase 8: reference generator (PicX-Real or SD v1.5 + ControlNet + IPAdapter-plus) with
+   token-seeded noise; fp16 + sequential offload on the 6 GB card.
+3. Phase 9: ControlNet zero-conv fine-tune, or a documented deviation.
+4. Phase 10: EDICT in isolation; inversion to machine precision.
+5. Phase 11: local hide/recover with eta = 0.05 and a manual reference.
+6. Phases 12-14: AWGN, semantic codec (SwinJSCC-style C=48 / MDJCM mod 64), CodeFormer.
+7. **Phase 15 gate**: reproduce Table II within tolerance (facial 5 dB PSNR 22.73,
+   facial 20 dB LPIPS 0.2127, style 5 dB LPIPS 0.3850, common 5 dB PSNR 19.71).
+8. Phase 16: baseline security and steganalysis, then freeze the baseline.
+
+**Only then Phases 17-22**: FAISS (loads the banked `.npz`), token selection, structural
+reranking, RACS-Base with `Xref_tx == Xref_rx`, and the controlled comparison.
 
 Invariant to preserve: identical database, preprocessing, embedding model, and index on
 both ends, or `Xref_tx ≠ Xref_rx` and recovery fails. Row order in the `.npz` and the
@@ -176,3 +200,6 @@ FAISS index must stay identical to `image_index.json`.
 - `models/clip-vit-base-patch32/` holds the 605 MB checkpoint. If it is missing, refetch
   with `scripts/phase5_fetch_model.py`; it resumes and verifies SHA-256.
 - `imp_code/` and several `temp/` pip dirs are leftover junk; safe to prune.
+- **Baseline reproduction is a real workload**, not a 2-day task. The paper uses PicX-Real,
+  ControlNet, IPAdapter-plus, UniStega (3 classes), MDJCM and CodeFormer. Any substitute
+  must be recorded in `docs/DEVIATIONS.md` with its measured impact.

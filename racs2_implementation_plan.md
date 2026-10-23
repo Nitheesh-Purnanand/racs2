@@ -1,562 +1,992 @@
-# RACS2 — Learning-Oriented Implementation Plan
+# RACS2 — Learning-Oriented Implementation Plan (v2, baseline-first)
 
-> **Principle**: Learn one thing → build a small version → test it → understand the output → integrate it → move on.  
-> **Anti-pattern**: Do NOT try to build the whole system at once.  
-> **Your constraints**: RTX 3050 (6 GB VRAM), ~30 GB free disk, ~3.4 GB free RAM, Windows, Python 3.10.11
+> **Revision v2, 2026-10-23.** The execution order has been inverted: **AgentSemSteCom is
+> reproduced and validated first**, and only then is the RACS contribution built on top of
+> the frozen baseline. Phases 1-5 are already complete and carry over unchanged. Every phase
+> after 5 is renumbered. v1 remains in git history (commit `4af625a`).
+>
+> **Why the change.** v1 built RACS-only components (Phases 4-9) and deferred the baseline to
+> a single over-scoped Phase 16. That breaks the scientific claim in
+> `docs/PROJECT_UNDERSTANDING.md` ("everything downstream is unchanged, so any measured
+> difference is attributable to reference acquisition"). Without a validated baseline there is
+> no control, no debugging signal, and no anchor for the RACS numbers.
 
----
-
-## How This Plan Is Organized
-
-The project is split into **12 Milestones (M1–M12)**, containing **27 Phases**. Each phase is a self-contained "mini-project" where you:
-
-1. **Learn the theory** — understand *what* you're building and *why* RACS needs it
-2. **Build a tiny experiment** — write isolated code that demonstrates the concept
-3. **Test and measure** — run it, collect numbers, save artifacts
-4. **Explain** — answer the "gate question" in your own words
-5. **Integrate** — connect it to the growing pipeline
-6. **Report** — document what you built, what you measured, what surprised you
-
-Every phase ends with a concrete **gate** — a test you must pass before moving on.
+> **Principle**: Learn one thing, build a small version, test it, understand the output,
+> integrate it, move on.
+> **Anti-pattern**: Do NOT try to build the whole system at once.
+> **Constraints**: RTX 3050 (6 GB VRAM), 16 GB RAM, 26 GB free disk, Windows, Python 3.10.11.
 
 ---
 
-## The Big Picture (What You're Building)
+## 1. The ordering rule
 
 ```
-EXISTING SYSTEM (AgentSemSteCom):
-  Secret Image → LLM semantic key → Diffusion GENERATES reference → EDICT steganography → Channel → Recovery
-
-RACS (Your Contribution):
-  Secret Image → LLM semantic key → RETRIEVES reference from database → EDICT steganography → Channel → Recovery
-                                     ↑
-                              THIS IS WHAT YOU BUILD
+1. Reproduce AgentSemSteCom  ->  land on the paper's numbers  ->  freeze it
+2. Swap exactly one stage     ->  retrieval instead of diffusion  ->  RACS-Base
+3. Compare both under identical conditions
 ```
 
-You're replacing **one expensive stage** (diffusion generation) with **retrieval**. Everything else stays the same. This way, any performance difference is scientifically attributable to your change.
+The baseline is the control condition, not an afterthought. It must exist, be measured, and
+be trusted before the contribution is built. Concretely:
+
+- **Nothing RACS-specific is integrated before Phase 15 passes.** That means no FAISS
+  retrieval feeding EDICT, no reranking, no token selection in the pipeline. Those components
+  may exist on disk (they already do), but they are not wired in.
+- **The shared downstream is built once and used by both systems.** VAE, EDICT, token
+  perturbation, AWGN, semantic codec and metrics are identical in both paths. Only the
+  reference acquisition differs.
+- **Every deviation is logged.** If the paper cannot be reproduced exactly (missing weights,
+  VRAM limits, substitute codec), it goes in `docs/DEVIATIONS.md` with the reason and the
+  measured impact.
 
 ---
 
-## Milestone M1 — Foundation (Phases 1–2)
-*Time estimate: 2–3 days*
+## 2. How This Plan Is Organized
 
-### Phase 1: Environment & Project Skeleton
+The project is split into **10 Milestones (M1-M10)** containing **33 Phases**. Each phase is a
+self-contained mini-project:
 
-> **What**: A working Python environment with PyTorch + GPU, a clean project structure, and a shared config.  
+1. **Learn the theory** for that component.
+2. **Build a tiny experiment** that demonstrates the concept in isolation.
+3. **Test and measure**, saving artifacts to `experiments/results/`.
+4. **Answer the gate question** in your own words.
+5. **Integrate** into the growing pipeline.
+6. **Report** in `project_status.md`.
+
+Every phase ends with a concrete **gate**. Gates are numeric where the paper gives numbers.
+
+**Status legend**: `DONE` complete and verified, `BANKED` built and verified but consumed in a
+later phase, `NEXT` the immediate next phase, `TODO` not started.
+
+---
+
+## 3. Current state (2026-10-23)
+
+| Phase | Scope | Status |
+| :-- | :-- | :-- |
+| 1 | Environment and project skeleton | **DONE** |
+| 2 | VAE and latent space | **DONE** |
+| 3 | SD v1.5 loading and generation cost | **DONE** |
+| 4 | Retrieval corpus (1,000 COCO images) | **BANKED** (used in Phase 17) |
+| 5 | CLIP embeddings (1,000 x 512 float32) | **BANKED** (used in Phase 17) |
+| 6 | Evaluation harness and test set | **NEXT** |
+| 7-16 | AgentSemSteCom reproduction | **TODO** |
+| 17-22 | RACS retrieval, RACS-Base, comparison | **TODO** |
+| 23-33 | Variants, evaluation, write-up | **TODO** |
+
+Verified numbers so far:
+
+- VAE round-trip: PSNR 32.809 dB, SSIM 0.9354 on 5 images.
+- SD v1.5, 512x512, fp16: 0.26 s/step, 50 steps = 12.98 s, 2.60 GB peak VRAM, CFG 1.75x.
+- Corpus: 1,000 images, 512x512 RGB, 429.3 MB, `corpus_version cc20af21...89aff`.
+- CLIP ViT-B/32: 1,000 x 512 float32, 18.2 s, caption to image top-1 0.476, verify PASS.
+
+---
+
+## 4. Nothing built so far is wasted: the reuse map
+
+Every existing artifact has a named consumer in the new order. This is the contract.
+
+| Artifact (already built) | Built in | Consumed by (new phase) | How it is reused |
+| :-- | :-- | :-- | :-- |
+| `configs/base.yaml`, `common/seed.py`, `common/device.py`, `common/paths.py` | 1 | Every phase | Unchanged. Config gains baseline blocks. |
+| `evaluation/metrics.py` (MSE, PSNR, SSIM) | 2 | Phase 6 and all measurement | Extended with LPIPS and distribution reporting, not replaced. |
+| `models/vae.py` (SD VAE fp16) | 2 | Phases 11, 12, 21, baseline and RACS | Unchanged. Both systems share the same VAE. |
+| `experiments/results/phase2_*_compare.png` | 2 | Phase 32 figures | Reused as the VAE error-floor evidence. |
+| `models/sd_pipeline.py` (fp16 loader, DDIM, attention slicing) | 3 | Phase 8 (reference generator) | Extended with ControlNet and IPAdapter, not rewritten. |
+| `common/hf_lowmem.py` (read-only safetensors mmap) | 3 | Phase 8, 10, 11 | Required. The baseline stack is larger than SD v1.5 alone, so the commit-charge fix matters more, not less. |
+| `experiments/results/phase3_timings.json` | 3 | Phase 30 efficiency analysis | Retained, but relabelled as the **SD-only lower bound**, not the baseline cost. |
+| `scripts/phase3_img2img.py` | 3 | Phase 24 lightweight editing | Img2img is the editing primitive. The strength sweep is a direct prior for edit strength 0.5. |
+| `retrieval/schema.py`, `retrieval/corpus.py` | 4 | Phase 17 FAISS, Phase 21 RACS | Index schema and deterministic loader reused as the protocol resource. |
+| `data/retrieval_images/` (1,000 COCO PNGs) | 4 | Phase 17 corpus, Phase 6 common-class secrets | Dual use: retrieval database for RACS and a dev substitute for the common class. |
+| `data/metadata/image_index.json` | 4 | Phase 17, Phase 21 | Row order and `corpus_version` provenance must match the FAISS index. |
+| `models/clip_encoder.py` | 5 | Phase 17, Phase 20 | Unchanged. float32 stays. |
+| `experiments/results/phase5_corpus_embeddings.npz` | 5 | Phase 17 | Direct input to `IndexFlatIP`. |
+| `scripts/phase5_verify.py` | 5 | Phase 17, Phase 21 | Its determinism-check pattern becomes the `Xref_tx == Xref_rx` checker. |
+| `scripts/phase5_fetch_model.py` (resumable SHA-verified download) | 5 | Phase 8 model fetch | Reused for PicX-Real, ControlNet, IPAdapter, OneFormer, OpenPose, CodeFormer weights. |
+
+**What changes in interpretation, not in code**
+
+- The Phase 3 timing number is no longer "the baseline cost". It is the floor. The paper's
+  baseline adds ControlNet, IPAdapter-plus and an independently trained generator, so the real
+  comparator is more expensive. This makes the RACS efficiency claim more conservative, not
+  less.
+- The corpus and CLIP work is no longer "step 1 of RACS". It is banked. It costs nothing while
+  the baseline is built, and it is consumed at Phase 17.
+
+---
+
+## 5. Old phase to new phase map
+
+Use this to translate existing scripts, notes and commit messages.
+
+| Old | New | Component |
+| :-- | :-- | :-- |
+| 1 | 1 | Environment and skeleton |
+| 2 | 2 | VAE and latent space |
+| 3 | 3 | SD v1.5 and generation cost |
+| 4 | 4 | Retrieval corpus (banked) |
+| 5 | 5 | CLIP embeddings (banked) |
+| 6 | 17 | FAISS retrieval |
+| 7 | 18 | Deterministic token selection |
+| 8 | 19 | Structural representation |
+| 9 | 20 | Structure-aware reranking |
+| 10 | 10 | EDICT |
+| 11 | 11 | Local steganography core |
+| 12 | 21 | RACS-Base local integration |
+| 13 | 12 | AWGN channel |
+| 14 | 13 | Semantic codec |
+| 15 | 21 | Full RACS-Base |
+| 16 | 22 | Baseline comparison |
+| 17 | 23 | VLM reranking |
+| 18 | 24 | Lightweight editing |
+| 19 | 25 | Retrieve-or-generate hybrid |
+| 20 | 26 | Security testing |
+| 21 | 27 | Steganalysis |
+| 22 | 28 | Full evaluation matrix |
+| 23 | 29 | Ablations |
+| 24 | 30 | Efficiency analysis |
+| 25 | 31 | Research analysis |
+| 26 | 32 | Final tables and figures |
+| 27 | 33 | Reproducibility package |
+| (new) | 6-9, 14-16 | Baseline reproduction work that v1 never scheduled |
+
+---
+
+## 6. The baseline reproduction contract
+
+Before Phase 15 is declared passed, all of the following must hold.
+
+**Inputs**
+
+- 100 secret images, 20+ per class: `common` (UniStega-Content), `facial`
+  (UniStega-Similar face subset), `style` (UniStega-Style). If UniStega cannot be obtained,
+  document the substitute and its class balance in `docs/DEVIATIONS.md`.
+- Four SNR points: 5, 10, 15, 20 dB.
+- Fixed digital tokens per image, stored in `data/metadata/tokens.json` so Tx and Rx use the
+  same values.
+
+**Parameters** (from the paper, do not tune to hit numbers)
+
+- SD v1.5 latent space in both directions, EDICT steps 50, EDICT mixing coefficient 0.93,
+  perturbation strength eta = 0.05, channel coefficient h = 1.
+- Reference generator: PicX-Real, or SD v1.5 + ControlNet + IPAdapter-plus if PicX-Real
+  weights are unavailable.
+- Implicit feature: segmentation for common, pose-to-skeleton for facial, none for style
+  (style is conditioned on the public key only).
+- Analog codec: SwinJSCC-style, C = 48, trained SNR 10 dB. Digital codec: MDJCM, DIV2K,
+  modulation 64.
+- Optional enhancement: CodeFormer at fidelity 0.5, facial class only.
+
+**Reported targets** (Table II and Section VI of the paper)
+
+| Condition | Paper value |
+| :-- | :-- |
+| facial, 5 dB | PSNR 22.73 dB, SSIM 0.6989 |
+| facial, 20 dB | PSNR 26.29 dB, LPIPS 0.2127 |
+| style, 5 dB | MSE 0.721e-2, LPIPS 0.3850 |
+| common, 5 dB | PSNR 19.71 dB, MSE 1.207e-2 |
+| common, 10 dB | SSIM 0.5643 |
+
+**Acceptance tolerance**
+
+- PSNR within +/- 1.5 dB of the paper value.
+- SSIM within +/- 0.05.
+- LPIPS within +/- 0.03.
+- MSE within +/- 30 percent relative.
+- Monotone improvement from 5 dB to 20 dB in every class.
+- At least 90 percent of images recover with PSNR above 18 dB at 10 dB SNR.
+
+If a target is missed, the phase does not pass. Either fix the pipeline or file the deviation
+with a diagnosis and a measured explanation. Do not proceed to Phase 17 with an unexplained
+gap: every later RACS number would be unanchored.
+
+---
+
+## Milestone M1 — Foundation (Phases 1-2)
+
+*Time estimate: 2-3 days. Status: complete.*
+
+### Phase 1: Environment and Project Skeleton — **DONE**
+
+> **What**: A working Python environment with PyTorch and GPU, a clean project structure, and
+> a shared config.
 > **Why**: Nothing else works without this. Reproducibility starts here.
 
-**Theory to learn:**
-- Python virtual environments (`venv`)
-- PyTorch: tensors, devices (CPU vs GPU), dtypes (fp32, fp16)
-- CUDA: what it is, how `torch.cuda.is_available()` works, `torch.cuda.memory_allocated()`
-- Model checkpoints: what `.safetensors` / `.bin` files are, HuggingFace Hub
-- Random seeds: `torch.manual_seed()`, `random.seed()`, `np.random.seed()` — why determinism matters
+**Theory**: virtual environments, tensors and dtypes, CUDA availability and memory accounting,
+model checkpoints (`safetensors`, `.bin`), random seeds and determinism.
 
-**Build tasks:**
-1. Create the project skeleton:
+**Build tasks**: project skeleton, `common/seed.py`, `common/device.py`, `common/paths.py`,
+`configs/base.yaml`, a first GPU tensor experiment.
+
+**Gate**: Image tensors (B x C x H x W), CPU versus GPU, checkpoints, and seed determinism are
+explained, and a script runs on the GPU and prints shapes.
+
+**Verified**: 7/7 checks, PyTorch 2.6.0+cu124, RTX 3050 6 GB.
+
+---
+
+### Phase 2: Image Tensors, VAE and Latent Space — **DONE**
+
+> **What**: Encode an image into Stable Diffusion's latent space and decode it back.
+> **Why**: EDICT and every diffusion stage operate in latent space. This round-trip error is
+> the floor that both the baseline and RACS inherit.
+
+**Theory**: VAE encoder and decoder, 512x512x3 to 64x64x4 (8x spatial downscale, 4 channels),
+normalisation to [-1, 1], MSE, PSNR, SSIM, and why reconstruction is lossy.
+
+**Build tasks**: install `diffusers` and `accelerate`, load the SD VAE in fp16, run the
+round-trip on 5 images, implement metrics, save side-by-side comparisons.
+
+**Gate**: Round-trip measured on more than one image, with an explanation of latent space, the
+compression factor, and the source of loss.
+
+**Verified**: PSNR 32.809 dB (31.78-34.15), SSIM 0.9354, latent (1, 4, 64, 64).
+
+**Reuse**: `models/vae.py` is used unchanged by the baseline (Phase 11 onward) and by RACS.
+
+---
+
+## Milestone M2 — Diffusion and Generation Cost (Phase 3)
+
+*Time estimate: 1-2 days. Status: complete.*
+
+### Phase 3: SD v1.5 Loading and Generation Cost — **DONE**
+
+> **What**: Run Stable Diffusion, measure what it costs, and confirm the exact same weights
+> can be loaded again inside the larger baseline stack.
+> **Why**: v1 framed this as "the number RACS must beat". In v2 it is the **floor**: the
+> paper's baseline adds ControlNet and IPAdapter-plus on top, so the true comparator costs
+> more. Keeping this measurement is still useful, as a lower bound and as the loader that
+> Phase 8 extends.
+
+**Theory**: forward and reverse diffusion, timesteps and schedules, DDIM, classifier-free
+guidance, and the cost model `time ~ steps x U-Net cost`.
+
+**Build tasks**: load SD v1.5 fp16 with DDIM and attention slicing, sweep steps and seeds,
+measure wall-clock and peak VRAM, save `phase3_timings.json`.
+
+**Gate**: Generation cost explained from measured numbers, reference images saved.
+
+**Verified**: 0.26 s/step, 12.98 s at 50 steps, 2.60 GB peak, CFG 1.75x.
+
+**Reuse**: `models/sd_pipeline.py` and `common/hf_lowmem.py` are the starting point for the
+Phase 8 reference generator. `phase3_timings.json` becomes the "generation only" row in
+Phase 30. `scripts/phase3_img2img.py` seeds Phase 24.
+
+---
+
+## Milestone M3 — Banked Retrieval Inputs (Phases 4-5)
+
+*Time estimate: already spent. Status: complete but not wired in.*
+
+These two phases are finished. They are **not** on the critical path to the baseline. They are
+parked here so the work is preserved and clearly accounted for.
+
+### Phase 4: Retrieval Image Database — **BANKED**
+
+> **What**: A versioned, deterministic corpus of 1,000 images.
+> **Why**: This is the RACS reference source. It is shared protocol state, so versioning and
+> hashes matter.
+
+**Verified**: 1,000 COCO val2017 images, canonical 512x512 RGB PNGs, 429.3 MB,
+`schema_version=1`, per-image `sha256`, `corpus_version cc20af21...89aff`, loader stable
+across loads, verify PASS.
+
+**Reuse**: Phase 17 builds the FAISS index directly on this corpus and its index file. Phase 6
+may also draw its `common`-class secret images from the same pool for development, while the
+frozen test split stays disjoint from the retrieval corpus.
+
+---
+
+### Phase 5: CLIP Embeddings — **BANKED**
+
+> **What**: 1,000 x 512 float32 unit-norm CLIP ViT-B/32 vectors aligned row-for-row with the
+> corpus index.
+> **Why**: Semantic similarity for retrieval. CLIP captures semantics, not pose, layout or
+> geometry, which is why structural reranking exists in Phase 20.
+
+**Verified**: 18.2 s for 1,000 images, re-encode max difference 2.53e-07, caption to image
+top-1 0.476, within-topic 0.779 versus across-topic 0.542, verify PASS. float32 is mandatory:
+fp16 varied by about 7e-4 across batch sizes and would break Tx/Rx identity.
+
+**Reuse**: Phase 17 loads `phase5_corpus_embeddings.npz` and builds `IndexFlatIP` with
+`image_ids` from `image_index.json`. Phase 20 reuses `models/clip_encoder.py`.
+
+---
+
+## Milestone M4 — Measurement and Test Set (Phase 6)
+
+*Time estimate: 2-3 days.*
+
+### Phase 6: Evaluation Harness and Class-Balanced Test Set — **NEXT**
+
+> **What**: The measurement rig and the frozen test split that every later phase reports on.
+> **Why**: You cannot "land on the paper's numbers" without the paper's metrics, classes and
+> SNRs. Building this before the baseline avoids retrofitting numbers later, and it is also
+> exactly what RACS needs, so it is not baseline-only work.
+
+**Theory**: LPIPS and why perceptual distance differs from PSNR and SSIM, distribution
+reporting versus single-image anecdotes, class-conditional evaluation, and frozen test splits.
+
+**Build tasks**
+
+1. Install `lpips`, `scipy`, `scikit-image`. Confirm they import inside the venv.
+2. Extend `evaluation/metrics.py` with `lpips` (AlexNet or VGG backbone, state which), and a
+   `report(metric_dict)` helper that emits mean, median, std, min, max and N per
+   (class, SNR) cell.
+3. Build `data/test_set/` with three class folders:
+   - `common`: UniStega-Content, or the COCO pool if UniStega is unavailable.
+   - `facial`: UniStega-Similar face subset.
+   - `style`: UniStega-Style.
+4. Freeze 100 images (at least 20 per class) in `data/metadata/test_split.json` with sha256
+   per file and a `split_version`. Test images must be disjoint from
+   `data/retrieval_images/`.
+5. Create `data/metadata/tokens.json`: one fixed digital token per test image, versioned.
+6. Write `scripts/phase6_eval_selftest.py`: metrics on identical images return PSNR infinity
+   or a sentinel, LPIPS near 0, and the report shape is correct.
+7. Write `scripts/eval_report.py`: a reusable driver that takes a system name, runs the SNR
+   sweep, and writes `experiments/results/<system>_<class>_<snr>.json`.
+
+**Gate**: Metrics verified against known cases (identical, slightly noisy, structurally
+different), the frozen split is reproducible by hash, and the report driver produces a
+well-formed table for a dummy system. The `common` class has at least 20 images; facial and
+style are present or their substitution is logged.
+
+**Reuse**: `evaluation/metrics.py` from Phase 2 is extended, not replaced. `eval_report.py` is
+used by Phase 15 (baseline), Phase 21 (RACS) and Phase 22 (comparison), so the comparison is
+literally the same code path.
+
+---
+
+## Milestone M5 — AgentSemSteCom Reproduction (Phases 7-16)
+
+*Time estimate: 12-16 days. This is the baseline. Nothing RACS-specific is wired in until it
+passes.*
+
+### Phase 7: Public Conditions (Kpub and Xfeat)
+
+> **What**: The public semantic key and the implicit structural feature.
+> **Why**: These are the paper's conditioning inputs. They are public in the paper's threat
+> model, and both Tx and Rx must derive identical values. They also become RACS inputs later,
+> so this work is shared.
+
+**Theory**: LLM prompting as a semantic key generator, why the key carries no reversible
+information, semantic segmentation versus pose skeletons as structural constraints, and the
+difference between public and private state.
+
+**Build tasks**
+
+1. `semantic/keygen.py`: generate `Kpub` from a secret image. Note `Kpub` is a prompt sequence,
+   not a caption of the secret verbatim. Options in order of preference: a local VLM or LLM,
+   then a deterministic template plus CLIP-based content words. Whatever is chosen must be
+   deterministic for a fixed image and recorded in the manifest.
+2. `semantic/features.py`:
+   - common: segmentation map (OneFormer or SegFormer). Store as a class-index map.
+   - facial: detect and extract pose keypoints, then render a skeleton graph image.
+   - style: return `None`, since style is conditioned on `Kpub` only.
+3. Cache artefacts to `experiments/results/public_conditions/<image_id>.npz` plus a manifest.
+4. Verify determinism: two runs on the same image give bit-identical `Kpub` and `Xfeat`.
+
+**Gate**: For all three classes, `Kpub` and `Xfeat` are produced, cached, deterministic, and
+visually inspected. A facial skeleton and a common-class segmentation map are shown next to
+their source images.
+
+**Reuse**: Phase 17 reuses `Kpub` and `Xfeat` as the RACS query. `semantic/features.py` also
+provides the edge and segmentation tools used by Phase 19.
+
+---
+
+### Phase 8: Reference Generator (PicX-Real / SD + ControlNet + IPAdapter-plus)
+
+> **What**: The paper's reference acquisition stage: deterministic noise from the digital
+> token, DDIM sampling guided by `Kpub` and `Xfeat`, ControlNet structure injection, and
+> IPAdapter-plus image guidance.
+> **Why**: This is the single stage RACS replaces. It must exist and be deterministic before
+> anything can be compared.
+
+**Theory**: ControlNet side branches and zero convolutions, IPAdapter as a decoupled
+cross-attention image prompt, deterministic noise from a hashed token, DDIM inversion and
+sampling order, and why a training step is involved.
+
+**Build tasks**
+
+1. Fetch weights with `scripts/phase5_fetch_model.py` (resumable, SHA-verified): PicX-Real if
+   available, otherwise SD v1.5 plus a segmentation-conditioned ControlNet and IPAdapter-plus.
+2. Implement `reference/generate.py`:
    ```
-   d:\racs2\
-   ├── configs/          # YAML/JSON config files
-   ├── common/           # Shared utilities (seed, paths, device)
-   ├── data/             # Images (secret, retrieval corpus)
-   ├── models/           # Model loading helpers
-   ├── semantic/         # Semantic/structural extraction
-   ├── retrieval/        # CLIP, FAISS, embedding, ranking
-   ├── reference/        # Reference acquisition (retrieval path, editing)
-   ├── steganography/    # VAE, EDICT, token perturbation
-   ├── communication/    # AWGN, SemCom codecs
-   ├── security/         # Token tests, steganalysis
-   ├── evaluation/       # Metrics (PSNR, SSIM, MSE, LPIPS, latency)
-   ├── experiments/      # Experiment scripts + results
-   │   └── results/
-   ├── scripts/          # Standalone run scripts per phase
-   └── tests/            # Unit tests
+   t -> seed = H(token) -> zD ~ N(0, I)
+   zref = DDIM(zD, noise_pred, Kpub, Xfeat, T, 0)
+   Xref = VAE.decode(zref)
    ```
-2. Create `common/seed.py` — a `set_seed(seed)` function that seeds Python, NumPy, PyTorch (CPU + CUDA).
-3. Create `common/device.py` — auto-detect GPU, report VRAM.
-4. Create `common/paths.py` — centralized paths, HuggingFace cache on D: (not C:).
-5. Create `configs/base.yaml` — image_size, device, seed, database_path, index_path, top_k, token, snr.
-6. **First experiment**: Load any image → convert to tensor → move to GPU → run through a tiny pretrained model (e.g., torchvision ResNet or just a matrix multiply) → get output → print shapes.
+3. Fit the 6 GB budget: fp16, `enable_attention_slicing`, `enable_vae_slicing`, sequential CPU
+   offload, and keep `hf_lowmem` installed before `diffusers`/`transformers`.
+4. Log peak VRAM, reference generation latency, and the seed derivation.
+5. Determinism test: the same token and image must produce a bit-identical `Xref`.
 
-**Gate**: You can explain image tensors (B×C×H×W), CPU vs GPU, model checkpoints, and why seeds matter. A script runs on GPU and prints tensor shapes.
-
----
-
-### Phase 2: Image Tensors, VAE & Latent Space
-
-> **What**: Encode an image into Stable Diffusion's latent space and decode it back.  
-> **Why**: EDICT and all diffusion stages operate in **latent space**, not pixel space. This is the error floor for everything downstream.
-
-**Theory to learn:**
-- VAE (Variational Autoencoder): encoder compresses, decoder reconstructs
-- Pixel space (512×512×3) → Latent space (64×64×4): 8× spatial downscale, 4 latent channels
-- Normalization: SD VAE expects pixel range [-1, 1]
-- Metrics: MSE, PSNR = 10·log₁₀(1/MSE), SSIM
-- **Key insight**: Reconstruction is NOT perfect. The round-trip error is a *floor* — EDICT/channel/retrieval errors add ON TOP of this.
-
-**Build tasks:**
-1. Install `diffusers` + `accelerate`.
-2. Load the SD v1.5 VAE (`AutoencoderKL`, fp16 on GPU).
-3. Take one image (512×512), normalize to [-1, 1].
-4. Run: `image → VAE encode → latent → VAE decode → reconstructed image`.
-5. Print every shape: input, latent, output.
-6. Measure MSE / PSNR / SSIM (implement in `evaluation/`).
-7. Repeat on 5 images. Report the spread, not one value.
-8. Save a side-by-side comparison to `experiments/results/`.
-
-**Gate**: VAE round-trip runs, is measured (MSE/PSNR/SSIM for >1 image), and you can explain: why latent space, what compression factor, why reconstruction is lossy.
-
-> **Answer for yourself**: *Why does Stable Diffusion work in latent space instead of pixel space?*
+**Gate**: References generated for all three classes, same token gives a bit-identical
+`Xref` (hash equality across two runs), peak VRAM measured and inside budget, and the
+generated reference is visually plausible for its class. If PicX-Real is unavailable, the
+substitute is recorded in `docs/DEVIATIONS.md` with the measured visual and metric impact.
 
 ---
 
-## Milestone M2 — Diffusion Understanding (Phase 3)
-*Time estimate: 1–2 days*
+### Phase 9: ControlNet Zero-Conv Fine-Tuning (Paper Algorithm 2)
 
-### Phase 3: Diffusion Models & Generation Cost
+> **What**: Train the ControlNet side branch (and its zero convolutions) on the diffusion
+> objective with the backbone frozen.
+> **Why**: The paper trains this branch. A stock ControlNet is a different conditioning
+> distribution and is a likely source of a systematic gap in Phase 15.
 
-> **What**: Run Stable Diffusion to generate images and measure how expensive it is.  
-> **Why**: You cannot argue RACS is cheaper until you have **measured** the generation cost. This phase gives you the baseline number that RACS must beat.
+**Theory**: the denoising objective, zero-initialised convolutions, why freezing the backbone
+preserves generative priors, and how to tell whether a fine-tune helped or just moved noise.
 
-**Theory to learn:**
-- Forward process: clean image → progressively add Gaussian noise → pure noise
-- Reverse process: pure noise → U-Net predicts and removes noise → clean image (many steps!)
-- Timesteps and noise schedules
-- DDIM: deterministic, fewer-step variant of DDPM
-- Classifier-free guidance: `guidance_scale` controls prompt adherence vs diversity
-- **Cost model**: generation time ≈ num_steps × per-step U-Net cost. This is why it's expensive.
+**Build tasks**
 
-**Build tasks:**
-1. Load SD v1.5 pipeline (fp16, DDIM scheduler, attention slicing for 6 GB VRAM).
-2. Generate images with the paper's example prompt.
-3. Experiment: vary seed, prompt, num_steps (20, 30, 50), guidance_scale.
-4. Measure: wall-clock time and peak VRAM per setting.
-5. Save timings to `experiments/results/phase3_timings.json`.
+1. Implement `reference/train_controlnet.py` following Algorithm 2: sample `t`, add noise,
+   compute the controlled block output, predict noise, backpropagate into the zero-conv
+   parameters only.
+2. Train a small run first (a few hundred steps) and verify the loss decreases and outputs
+   change in the intended direction.
+3. Scale up only if VRAM permits. Record batch size, steps, learning rate, and the exact
+   checkpoint hash.
+4. Compare zero-shot ControlNet versus fine-tuned on a 10-image probe using PSNR and SSIM of
+   the recovered secret at 10 dB.
+5. If a pretrained structure-conditioned ControlNet already matches the probe within
+   tolerance, record that as a deviation and skip the full fine-tune.
 
-**Gate**: You can explain *why generation is expensive* using your own numbers (e.g., "50 steps × 0.8s/step = 40 seconds on my GPU"). You have reference images saved.
-
-> **Key insight for RACS**: If generation takes 40 seconds and retrieval takes 0.1 seconds, that's the efficiency argument. But you need the numbers first.
-
----
-
-## Milestone M3 — Retrieval Stack (Phases 4–7)
-*Time estimate: 4–5 days — this is where RACS begins*
-
-### Phase 4: Build the Retrieval Image Database
-
-> **What**: Collect and organize a corpus of images that RACS will retrieve from.  
-> **Why**: The database IS the RACS core. No database = no retrieval. Both transmitter and receiver must share the exact same database.
-
-**Theory to learn:**
-- Image datasets: LAION subset, or curated corpus (start small)
-- Metadata per image: image_id, image_path, embedding (later), caption, structural metadata
-- **Critical principle**: The database is a shared protocol resource. Tx and Rx must use the SAME version, preprocessing, embedding model, and index. If they disagree, `Xref_tx ≠ Xref_rx` and recovery fails.
-
-**Build tasks:**
-1. Curate a small dataset: start with **1,000 images** (e.g., from COCO, ImageNet subset, or Unsplash).
-2. Organize as: `data/retrieval_images/` with an index file (`data/metadata/image_index.json`).
-3. Store: image_id, image_path, caption/description (if available).
-4. Build a loader that can iterate over the corpus.
-5. Plan the growth path: 1k → 5k → 10k → larger if needed.
-
-**Gate**: You have a working image corpus with metadata, and a loader that iterates over it.
+**Gate**: Either a fine-tuned checkpoint exists with a documented improvement over zero-shot on
+the probe, or a documented deviation shows the pretrained branch is sufficient. In both cases
+the chosen checkpoint, its hash, and the decision are recorded.
 
 ---
-
-### Phase 5: CLIP Embeddings
-
-> **What**: Convert images and text into vector embeddings using CLIP.  
-> **Why**: CLIP is how RACS measures semantic similarity. "Semantically similar" = "nearby in embedding space."
-
-**Theory to learn:**
-- CLIP: trained on image-text pairs, produces aligned embeddings
-- Image → image embedding (vector), Text → text embedding (vector)
-- Cosine similarity: `sim(a, b) = a·b / (|a|·|b|)`
-- **Critical limitation**: CLIP captures *semantic* similarity but NOT: same pose, same layout, same geometry, same texture, same steganographic suitability. This limitation motivates structural reranking (Phase 8–9).
-
-**Build tasks:**
-1. Load CLIP (e.g., `ViT-B/32` or `ViT-L/14` via `transformers` or `open_clip`).
-2. **Experiment 1**: Encode text prompts → embeddings. Compare similarity between related vs unrelated prompts.
-3. **Experiment 2**: Encode images → embeddings. Find which images are "similar" to each other.
-4. **Experiment 3**: Cross-modal — encode a text description and find the most similar images.
-5. Embed your entire 1k image corpus. Save embeddings to disk.
-
-**Gate**: You understand that CLIP = semantic similarity ≠ structural compatibility. You have embeddings for your corpus.
-
----
-
-### Phase 6: FAISS Retrieval
-
-> **What**: Build a vector search index so you can query "find the 10 most similar images to this query."  
-> **Why**: This is the first real RACS component — the retrieval engine.
-
-**Theory to learn:**
-- Vector search: given a query vector, find the K nearest neighbors in a database
-- Distance metrics: cosine similarity, inner product, L2 distance
-- FAISS: Facebook's library for efficient similarity search
-- `IndexFlatIP` (exact inner product) — recommended for determinism
-- Approximate indices (IVF, HNSW) — faster but non-deterministic
-
-**Build tasks:**
-1. Build `retrieval/build_index.py`: takes embeddings → creates FAISS index → saves to disk.
-2. Build `retrieval/retrieve.py`: `results = retrieve(query_embedding, top_k=10)`.
-3. Test with varying K: 1, 5, 10, 20, 50. For each K, log candidate IDs and similarity scores.
-4. Visualize: for a query image, display the Top-K retrieved candidates side by side.
-
-**Gate**: You can retrieve semantically similar images from your corpus. Pipeline so far:
-```
-Secret image → semantic query → CLIP embedding → FAISS → Top-K candidate images
-```
-
----
-
-### Phase 7: Deterministic Token Selection
-
-> **What**: Given the Top-K candidates, use a digital token to select exactly one candidate in a deterministic, reproducible way.  
-> **Why**: The transmitter and receiver must select the SAME reference image. The token provides both reproducibility and security (wrong token → wrong selection → failed recovery).
-
-**Theory to learn:**
-- Deterministic hashing: `index = hash(token) % K`
-- Why the token must NOT directly drive nondeterministic LLM behavior
-- Separation of AI reasoning from protocol-critical determinism
-- Security implication: without the token, an attacker's chance of guessing the right reference is ≈ 1/K
-
-**Build tasks:**
-1. Implement `retrieval/token_selection.py`:
-   - Input: Top-K candidate list (ordered), digital token
-   - Output: selected candidate index
-   - Method: `selected = candidates[hash(token) % len(candidates)]`
-2. **Test determinism**: same token + same candidate list → always the same selection.
-3. **Test security**: different token → different selection.
-4. **Test edge cases**: K=1 (always same), K=50 (more diversity).
-
-**Gate**: Token selection is deterministic and reproducible. Correct/wrong/different tokens produce expected behavior.
-
-> **Milestone M3 complete!** You now have the fundamental RACS retrieval pipeline:
-> ```
-> Secret → semantic query → CLIP → FAISS → Top-K → token selection → Xref
-> ```
-
----
-
-## Milestone M4 — Structural Reranking (Phases 8–9)
-*Time estimate: 3–4 days*
-
-### Phase 8: Structural Representation
-
-> **What**: Extract structural features (edges, segmentation, pose) from images.  
-> **Why**: CLIP finds "a person playing football" but might return the wrong pose, wrong layout, wrong spatial arrangement. Structural features measure *how things are arranged*, not just *what things are*.
-
-**Theory to learn:**
-- Semantic segmentation: pixel-level class labels
-- Edge detection: Canny, HED
-- Depth estimation: MiDaS / relative depth
-- Pose landmarks: OpenPose (for human/face images)
-- The difference between *semantic similarity* and *structural compatibility*
-
-**Build tasks:**
-1. Pick one structural representation to start (edges or segmentation — simplest).
-2. Extract structural features for a few images.
-3. Compare: two images that are semantically similar (same CLIP score) but structurally different.
-4. Define a structural similarity metric (e.g., IoU for segmentation maps, MSE for edge maps).
-
-**Gate**: You have a working structural representation and can demonstrate cases where CLIP says "similar" but structure says "different."
-
----
-
-### Phase 9: Structure-Aware Reranking
-
-> **What**: Combine semantic (CLIP) and structural similarity to produce better candidate rankings.  
-> **Why**: Pure CLIP retrieval is the baseline, not the final design. Structural reranking should improve reference quality for EDICT.
-
-**Theory to learn:**
-- Composite scoring: `Score(I) = α × semantic_similarity + β × structural_similarity`
-- Hyperparameter tuning of α, β
-- Later extension: `+ γ × steganographic_suitability`
-
-**Build tasks:**
-1. For each FAISS Top-K candidate, compute structural similarity to the secret image.
-2. Rerank by composite score.
-3. **A/B comparison**: CLIP-only ranking vs CLIP + structure ranking. Do the top candidates change? Are they visually better?
-4. Do NOT add VLM yet — first prove the simple structural signal helps.
-
-**Gate**: Structural reranking measurably changes the candidate pool vs CLIP-only. You can show examples where it helps.
-
----
-
-## Milestone M5 — EDICT (Phase 10)
-*Time estimate: 4–5 days — this is the hardest new concept*
 
 ### Phase 10: EDICT as an Isolated Mini-Project
 
-> **What**: Understand and implement EDICT (Exact Diffusion Inversion via Coupled Transformations).  
-> **Why**: EDICT is the reversible hiding/recovery mechanism. It's what makes the steganography work. You MUST understand it separately before integrating with RACS.
+> **What**: Exact Diffusion Inversion via Coupled Transformations, learned standalone.
+> **Why**: This is the reversible hiding and recovery mechanism. It is the highest-risk
+> unknown in the whole project, so it is proven before retrieval, reranking, or comparison.
 
-> [!CAUTION]
-> Do NOT try to integrate EDICT with RACS yet. Learn it as a standalone project first.
+> **Caution**: Do NOT integrate retrieval here. This phase is EDICT alone.
 
-**Theory to learn:**
-- Diffusion inversion: running the diffusion process "backwards" to recover the original latent
-- DDIM inversion: approximate but has numerical drift
-- EDICT: uses coupled latent variables to achieve *exact* (bit-level) inversion
-- Forward: `latent → EDICT forward → transformed latent`
-- Inverse: `transformed latent → EDICT inverse → original latent`
-- Why this matters: the hiding/recovery process must be *reversible*
+**Theory**: diffusion inversion, DDIM inversion drift, affine coupling of two latent
+trajectories, the mixing coefficient, why exactness is possible, and where the numerical
+floor actually is.
 
-**Build tasks:**
-1. Implement or reproduce EDICT from the paper.
-2. **First experiment** (pure inversion test):
+**Build tasks**
+
+1. Implement `steganography/edict.py` following the paper: forward
+   `latent -> EDICT forward -> transformed latent`, inverse the other way.
+2. Round-trip test over 20 random latents plus 20 real image latents:
+   `latent -> forward -> inverse -> latent`.
+3. Report max absolute and relative error, and the recovery error after VAE decoding.
+4. Sweep steps in {10, 20, 50} and mixing coefficient in {0.5, 0.7, 0.93, 0.99}.
+5. Confirm 50 steps with 0.93 is a sensible operating point before adopting it.
+
+**Gate**: Latent reconstruction error is at float32 machine precision scale (document the
+exact value, expect about 1e-6 or better relative), and the choice of steps and mixing
+coefficient is justified with the sweep.
+
+---
+
+### Phase 11: Local Steganography Core (VAE + EDICT + Token Perturbation)
+
+> **What**: The complete hide and recover mechanism with a manually chosen reference, no
+> channel, no retrieval.
+> **Why**: If this does not work, nothing downstream can. It isolates the steganographic core
+> from the reference-acquisition question.
+
+**Build tasks**
+
+1. `steganography/hide.py` and `steganography/recover.py`:
    ```
-   latent → EDICT forward → EDICT inverse → latent
+   Secret + Reference -> VAE encode -> EDICT forward -> token perturbation (eta = 0.05) -> Stego
+   Stego -> VAE encode -> EDICT inverse -> inverse perturbation -> Recovered secret
    ```
-   Measure latent reconstruction error. It should be near zero.
-3. Decode both latents to images. Compare visually and with metrics.
-4. Experiment with EDICT parameters: steps (50), mixing coefficient (0.93).
+2. Implement the binary mask from the token using the same PRNG derivation as Phase 8.
+3. Use a manually chosen reference that is semantically close to the secret, so failures are
+   not confused with bad reference selection.
+4. Measure MSE, PSNR, SSIM and LPIPS between secret and recovered secret on 20 images.
+5. Include a reference-sensitivity probe: swap to a mismatched reference and record the drop.
+6. Do NOT add AWGN, codec, VLM or editing.
 
-**Gate**: Latent reconstruction error is small (near machine precision). You can explain why EDICT enables reversible hiding/recovery.
-
----
-
-## Milestone M6 — Local Steganography Core (Phase 11)
-*Time estimate: 3–4 days*
-
-### Phase 11: VAE + EDICT + Token Perturbation (Local Only)
-
-> **What**: Make the complete hiding/recovery mechanism work locally (no wireless channel, no retrieval, no VLM).  
-> **Why**: If the core steganography doesn't work, nothing else matters.
-
-**Build tasks:**
-1. Implement the full local pipeline:
-   ```
-   Secret + Reference → VAE encode → EDICT forward + token perturbation → Stego image
-   Stego → VAE encode → EDICT inverse + inverse perturbation → Recovered secret
-   ```
-2. Use a manually chosen reference image (not retrieved yet).
-3. Include the token perturbation mechanism (η = 0.05).
-4. Measure: MSE, PSNR, SSIM, LPIPS between original secret and recovered secret.
-5. **Do NOT add**: AWGN, JSCC, VLM, editing. First prove the local core works.
-
-**Gate**: Local hide/recover works. Metrics are measured and reasonable.
+**Gate**: Local hide and recover works on 20 images, metrics are reported as distributions,
+and the mismatched-reference probe shows a clear degradation. The eta = 0.05 operating point is
+reproduced from the paper.
 
 ---
 
-## Milestone M7 — RACS-Base Local (Phase 12)
-*Time estimate: 2–3 days*
+### Phase 12: AWGN Channel
 
-### Phase 12: Connect Retrieval to EDICT
+> **What**: Add realistic channel noise between stego transmission and recovery.
+> **Why**: The paper reports results over SNR 5 to 20 dB. This is the first point where the
+> pipeline spans a channel.
 
-> **What**: Replace the manually-chosen reference with a retrieval-selected reference.  
-> **Why**: This is the RACS idea! You're now using your retrieval pipeline (Phases 4–9) to select references for EDICT (Phase 11).
+**Theory**: SNR in dB, complex Gaussian noise, channel coefficient `h = 1`, and how noise power
+follows from a target SNR.
 
-**Build tasks:**
-1. Wire the full local RACS pipeline:
-   ```
-   Secret → Kpub + Xfeat → CLIP → FAISS → rerank → token select → Xref
-         → EDICT hide → Stego → EDICT recover → Secret
-   ```
-2. This is **RACS-Base** (no VLM, no editing, no generation fallback).
-3. Measure quality: MSE, PSNR, SSIM, LPIPS.
-4. If it fails, debug whether the problem is in retrieval, reference compatibility, or EDICT integration.
+**Build tasks**
 
-**Gate**: End-to-end local recovery works with retrieved references.
+1. `communication/awgn.py`: `received = h * signal + n`, `n ~ CN(0, sigma^2)`, with `sigma^2`
+   derived from the target SNR and the measured signal power.
+2. Run the Phase 11 pipeline at 5, 10, 15 and 20 dB.
+3. Confirm the noise seed is controlled so runs are reproducible.
+4. Report per-SNR distributions, not single images.
 
-> **Why start simple?** If it fails, you know the problem is in retrieval OR reference compatibility OR EDICT integration — not in a complicated combination of 10 modules.
+**Gate**: Recovery degrades monotonically as SNR falls, with the same noise seed reproducing
+identical outputs. The SNR implementation is checked against the analytic noise power.
 
 ---
 
-## Milestone M8 — Communication + Full RACS-Base (Phases 13–15)
-*Time estimate: 4–5 days*
+### Phase 13: Semantic Communication Codec
 
-### Phase 13: AWGN Channel
+> **What**: Replace raw pixel transmission with the paper's JSCC codec.
+> **Why**: The paper's numbers are measured through this codec. Comparing against it without
+> the codec would be an apples-to-oranges baseline.
 
-> **What**: Add realistic channel noise to the stego image before recovery.  
-> **Why**: Real wireless channels add noise. RACS must work under noise, not just in ideal conditions.
+**Build tasks**
 
-**Theory to learn:**
-- SNR (Signal-to-Noise Ratio) in dB
-- AWGN (Additive White Gaussian Noise): `received = signal + noise`
-- How to compute noise power from target SNR
+1. Obtain the paper's codec path: analog SwinJSCC-style with C = 48 trained at 10 dB, and the
+   digital MDJCM trained on DIV2K with modulation 64. Use pretrained weights, do not train
+   from scratch.
+2. `communication/semantic_codec.py`: `stego -> encoder -> channel -> decoder -> stego_hat`.
+3. Verify the codec in isolation on clean images: report reconstruction PSNR and LPIPS at each
+   SNR before wiring it into the full pipeline.
+4. Compare raw AWGN versus codec-plus-AWGN at the same SNR so the codec's contribution is
+   separable.
+5. If a specific pretrained checkpoint is unobtainable, substitute the closest available JSCC
+   implementation and log it in `docs/DEVIATIONS.md`.
 
-**Build tasks:**
-1. Implement `communication/awgn.py`.
-2. Add AWGN to the stego image at SNR = 20, 15, 10, 5 dB.
-3. Measure recovery quality at each SNR level.
-
-**Gate**: You see quality degrade gracefully as SNR decreases.
-
----
-
-### Phase 14: Semantic Communication
-
-> **What**: Replace raw AWGN with a learned semantic communication codec (SwinJSCC or similar).  
-> **Why**: The baseline paper uses semantic communication, not raw pixel transmission. RACS must use the same codec for fair comparison.
-
-**Build tasks:**
-1. Use a pretrained semantic communication implementation (do NOT train from scratch).
-2. Integrate: `stego → semantic encoder → channel → semantic decoder → reconstructed stego`.
-3. Measure quality degradation from the codec at each SNR.
-
-**Gate**: The semantic communication codec runs and its effect on quality is measured.
+**Gate**: The codec runs end to end, its standalone degradation curve is measured, and the
+codec-plus-channel path is measurably different from raw AWGN in the expected direction.
 
 ---
 
-### Phase 15: Full RACS-Base
+### Phase 14: Optional Task-Oriented Enhancement (CodeFormer)
 
-> **What**: The complete end-to-end pipeline with all components connected.  
-> **Why**: This is the first major milestone — the system that answers the research question.
+> **What**: The paper's optional enhancement module for the facial class.
+> **Why**: Fig. 8 in the paper reports a facial-class gain from this module. Without it, that
+> result cannot be compared. It is optional for the main Table II path.
 
-```
-TRANSMITTER:
-  Secret → Kpub + Xfeat → CLIP → FAISS → rerank → token select → Xref
-        → EDICT + token perturbation → Stego → Semantic encoder → AWGN
+**Build tasks**
 
-RECEIVER:
-  AWGN → Semantic decoder → Reconstructed stego
-       → SAME database → SAME embedding → SAME ranking → SAME token → SAME Xref
-       → EDICT inversion → Inverse perturbation → Recovered secret
-```
+1. Load CodeFormer with fidelity weight 0.5.
+2. Apply it after recovery, facial class only.
+3. Measure the delta in PSNR, SSIM and LPIPS, with and without enhancement, at 5, 10, 15 and
+   20 dB.
+4. Confirm it does not degrade the non-facial classes (it should not be applied there).
 
-**Critical test BEFORE looking at PSNR:**
-```
-Xref_transmitter == Xref_receiver
-```
-**If this fails, STOP and fix reproducibility.** Nothing else matters until this invariant holds.
-
-**Gate**: Full pipeline runs. `Xref_tx == Xref_rx`. Quality metrics are measured across SNR levels.
+**Gate**: The facial-class gain is reproduced in direction and roughly in magnitude, and the
+module is cleanly switchable by config.
 
 ---
 
-## Milestone M9 — Baseline Comparison (Phase 16)
-*Time estimate: 2–3 days*
+### Phase 15: Assemble AgentSemSteCom and Reproduce Table II — **BASELINE GATE**
 
-### Phase 16: Compare Against AgentSemSteCom
+> **What**: The full baseline, end to end, in the paper's order:
+> ```
+> Secret -> Kpub + Xfeat -> token-seeded diffusion + ControlNet + IPAdapter-plus -> Xref
+>        -> VAE encode -> EDICT forward -> token perturbation -> Stego
+>        -> semantic encode -> AWGN -> semantic decode -> Stego_hat
+>        -> EDICT inverse -> inverse perturbation -> Recovered secret
+> ```
+> **Why**: This is the control condition. Everything after this phase is a comparison against
+> this.
+> **Rule**: Nothing RACS-specific is wired in here. If a retrieval module appears in this
+> pipeline, the gate fails.
 
-> **What**: Build or obtain the best possible implementation of the original system and compare.  
-> **Why**: Without a fair comparison, RACS results are meaningless.
+**Build tasks**
 
-**Build tasks:**
-1. Use the same secret images, same image classes, same SNR values, same metrics, same downstream pipeline.
-2. Compare:
-   - **Quality**: PSNR, SSIM, MSE, LPIPS
-   - **Efficiency**: reference acquisition time, total latency, peak GPU memory
-   - **Security**: correct-token vs wrong-token gap
-3. **Do not claim RACS is faster until measurements demonstrate it.**
+1. `pipelines/agentsemstecom.py`: one function that takes a secret image, class and SNR and
+   returns the recovered image plus all intermediates.
+2. `scripts/phase15_baseline.py`: run the frozen 100-image split across 3 classes and 4 SNRs.
+3. Write `experiments/results/baseline_table.json` with mean, median, std and N per cell.
+4. Write `experiments/results/baseline_manifest.json`: model hashes, config hash, split
+   version, token file hash, and code commit.
+5. Visual grids: `baseline_<class>_<snr>.png`.
+6. Fill `docs/DEVIATIONS.md` for anything not reproduced exactly.
 
-**Gate**: A comparison table exists with honest numbers.
+**Gate**
 
----
+- Determinism: the same image, token and seed reproduce a bit-identical `Xref` and a
+  bit-identical stego image.
+- Quality targets within tolerance:
 
-## Milestone M10 — Intelligent Variants (Phases 17–19)
-*Time estimate: 5–7 days*
+| Cell | Target | Tolerance |
+| :-- | :-- | :-- |
+| facial 5 dB | PSNR 22.73, SSIM 0.6989 | +/- 1.5 dB, +/- 0.05 |
+| facial 20 dB | PSNR 26.29, LPIPS 0.2127 | +/- 1.5 dB, +/- 0.03 |
+| style 5 dB | MSE 0.721e-2, LPIPS 0.3850 | +/- 30 percent, +/- 0.03 |
+| common 5 dB | PSNR 19.71, MSE 1.207e-2 | +/- 1.5 dB, +/- 30 percent |
+| common 10 dB | SSIM 0.5643 | +/- 0.05 |
 
-### Phase 17: VLM/Agentic Reranking (RACS-Agent)
+- Monotone improvement from 5 dB to 20 dB in every class.
+- At least 90 percent of images above 18 dB PSNR at 10 dB SNR.
+- Any missed target has a written, measured diagnosis in `docs/DEVIATIONS.md`.
 
-> **What**: Use a Vision-Language Model to evaluate candidates more intelligently.  
-> **Why**: A VLM can assess semantic compatibility, layout, structure, visual similarity, and editing requirements — things CLIP + simple structure metrics can't.
-
-> [!IMPORTANT]
-> **Do NOT put a nondeterministic cloud LLM in the transmitter/receiver selection path.**
-> The VLM must produce fixed scores → deterministic ranking → token selection.
-
-**Gate**: Compare RACS-Base vs RACS-Agent. Does the VLM actually improve retrieval enough to justify its cost?
-
----
-
-### Phase 18: Lightweight Editing (RACS-AgentEdit)
-
-> **What**: If the retrieved reference is semantically good but structurally imperfect, apply a light edit.  
-> **Why**: This might bridge the quality gap between pure retrieval and full generation.
-
-> [!WARNING]
-> Do NOT turn this into full diffusion generation. The editing must be substantially cheaper than generation. Otherwise you've recreated the problem RACS is trying to solve.
-
-**Gate**: Compare quality gain vs additional latency. Is RACS-AgentEdit better than RACS-Agent?
-
----
-
-### Phase 19: Retrieve-or-Generate Hybrid (RACS-Hybrid)
-
-> **What**: If retrieval quality is too low, fall back to diffusion generation.  
-> **Why**: This gives the best of both worlds — fast retrieval when it works, full generation only when needed.
-
-**Build tasks:**
-1. Define a quality threshold: if candidate score < threshold, fall back to generation.
-2. The threshold must be **deterministic** and **identical at Tx and Rx**.
-3. Compare: always-generate vs always-retrieve vs retrieve+edit vs retrieve-or-generate.
-
-**Gate**: The hybrid system is compared against all other variants on quality and cost.
+> **Do not proceed to Phase 17 with an unexplained miss.** A silent gap here contaminates
+> every RACS number later.
 
 ---
 
-## Milestone M11 — Security, Evaluation, Ablations (Phases 20–24)
-*Time estimate: 5–7 days*
+### Phase 16: Baseline Security and Steganalysis
 
-### Phase 20: Security Testing
-Test correct token, wrong token, no token. Measure recovery quality degradation. Use a proper test set and report distributions, not single images.
+> **What**: The baseline's security profile: correct token versus wrong token versus no token,
+> and the XuNet detection rate.
+> **Why**: These are the paper's contribution numbers. They must be baseline numbers before
+> they can be RACS numbers.
 
-### Phase 21: Steganalysis
-Test whether stego images can be detected by XuNet / SRNet. Compare detection rates for AgentSemSteCom vs RACS. Non-blocking.
+**Build tasks**
 
-### Phase 22: Full Evaluation Matrix
-Systems × Image classes × SNR × Token conditions → Quality + Efficiency + Security metrics.
+1. Three receiver conditions on the same stego images: correct token, wrong token, no token.
+2. Report PSNR, SSIM and LPIPS distributions for each, plus the correct-minus-wrong gap.
+3. Compare against the paper's 25.37 dB correct versus 18.91 dB wrong (gap 6.46 dB).
+4. Train or obtain XuNet on the baseline stego set (target detection about 50.91 percent,
+   near chance). Record training setup and epochs.
+5. Save `experiments/results/baseline_security.json` and `baseline_steganalysis.json`.
 
-### Phase 23: Ablation Studies
-- CLIP only vs CLIP + structure
-- Top-K sweep (1, 5, 10, 20, 50)
-- With/without token selection
-- With/without VLM
-- With/without editing
-- Always-retrieve vs retrieve-or-generate
-
-### Phase 24: Efficiency Analysis
-Measure: T_generation, T_retrieval, T_reranking, T_editing, T_total, peak GPU memory.
-
-**Gate**: Numbers support or refute each hypothesis, with distributions not anecdotes.
+**Gate**: The correct-token advantage is reproduced within tolerance (gap at least 4 dB), the
+wrong-token and no-token conditions both underperform the correct one, and the XuNet detection
+rate is reported with its training setup. Baseline results are now frozen.
 
 ---
 
-## Milestone M12 — Research Output (Phases 25–27)
-*Time estimate: 3–5 days*
+## Milestone M6 — RACS Retrieval Stack (Phases 17-20)
 
-### Phase 25: Research Analysis
-Answer the 12 final questions from the overview (quality, efficiency, security, robustness, retrieval effectiveness, adaptive architecture).
+*Time estimate: 6-8 days. Now, and only now, the banked work is wired in.*
 
-### Phase 26: Final Tables & Figures
-Quality table, efficiency table, security table, ablation table. Key figures: architecture comparison, latency bars, PSNR vs SNR curves, Top-K effect, token security.
+### Phase 17: FAISS Retrieval
 
-### Phase 27: Reproducibility Package
-Freeze: dataset version, database, FAISS index, embedding model, preprocessing, seeds, token mapping, Top-K, ranking weights, editing parameters, EDICT parameters, SNR, test set.
+> **What**: Exact inner-product vector search over the banked embeddings.
+> **Why**: This is the retrieval engine that will stand in for diffusion generation.
 
----
+**Theory**: vector search, cosine and inner product, `IndexFlatIP` versus approximate indexes,
+and why exactness is required for Tx/Rx agreement.
 
-## Summary: The Sprint Path
+**Build tasks**
 
-If you want a fast first pass, here's the critical path to a working RACS-Base:
+1. Install `faiss-cpu`.
+2. `retrieval/build_index.py`: load `phase5_corpus_embeddings.npz`, assert row order matches
+   `image_index.json`, build `IndexFlatIP`, save the index plus `image_ids` and
+   `corpus_version`.
+3. `retrieval/retrieve.py`: `retrieve(query, top_k=10)` returning ordered `(image_id, score)`.
+4. Sweep K in {1, 5, 10, 20, 50} and log candidates and scores.
+5. Save `experiments/results/phase17_index_manifest.json` with the embedding hash, index hash,
+   corpus version and K sweep.
 
-| Sprint | Phases | What You Get |
-|--------|--------|-------------|
-| **Sprint 1** | 1–2 | Environment + VAE understanding |
-| **Sprint 2** | 3 | "Generation costs X seconds" — the number RACS must beat |
-| **Sprint 3** | 4–7 | `query → CLIP → FAISS → token → selected image` — RACS retrieval works |
-| **Sprint 4** | 8–9 | Structural reranking improves candidate quality |
-| **Sprint 5** | 10–11 | EDICT steganography works locally (hide + recover) |
-| **Sprint 6** | 12 | RACS + EDICT — the core contribution works locally |
-| **Sprint 7** | 13–15 | Full RACS-Base with communication channel |
-| **Sprint 8** | 16 | "Here's how RACS compares to the baseline" |
+**Gate**: Index row order matches the corpus exactly, retrieval is deterministic across
+process restarts, top-1 self-query returns the query image at score 1.0, and the K sweep is
+logged. Query to Top-K works for an image query and for a text query.
 
-Everything after Sprint 8 is **extensions and evaluation** that make the research stronger, but Sprint 8 is the minimum viable research result.
+**Reuse**: This is the Phase 4 and Phase 5 payoff. No corpus or embedding work is redone.
 
 ---
 
-## My Recommendation
+### Phase 18: Deterministic Token Selection
 
-> [!TIP]
-> **Start with Phase 1 right now.** Create the project skeleton, set up seeds, run something on GPU. It's the smallest phase and builds confidence. Don't overthink it — just get Python + PyTorch + GPU working and printing tensor shapes.
+> **What**: Use the digital token to select exactly one candidate from Top-K.
+> **Why**: Tx and Rx must select the same reference. The token provides reproducibility and
+> security.
 
-The plan in [_implplan.txt](file:///d:/racs2/phase2/_implplan.txt) and [RACS_ROADMAP.md](file:///d:/racs2/docs/RACS_ROADMAP.md) are solid. I've restructured and simplified them here, but the substance is the same. The key adjustments I'd make:
+**Theory**: deterministic hashing, `index = H(token) mod K`, why the token must not drive a
+nondeterministic model in the selection path, and the 1/K guessing bound.
 
-1. **Don't rush to EDICT.** Phases 1–7 build your understanding progressively. EDICT (Phase 10) is the hardest concept — arrive there with a strong foundation.
-2. **Start with a small corpus** (1k images). Scaling to 10k+ is a later problem.
-3. **Use `IndexFlatIP`** for FAISS — it's exact and deterministic. Speed doesn't matter at 1k–10k scale.
-4. **Keep the HuggingFace blocker in mind** — Phase 2 and 3 need model downloads. Test connectivity first.
-5. **Phase 15's gate is the hardest**: `Xref_tx == Xref_rx`. Design for determinism from day one.
+**Build tasks**
+
+1. `retrieval/token_selection.py`: stable hash (SHA-256 based, not Python's randomised
+   `hash()`), input is the ordered candidate list and the token.
+2. Test determinism across processes and Python versions.
+3. Test that distinct tokens spread across the pool, and measure the distribution for K = 1,
+   5, 10, 20, 50.
+4. Test that K = 1 always selects the same candidate.
+5. Confirm the same selection function is used by Tx and Rx code paths.
+
+**Gate**: Same token and candidates produce the same selection across processes, different
+tokens spread measurably, K = 1 is stable, and the guessing probability is 1/K by
+construction. Do not use the built-in `hash()`.
+
+---
+
+### Phase 19: Structural Representation
+
+> **What**: Structural features that measure arrangement rather than semantics.
+> **Why**: CLIP finds the right content but can return the wrong pose, layout or geometry.
+> Structure is the reranking signal.
+
+**Theory**: semantic segmentation, edge detection (Canny, HED), depth (MiDaS), pose landmarks,
+and the difference between semantic similarity and structural compatibility.
+
+**Build tasks**
+
+1. Start with edges or segmentation, whichever is simpler to validate.
+2. Extract features for a probe set of 50 images.
+3. Find pairs with high CLIP similarity but low structural similarity and show them.
+4. Define the structural metric: IoU for segmentation, MSE or correlation for edges.
+5. Reuse the Phase 7 feature extractors where they apply.
+
+**Gate**: A working structural representation exists, and at least three concrete examples
+show CLIP saying "similar" while structure says "different", with numbers.
+
+---
+
+### Phase 20: Structure-Aware Reranking
+
+> **What**: Composite semantic plus structural ranking of the Top-K candidates.
+> **Why**: Pure CLIP retrieval is the baseline design, not the final one.
+
+**Build tasks**
+
+1. `retrieval/rerank.py`: `score = alpha * semantic + beta * structural`, with both terms
+   normalised to a comparable range.
+2. Sweep alpha and beta on a held-out probe. Do not tune on the test split.
+3. A/B comparison: CLIP-only versus CLIP plus structure. Report rank changes and the resulting
+   reference quality from Phase 11's local pipeline.
+4. Freeze the chosen weights and record them in config and in the manifest.
+5. Do NOT add a VLM here.
+
+**Gate**: Reranking measurably changes the candidate pool, the chosen weights are frozen and
+justified, and there is at least one case where it visibly helps. If it does not help, report
+that honestly as a negative result; it is a valid finding.
+
+---
+
+## Milestone M7 — RACS-Base and the Comparison (Phases 21-22)
+
+*Time estimate: 3-5 days.*
+
+### Phase 21: RACS-Base End-to-End
+
+> **What**: The full pipeline with exactly one stage swapped:
+> ```
+> Secret -> Kpub + Xfeat -> CLIP -> FAISS -> rerank -> token select -> Xref
+>        -> [identical downstream as Phase 15]
+> ```
+> **Why**: This is the contribution. Because the downstream is byte-identical to the baseline,
+> the difference is attributable to reference acquisition.
+
+**Build tasks**
+
+1. `pipelines/racs_base.py`, importing the same downstream modules as Phase 15. Any
+   duplication of the downstream code is a bug.
+2. Run the same frozen 100-image split, 3 classes, 4 SNRs, same tokens.
+3. **Before looking at PSNR**, verify `Xref_tx == Xref_rx` bit-exactly for every image:
+   - recompute the receiver-side reference from the same query, index, ranking and token;
+   - compare SHA-256 of the tensors and of the saved PNG.
+4. Measure reference acquisition latency and peak VRAM, and keep the baseline values from
+   Phase 15 for comparison.
+5. Save `experiments/results/racs_table.json` and `racs_manifest.json`.
+
+**Gate**: `Xref_tx == Xref_rx` for 100 percent of images across all classes and SNRs, the
+downstream code is provably the same module as the baseline, and quality metrics are measured
+as distributions. If the invariant fails on any single image, stop and fix it. Nothing else
+matters until it holds.
+
+---
+
+### Phase 22: Controlled Comparison — **PRIMARY RESULT**
+
+> **What**: AgentSemSteCom versus RACS-Base under identical conditions.
+> **Why**: This is the paper-style result: same secrets, same classes, same SNRs, same
+> metrics, same codec, same tokens, same downstream.
+
+**Build tasks**
+
+1. `scripts/phase22_compare.py`: load both frozen result sets and emit the comparison table.
+2. Table rows: system, class, SNR, PSNR, SSIM, MSE, LPIPS, reference latency, total latency,
+   peak VRAM.
+3. Security comparison: correct versus wrong token gap for both systems.
+4. Visual grids: baseline versus RACS recovered images at 5 and 20 dB.
+5. State the efficiency claim only if the measured latency difference supports it.
+6. Save `experiments/results/phase22_comparison.json` and `.md`.
+
+**Gate**: The comparison table exists, both systems were measured with the same code path,
+`Xref_tx == Xref_rx` holds, and the conclusion is stated in terms of measured numbers,
+including any metric where RACS is worse. A negative or mixed result is valid and must be
+reported as such.
+
+> **This phase is the minimum viable research result.** Everything after it strengthens the
+> paper but does not change whether the core claim can be evaluated.
+
+---
+
+## Milestone M8 — Intelligent Variants (Phases 23-25)
+
+*Time estimate: 5-7 days.*
+
+### Phase 23: VLM and Agentic Reranking (RACS-Agent)
+
+> **What**: A VLM scores candidates before deterministic ranking.
+> **Why**: A VLM can judge layout and compatibility in ways CLIP plus edges cannot.
+
+> **Important**: The VLM must produce fixed scores, then a deterministic ranking, then token
+> selection. No nondeterministic cloud model in the Tx/Rx selection path.
+
+**Build tasks**: score each candidate with a VLM, cache scores by image hash, rerank
+deterministically, compare RACS-Base versus RACS-Agent on quality and latency.
+
+**Gate**: RACS-Agent is measured against RACS-Base. Either it improves reference quality
+enough to justify its cost, or it does not and that is reported.
+
+---
+
+### Phase 24: Lightweight Editing (RACS-AgentEdit)
+
+> **What**: A light edit of a semantically good but structurally imperfect reference.
+> **Why**: It may close the gap to generation at a fraction of the cost.
+
+> **Warning**: Do not turn this into full diffusion generation. If the edit costs as much as
+> generation, the project's premise is defeated.
+
+**Build tasks**: reuse `scripts/phase3_img2img.py`, apply low-strength img2img (start from the
+measured strength curve, around 0.25-0.5), record edit latency, compare quality and cost.
+
+**Gate**: Quality gain versus added latency is measured, and the edit stays substantially
+cheaper than a full generation.
+
+---
+
+### Phase 25: Retrieve-or-Generate Hybrid (RACS-Hybrid)
+
+> **What**: Fall back to generation when retrieval quality is too low.
+> **Why**: Best of both, if the threshold is deterministic on both ends.
+
+**Build tasks**: define a deterministic quality threshold on the ranking score, implement the
+fallback, verify the threshold decision is identical at Tx and Rx, compare all four variants.
+
+**Gate**: The hybrid is compared against always-generate, always-retrieve and retrieve-plus-edit
+on quality and cost, with a fixed documented threshold.
+
+---
+
+## Milestone M9 — Security, Evaluation, Ablations (Phases 26-30)
+
+*Time estimate: 5-7 days.*
+
+### Phase 26: Security Matrix
+
+Test correct token, wrong token and no token for both systems on a proper test set. Report
+distributions and the correct-minus-wrong gap. Gate: distributions, not single images, and the
+gap is compared against the paper's 6.46 dB.
+
+### Phase 27: RACS Steganalysis
+
+Run XuNet and SRNet on RACS stego images, using the same training setup as Phase 16.
+Non-blocking. Gate: detection accuracy reported and compared with the baseline's 50.91
+percent.
+
+### Phase 28: Full Evaluation Matrix
+
+Systems x classes x SNR x token conditions, with quality, efficiency and security metrics.
+Gate: a single consolidated matrix whose cells trace back to raw result JSON files.
+
+### Phase 29: Ablations
+
+CLIP only versus CLIP plus structure; Top-K in {1, 5, 10, 20, 50}; with and without token
+selection; with and without VLM; with and without editing; always-retrieve versus hybrid.
+Gate: each ablation has a measured delta and a stated confidence, with distributions.
+
+### Phase 30: Efficiency Analysis
+
+Measure `T_generation`, `T_retrieval`, `T_rerank`, `T_editing`, `T_total` and peak GPU memory,
+for every system variant. Gate: the efficiency claim is supported or refuted by these numbers,
+including the Phase 3 SD-only floor as a reference row.
+
+---
+
+## Milestone M10 — Research Output (Phases 31-33)
+
+*Time estimate: 3-5 days.*
+
+### Phase 31: Research Analysis
+
+Answer the 12 final questions from the overview: quality, efficiency, security, robustness,
+retrieval effectiveness, adaptive architecture. Gate: every answer cites measured artifacts.
+
+### Phase 32: Final Tables and Figures
+
+Quality table, efficiency table, security table, ablation table. Figures: architecture
+comparison, latency bars, PSNR versus SNR curves, Top-K effect, token security. Reuse the
+Phase 2 and Phase 3 PNGs as supporting evidence rather than regenerating them.
+
+### Phase 33: Reproducibility Package
+
+Freeze dataset version, database, FAISS index, embedding model, preprocessing, seeds, token
+map, Top-K, ranking weights, editing parameters, EDICT parameters, SNRs and test set. One
+command reproduces the headline table. Gate: a clean checkout plus the package reproduces
+Phase 22 within tolerance.
+
+---
+
+## 7. Sprint path (revised)
+
+| Sprint | Phases | What you get | Duration |
+| :-- | :-- | :-- | :-- |
+| A | 6-9 | Test rig, public conditions, deterministic reference generator | 5-7 days |
+| B | 10-14 | EDICT, local hide and recover, channel, codec, enhancement | 7-10 days |
+| C | 15-16 | **AgentSemSteCom reproduced and frozen** | 3-5 days |
+| D | 17-20 | Retrieval, token selection, structural reranking | 6-8 days |
+| E | 21-22 | **RACS-Base and the primary comparison** | 3-5 days |
+| F | 23-25 | Variants | 5-7 days |
+| G | 26-30 | Security, steganalysis, matrix, ablations, efficiency | 5-7 days |
+| H | 31-33 | Write-up and reproducibility | 3-5 days |
+
+**Minimum viable result is the end of Sprint E (Phase 22).** Sprints F-H strengthen the paper.
+
+Total remaining estimate: **37-54 working days** for the full plan, with the first honest
+paper-comparable number at the end of Sprint C.
+
+---
+
+## 8. Critical path and stop rules
+
+Critical path: `6 -> 8 -> 10 -> 11 -> 13 -> 15 -> 17 -> 18 -> 21 -> 22`.
+
+- Phase 10 (EDICT) is the highest technical risk. If exact inversion does not reach machine
+  precision, stop and understand why before building anything else.
+- Phase 15 (baseline numbers) is the highest scientific risk. If the targets are missed, the
+  project has no control condition. Options in order: fix the pipeline, substitute the closest
+  documented component, or narrow the claim to the classes that do reproduce. Do not silently
+  proceed.
+- Phase 21 (`Xref_tx == Xref_rx`) is a hard invariant. A single mismatch invalidates the
+  security and recovery results.
+- Phase 6 is cheap and unblocks everything, so it comes next.
+
+---
+
+## 9. Environment and machine hygiene
+
+- Windows, RTX 3050 Laptop 6 GB, 16 GB RAM. venv at `.venv`, PyTorch 2.6.0+cu124.
+- HF, diffusers and torch caches are redirected to `D:\racs2\cache`; pip temp to
+  `D:\racs2\temp`. C: is full.
+- The commit-charge trap is still live. `common/hf_lowmem.py` must be imported before
+  `diffusers` and `transformers`. The baseline stack is heavier than SD v1.5 alone, so check
+  free commit before loading:
+  ```powershell
+  Get-CimInstance Win32_OperatingSystem | Select-Object @{n='FreeCommitGB';e={[math]::Round($_.FreeVirtualMemory/1MB,2)}}
+  ```
+- Expect to use sequential CPU offload for the Phase 8 stack. Record actual peak VRAM rather
+  than assuming it fits.
+
+---
+
+## 10. Deviation register
+
+`docs/DEVIATIONS.md` is created in Phase 6 and appended to in every phase that cannot match
+the paper exactly. Each entry records: phase, paper component, what was used instead, why, the
+measured impact on PSNR, SSIM, MSE and LPIPS, and whether the impact is acceptable.
+
+Deviation entries are required for, at minimum: the reference generator if PicX-Real weights
+are unavailable, the ControlNet branch if it is not fine-tuned, the semantic codec if a
+substitute is used, the dataset if UniStega cannot be obtained, and the public-key generator if
+a local model replaces the paper's LLM setup.
+
+---
+
+## 11. What this plan deliberately does not do
+
+- It does not build RACS components into the pipeline before the baseline is validated. They
+  exist on disk and are tested in isolation, which is why the banked work is safe.
+- It does not tune any parameter to make a number match. Parameters come from the paper;
+  deviations are recorded.
+- It does not claim an efficiency win before Phase 30 measures it.
+- It does not discard any completed work: see Section 4 for the artifact-to-consumer map.

@@ -1,8 +1,8 @@
 # RACS2 — Project Status & Change Log
 
 > **Location**: `d:\racs2\project_status.md`  
-> **Last Updated**: 2026-10-20  
-> **Current Phase**: Phase 5 complete (CLIP embeddings verified) — Phase 6 (FAISS retrieval) is next
+> **Last Updated**: 2026-10-23  
+> **Current Phase**: Phases 1-5 complete. Phase 4-5 (corpus + CLIP) are **banked** for later. Phase 6 (evaluation harness + test set) is next, then the AgentSemSteCom baseline reproduction (Phases 7-16) before any RACS integration.
 
 ---
 
@@ -210,6 +210,24 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
 
 ## 5. Change Log
 
+### [2026-10-23] - Plan Reordered: Baseline-First
+
+- **Rewrote** `racs2_implementation_plan.md` as v2. AgentSemSteCom is now reproduced and
+  validated **first** (Phases 7-16), and only then is the RACS contribution built on top of
+  the frozen baseline (Phases 17-22).
+- **Why**: the previous order built RACS-only components first and deferred the baseline to
+  one over-scoped phase. That left no control condition and no way to attribute differences
+  to reference acquisition.
+- **No completed work is discarded.** Phases 1-5 carry over unchanged. Phase 4-5 outputs are
+  now explicitly **banked** and consumed at Phase 17 (FAISS), with an artifact-to-consumer
+  reuse map in the plan's Section 4.
+- **Phase 3 timing** is reclassified as the SD-only **lower bound**, not the baseline cost,
+  since the paper's baseline adds ControlNet and IPAdapter-plus.
+- **New baseline gate** (Phase 15) requires the paper's Table II numbers within tolerance:
+  facial 5 dB PSNR 22.73, facial 20 dB LPIPS 0.2127, style 5 dB LPIPS 0.3850, common 5 dB
+  PSNR 19.71. Deviations must be logged in `docs/DEVIATIONS.md`.
+- **Phase 22** is now the primary comparison and the minimum viable research result.
+
 ### [2026-10-20] - Phase 5 Complete (CLIP Embeddings)
 
 - **Added** `models/clip_encoder.py`: frozen CLIP ViT-B/32 wrapper over `transformers`
@@ -328,7 +346,26 @@ removes the 3.2 GB checkpoint-mmap requirement, but weights still need to be
 materialised once.
 
 See `phase3_instructions.md`, `phase4_instructions.md`, and `phase5_instructions.md` for
-the full task detail and acceptance gates. **Phase 5 is complete and verified.** The next
-phase is **Phase 6 — FAISS Retrieval**: build `retrieval/build_index.py` and
-`retrieval/retrieve.py` over `experiments/results/phase5_corpus_embeddings.npz` using
-`IndexFlatIP`, then sweep Top-K = 1, 5, 10, 20, 50.
+the historical task detail. **Phases 1-5 are complete and verified.** The execution order
+changed on 2026-10-23: see `racs2_implementation_plan.md` v2.
+
+Active next steps (new numbering):
+
+- [ ] **Phase 6**: Install `lpips`, `scipy`, `scikit-image`; extend `evaluation/metrics.py`;
+  build the frozen 3-class 100-image test split and `data/metadata/tokens.json`; write
+  `scripts/eval_report.py`. Create `docs/DEVIATIONS.md`.
+- [ ] **Phase 7**: Public conditions (`Kpub` + `Xfeat`), cached and deterministic.
+- [ ] **Phase 8**: Reference generator (PicX-Real or SD + ControlNet + IPAdapter-plus) with
+  token-seeded noise; fit the 6 GB budget.
+- [ ] **Phase 9**: ControlNet zero-conv fine-tuning, or a documented deviation.
+- [ ] **Phase 10**: EDICT isolated, exact inversion to machine precision.
+- [ ] **Phase 11**: Local hide/recover with eta = 0.05 and a manual reference.
+- [ ] **Phase 12-14**: AWGN, semantic codec, optional CodeFormer enhancement.
+- [ ] **Phase 15 (GATE)**: Assemble AgentSemSteCom and reproduce Table II within tolerance.
+- [ ] **Phase 16**: Baseline security and steganalysis, then freeze the baseline.
+- [ ] **Phase 17-20**: FAISS, token selection, structural reranking (consumes the banked
+  Phase 4-5 artifacts).
+- [ ] **Phase 21 (GATE)**: RACS-Base, `Xref_tx == Xref_rx` on 100 percent of images.
+- [ ] **Phase 22**: Controlled AgentSemSteCom vs RACS-Base comparison (primary result).
+
+Nothing RACS-specific is wired into the pipeline before Phase 15 passes.
