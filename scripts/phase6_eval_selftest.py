@@ -126,6 +126,42 @@ def main():
     check("distribution handles inf",
           dist_inf["n"] == 3 and dist_inf["n_inf"] == 1 and dist_inf["mean"] == 2.0,
           f"n_inf={dist_inf['n_inf']} mean={dist_inf['mean']}")
+    empty = distribution([])
+    check("distribution handles empty input",
+          empty["n"] == 0 and empty["mean"] is None, empty["n"])
+    with_nan = distribution([1.0, float("nan"), 3.0])
+    check("distribution counts NaN as missing",
+          with_nan["n_missing"] == 1 and with_nan["mean"] == 2.0,
+          with_nan["n_missing"])
+
+    default_metrics = all_metrics(base, noisy)
+    check("all_metrics default keys unchanged",
+          set(default_metrics) == {"mse", "psnr", "ssim"}, sorted(default_metrics))
+
+    out_of_range_raised = False
+    try:
+        all_metrics(base, noisy * 2.0 + 1.0, with_lpips=True)
+    except ValueError:
+        out_of_range_raised = True
+    check("lpips rejects out-of-range input", out_of_range_raised)
+
+    gray = base.mean(dim=0, keepdim=True).repeat(1, 1, 1)
+    gray_ok = True
+    try:
+        gray_metrics = all_metrics(gray, gray, with_lpips=True)
+        gray_ok = gray_metrics["lpips"] <= 1e-6
+    except Exception:  # noqa: BLE001
+        gray_ok = False
+    check("lpips accepts grayscale input", gray_ok)
+
+    batch = torch.stack([base, noisy], dim=0)
+    batch_metric = all_metrics(base, noisy, with_lpips=True)["lpips"]
+    from evaluation.metrics import lpips_metric
+    batched = lpips_metric(batch, batch, batch_size=2)
+    repeated = lpips_metric(base, noisy, batch_size=1)
+    check("lpips deterministic across batch sizes",
+          abs(batched) <= 1e-6 and abs(repeated - batch_metric) <= 1e-6,
+          f"identical={batched:.2e} delta={abs(repeated - batch_metric):.2e}")
 
     print("=== splits ===", flush=True)
     cal_split = Split.load(role="calibration", allow_calibration=True)
@@ -153,6 +189,103 @@ def main():
             details.append(f"{role}/{cls}={count}")
             per_class_ok = per_class_ok and count >= 20
     check("each role/class has >= 20", per_class_ok, "; ".join(details))
+
+    from PIL import Image as PILImage
+    schema_ok, schema_detail = True, []
+    for record in eval_split.records() + cal_split.records():
+        for field in ("source", "license", "source_ref", "width", "height", "mode"):
+            if field not in record:
+                schema_ok = False
+                schema_detail.append(f"{record['image_id']} missing {field}")
+        if record.get("width") != 512 or record.get("height") != 512:
+            schema_ok = False
+            schema_detail.append(f"{record['image_id']} wrong size")
+        if record.get("mode") != "RGB":
+            schema_ok = False
+            schema_detail.append(f"{record['image_id']} wrong mode")
+        with PILImage.open(resolve_path(record["path"])) as image:
+            if image.size != (512, 512) or image.mode != "RGB":
+                schema_ok = False
+                schema_detail.append(f"{record['image_id']} pixel check failed")
+    check("record schema and pixels are 512x512 RGB", schema_ok,
+          "; ".join(schema_detail[:3]))
+
+    ids = [r["image_id"] for r in eval_split.records() + cal_split.records()]
+    shas = [r["sha256"] for r in eval_split.records() + cal_split.records()]
+    check("no duplicate ids or hashes", len(ids) == len(set(ids)) and len(shas) == len(set(shas)),
+          f"ids={len(ids)} unique={len(set(ids))}")
+
+    import shutil
+    from evaluation.splits import write_manifests
+    tmp_dir = PROJECT_ROOT / "temp" / "phase6_selftest_tmp"
+    if tmp_dir.exists():
+        shutil.rmtree(tmp_dir)
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    raw_manifest = json.loads((PROJECT_ROOT / eval_cfg["splits_path"])
+                              .read_text(encoding="utf-8"))
+
+    bad_version = dict(raw_manifest, split_version="0" * 64)
+    bad_version_path = tmp_dir / "bad_version.json"
+    bad_version_path.write_text(json.dumps(bad_version), encoding="utf-8")
+    raised = False
+    try:
+        Split.load(role="evaluation", manifest_path=bad_version_path)
+    except SplitError:
+        raised = True
+    check("corrupted split_version rejected", raised)
+
+    duplicate = json.loads(json.dumps(raw_manifest))
+    duplicate["records"].append(dict(duplicate["records"][0]))
+    duplicate["split_version"] = compute_split_version(duplicate["records"])
+    duplicate_path = tmp_dir / "duplicate.json"
+    duplicate_path.write_text(json.dumps(duplicate), encoding="utf-8")
+    raised = False
+    try:
+        Split.load(role="evaluation", manifest_path=duplicate_path)
+    except SplitError:
+        raised = True
+    check("duplicate manifest record rejected", raised)
+
+    sha_bad = json.loads(json.dumps(raw_manifest))
+    sha_bad["records"][0]["sha256"] = "f" * 64
+    sha_bad["split_version"] = compute_split_version(sha_bad["records"])
+    sha_bad_path = tmp_dir / "sha_bad.json"
+    sha_bad_path.write_text(json.dumps(sha_bad), encoding="utf-8")
+    raised = False
+    try:
+        Split.load(role=None, manifest_path=sha_bad_path)
+    except SplitError:
+        raised = True
+    check("sha256 mismatch rejected", raised)
+
+    raised = False
+    try:
+        Split.load(role="not_a_role")
+    except RoleError:
+        raised = True
+    check("unknown role rejected", raised)
+
+    raised = False
+    try:
+        eval_split.get("does_not_exist")
+    except KeyError:
+        raised = True
+    check("missing image_id raises KeyError", raised)
+
+    raised = False
+    try:
+        eval_split.get(cal_split.ids()[0])
+    except KeyError:
+        raised = True
+    check("other-role id is absent from split", raised)
+
+    raised = False
+    try:
+        load_tokens(split=eval_split, strict=True)
+    except SplitError:
+        raised = True
+    check("strict token load rejects other-role extras", raised)
+    shutil.rmtree(tmp_dir, ignore_errors=True)
 
     print("=== role enforcement ===", flush=True)
     check("evaluation split has no calibration records",
@@ -226,6 +359,99 @@ def main():
     except ValueError:
         mixed_raised = True
     check("mixed-role report raises", mixed_raised)
+
+    approx_raised = False
+    try:
+        build_report("selftest", "evaluation", eval_split, synthetic,
+                     approximate=True)
+    except ValueError:
+        approx_raised = True
+    check("evaluation report rejects approximate=True", approx_raised)
+
+    split_role_raised = False
+    try:
+        build_report("selftest", "calibration", eval_split, synthetic,
+                     approximate=True)
+    except ValueError:
+        split_role_raised = True
+    check("report rejects mismatched split role", split_role_raised)
+
+    class_raised = False
+    try:
+        build_report("selftest", "evaluation", eval_split,
+                     [{"image_id": synthetic[0]["image_id"], "class": "style",
+                       "snr_db": 10, "mse": 0.1}], approximate=False)
+    except ValueError:
+        class_raised = True
+    check("report rejects class mismatch", class_raised)
+
+    snr_raised = False
+    try:
+        build_report("selftest", "evaluation", eval_split,
+                     [{"image_id": synthetic[0]["image_id"], "class": synthetic[0]["class"],
+                       "mse": 0.1}], approximate=False)
+    except ValueError:
+        snr_raised = True
+    check("report rejects missing snr_db", snr_raised)
+
+    duplicate_raised = False
+    try:
+        build_report("selftest", "evaluation", eval_split,
+                     [synthetic[0], dict(synthetic[0])], approximate=False)
+    except ValueError:
+        duplicate_raised = True
+    check("report rejects duplicate image+SNR", duplicate_raised)
+
+    only_mse = build_report("selftest", "evaluation", eval_split,
+                            [{"image_id": synthetic[0]["image_id"],
+                              "class": synthetic[0]["class"], "snr_db": 5,
+                              "mse": 0.02}], approximate=False)
+    check("missing metrics are omitted, not zero-filled",
+          set(only_mse["cells"][0]["metrics"]) == {"mse"},
+          sorted(only_mse["cells"][0]["metrics"]))
+
+    from evaluation.report import report_digest, write_report
+    out_path = write_report(report, PROJECT_ROOT / "temp" / "phase6_report_check.json")
+    reloaded = json.loads(out_path.read_text(encoding="utf-8"))
+    check("write_report writes valid JSON",
+          reloaded["split_version"] == report["split_version"]
+          and reloaded["approximate"] is False)
+    check("report_digest ignores created_utc",
+          report_digest(report) == report_digest(dict(report, created_utc="later")))
+
+    print("=== canonicalisation ===", flush=True)
+    import importlib.util
+    from PIL import Image as PILImage
+    builder_path = PROJECT_ROOT / "scripts" / "phase6_build_testset.py"
+    module_spec = importlib.util.spec_from_file_location("p6_builder", builder_path)
+    builder = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(builder)
+
+    canon_dir = PROJECT_ROOT / "temp" / "phase6_canon"
+    if canon_dir.exists():
+        shutil.rmtree(canon_dir)
+    canon_dir.mkdir(parents=True, exist_ok=True)
+    from evaluation.splits import sha256_file
+    cases = {
+        "wide_rgb": PILImage.new("RGB", (700, 300), (20, 40, 60)),
+        "tall_gray": PILImage.new("L", (300, 700), 128),
+        "rgba": PILImage.new("RGBA", (512, 300), (10, 20, 30, 77)),
+    }
+    deterministic = True
+    size_ok = True
+    for name, image in cases.items():
+        source = canon_dir / f"{name}.png"
+        image.save(source)
+        first = canon_dir / f"{name}_a.png"
+        second = canon_dir / f"{name}_b.png"
+        builder.canonicalise(source, first)
+        builder.canonicalise(source, second)
+        deterministic = deterministic and sha256_file(first) == sha256_file(second)
+        with PILImage.open(first) as output:
+            size_ok = size_ok and output.size == (512, 512) and output.mode == "RGB"
+    check("canonicalise is deterministic", deterministic)
+    check("canonicalise outputs 512x512 RGB for RGB/gray/RGBA", size_ok)
+    shutil.rmtree(canon_dir, ignore_errors=True)
 
     passed = sum(1 for item in CHECKS if item["pass"])
     failed = len(CHECKS) - passed

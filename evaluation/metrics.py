@@ -145,6 +145,11 @@ def lpips_metric(a: Tensor, b: Tensor, net: str = "alex", device=None,
         raise ValueError("lpips_metric expects unit-range [0, 1] inputs")
     if float(b.min()) < -0.001 or float(b.max()) > 1.001:
         raise ValueError("lpips_metric expects unit-range [0, 1] inputs")
+    if a.shape[1] not in (1, 3):
+        raise ValueError(
+            f"lpips_metric expects 1 or 3 channels, got {a.shape[1]}; "
+            "for a batch use [N, C, H, W]"
+        )
     if a.shape[1] == 1:
         a = a.repeat(1, 3, 1, 1)
         b = b.repeat(1, 3, 1, 1)

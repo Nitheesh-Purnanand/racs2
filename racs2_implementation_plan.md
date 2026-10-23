@@ -69,7 +69,7 @@ later phase, `NEXT` the immediate next phase, `TODO` not started.
 | 3 | SD v1.5 loading and generation cost | **DONE** |
 | 4 | Retrieval corpus (1,000 COCO images) | **BANKED** (used in Phase 17) |
 | 5 | CLIP embeddings (1,000 x 512 float32) | **BANKED** (used in Phase 17) |
-| 6 | Evaluation harness and class-balanced splits | **DONE** (29/29 selftest) |
+| 6 | Evaluation harness and class-balanced splits | **DONE** (54/54 selftest) |
 | 7-16 | AgentSemSteCom reproduction | **TODO** |
 | 17-22 | RACS retrieval, RACS-Base, comparison | **TODO** |
 | 23-33 | Variants, evaluation, write-up | **TODO** |

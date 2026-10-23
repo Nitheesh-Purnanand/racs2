@@ -1,5 +1,5 @@
 {
-  "passed": 29,
+  "passed": 54,
   "failed": 0,
   "checks": [
     {
@@ -58,6 +58,36 @@
       "detail": "n_inf=1 mean=2.0"
     },
     {
+      "check": "distribution handles empty input",
+      "pass": true,
+      "detail": "0"
+    },
+    {
+      "check": "distribution counts NaN as missing",
+      "pass": true,
+      "detail": "1"
+    },
+    {
+      "check": "all_metrics default keys unchanged",
+      "pass": true,
+      "detail": "['mse', 'psnr', 'ssim']"
+    },
+    {
+      "check": "lpips rejects out-of-range input",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "lpips accepts grayscale input",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "lpips deterministic across batch sizes",
+      "pass": true,
+      "detail": "identical=0.00e+00 delta=0.00e+00"
+    },
+    {
       "check": "both roles load",
       "pass": true,
       "detail": "eval=66 cal=66"
@@ -96,6 +126,51 @@
       "check": "each role/class has >= 20",
       "pass": true,
       "detail": "evaluation/common=22; evaluation/facial=22; evaluation/style=22; calibration/common=22; calibration/facial=22; calibration/style=22"
+    },
+    {
+      "check": "record schema and pixels are 512x512 RGB",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no duplicate ids or hashes",
+      "pass": true,
+      "detail": "ids=132 unique=132"
+    },
+    {
+      "check": "corrupted split_version rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "duplicate manifest record rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "sha256 mismatch rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "unknown role rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "missing image_id raises KeyError",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "other-role id is absent from split",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "strict token load rejects other-role extras",
+      "pass": true,
+      "detail": ""
     },
     {
       "check": "evaluation split has no calibration records",
@@ -144,6 +219,56 @@
     },
     {
       "check": "mixed-role report raises",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "evaluation report rejects approximate=True",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "report rejects mismatched split role",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "report rejects class mismatch",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "report rejects missing snr_db",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "report rejects duplicate image+SNR",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "missing metrics are omitted, not zero-filled",
+      "pass": true,
+      "detail": "['mse']"
+    },
+    {
+      "check": "write_report writes valid JSON",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "report_digest ignores created_utc",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "canonicalise is deterministic",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "canonicalise outputs 512x512 RGB for RGB/gray/RGBA",
       "pass": true,
       "detail": ""
     }

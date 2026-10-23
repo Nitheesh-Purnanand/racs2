@@ -25,7 +25,7 @@
 | **Phase 3 — Diffusion & Generation Cost** | ✅ Completed | `common/hf_lowmem.py`, `models/sd_pipeline.py`, `scripts/phase3_diffusion.py`. SD v1.5 loads fp16 on the 6 GB GPU; 6-point timing sweep + 5 verification checks pass. |
 | **Phase 4 — Retrieval Image Database** | ✅ Completed | `retrieval/schema.py`, `retrieval/corpus.py`, `scripts/phase4_build_corpus.py`, `scripts/phase4_verify.py`. 1,000-image COCO val2017 corpus (512×512 RGB), versioned `image_index.json`, loader + integrity/determinism checks pass. |
 | **Phase 5 — CLIP Embeddings** | ✅ Completed | `models/clip_encoder.py`, `scripts/phase5_clip.py`, `scripts/phase5_verify.py`, `scripts/phase5_fetch_model.py`. CLIP ViT-B/32, 1,000 × 512-d float32 L2-normalised vectors aligned with the corpus. Verify PASS: re-encode max|diff| 2.5e-07, caption→image top-1 0.476, within-topic 0.779 vs across 0.542. |
-| **Phase 6 — Evaluation Harness & Splits** | ✅ Completed | `evaluation/splits.py` (role enforcement, tokens), `evaluation/report.py` (frozen report schema), extended `evaluation/metrics.py` (LPIPS + `distribution()`), `scripts/phase6_build_testset.py`, `scripts/phase6_eval_selftest.py`, `scripts/eval_report.py`, `scripts/dummy_runner.py`, `docs/DEVIATIONS.md`. Two frozen splits: **calibration** (UniStega, 22/class) and **evaluation** (COCO val2017 / FFHQ-derived faces / Commons cats, 22/class). `split_version 12154514...`, `tokens_version 20166234...`. Selftest **29/29 PASS**; dummy evaluation 264 cases across 12 cells. |
+| **Phase 6 — Evaluation Harness & Splits** | ✅ Completed | `evaluation/splits.py` (role enforcement, tokens), `evaluation/report.py` (frozen report schema), extended `evaluation/metrics.py` (LPIPS + `distribution()`), `scripts/phase6_build_testset.py`, `scripts/phase6_eval_selftest.py`, `scripts/eval_report.py`, `scripts/dummy_runner.py`, `docs/DEVIATIONS.md`. Two frozen splits: **calibration** (UniStega, 22/class) and **evaluation** (COCO val2017 / FFHQ-derived faces / Commons cats, 22/class). `split_version 12154514...`, `tokens_version 20166234...`. Selftest **54/54 PASS**; dummy evaluation 264 cases across 12 cells. |
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -227,8 +227,9 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
   filtered to the 22 FFHQ/CelebA-HQ entries (8 COCO non-faces excluded). Evaluation uses
   COCO val2017 (disjoint from the retrieval corpus), FFHQ-derived aligned faces, and Commons
   cat photographs.
-- **Added** `scripts/phase6_eval_selftest.py`: 29 checks over metrics, splits, role
-  enforcement, tokens and report shape. **29/29 PASS**.
+- **Added** `scripts/phase6_eval_selftest.py`: 54 checks over metrics, splits, manifest
+  invariants, corruption paths, role enforcement, tokens, report shape and canonicalisation.
+  **54/54 PASS**.
 - **Added** `scripts/eval_report.py` + `scripts/dummy_runner.py`: the single system x class x
   SNR measurement driver reused by Phases 15, 16, 21, 22 and 26.
 - **Added** `docs/DEVIATIONS.md` and the `evaluation:` config block.
@@ -393,7 +394,7 @@ Active next steps (new numbering):
 - [x] **Phase 6**: Complete. Follow `phase6_instructions.md`. `lpips`, `scipy` and
   `scikit-image` installed; metrics extended; two role-tagged splits built (22/class each);
   `evaluation/splits.py`, `evaluation/report.py`, `scripts/eval_report.py` with loader role
-  enforcement; `docs/DEVIATIONS.md` created. Selftest 29/29 PASS.
+  enforcement; `docs/DEVIATIONS.md` created. Selftest 54/54 PASS.
 - [ ] **Phase 7**: Public conditions (`Kpub` + `Xfeat`), cached and deterministic.
 - [ ] **Phase 8**: Reference generator (PicX-Real or SD + ControlNet + IPAdapter-plus) with
   token-seeded noise; fit the 6 GB budget.

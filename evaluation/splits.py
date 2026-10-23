@@ -66,6 +66,35 @@ def compute_split_version(records) -> str:
     return sha256_json(tuples)
 
 
+def validate_records(records):
+    """Enforces manifest invariants: required fields and uniqueness."""
+    required = ("image_id", "role", "class", "path", "sha256")
+    seen_ids, seen_sha, seen_paths = set(), set(), set()
+    for index, record in enumerate(records):
+        for field in required:
+            if field not in record:
+                raise SplitError(f"record {index} is missing {field!r}")
+        image_id = record["image_id"]
+        if image_id in seen_ids:
+            raise SplitError(f"duplicate image_id in manifest: {image_id!r}")
+        seen_ids.add(image_id)
+        if record["role"] not in ROLES:
+            raise SplitError(f"bad role for {image_id!r}: {record['role']!r}")
+        if record["class"] not in CLASSES:
+            raise SplitError(f"bad class for {image_id!r}: {record['class']!r}")
+        digest = record["sha256"]
+        if not isinstance(digest, str) or len(digest) != 64:
+            raise SplitError(f"bad sha256 for {image_id!r}")
+        if digest in seen_sha:
+            raise SplitError(f"duplicate sha256 in manifest: {image_id!r}")
+        seen_sha.add(digest)
+        resolved = str(resolve_path(record["path"]))
+        if resolved in seen_paths:
+            raise SplitError(f"duplicate path in manifest: {record['path']!r}")
+        seen_paths.add(resolved)
+    return True
+
+
 def compute_tokens_version(records) -> str:
     tuples = [[r["image_id"], r["token"], r["wrong_token"]] for r in records]
     return sha256_json(tuples)
@@ -107,6 +136,7 @@ class Split:
             )
 
         records = manifest.get("records", [])
+        validate_records(records)
         if role is not None:
             records = [r for r in records if r.get("role") == role]
 
@@ -233,6 +263,24 @@ def load_tokens(path=None, split=None, strict=False):
         raise SplitError(
             f"tokens_version mismatch: manifest says {expected}, recomputed {actual}"
         )
+
+    seen_tokens, seen_wrong = set(), set()
+    for record in records:
+        token = record.get("token")
+        wrong = record.get("wrong_token")
+        for name, value in (("token", token), ("wrong_token", wrong)):
+            if not isinstance(value, str) or len(value) != 8 or not value.isdigit():
+                raise SplitError(
+                    f"{record.get('image_id')!r}: {name} must be 8 decimal digits"
+                )
+        if token == wrong:
+            raise SplitError(f"{record.get('image_id')!r}: token equals wrong_token")
+        if token in seen_tokens:
+            raise SplitError(f"duplicate token: {token!r}")
+        if wrong in seen_wrong:
+            raise SplitError(f"duplicate wrong_token: {wrong!r}")
+        seen_tokens.add(token)
+        seen_wrong.add(wrong)
 
     mapping = {r["image_id"]: {"token": r["token"], "wrong_token": r["wrong_token"]}
                for r in records}

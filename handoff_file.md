@@ -29,7 +29,7 @@ diffusion (tens of seconds per reference).
 | 3 | Diffusion & generation cost (SD v1.5) | ✅ Complete (now read as a lower bound) |
 | 4 | Build the retrieval image database | ✅ Complete, **banked** |
 | 5 | CLIP embeddings | ✅ Complete, **banked** |
-| 6 | Evaluation harness + 3-class test set | ✅ Complete (29/29 selftest) |
+| 6 | Evaluation harness + 3-class test set | ✅ Complete (54/54 selftest) |
 | 7 | Public conditions (`Kpub` + `Xfeat`) | ⏳ **Next** |
 | 8-16 | **AgentSemSteCom reproduction** (baseline gate at 15) | ⏳ Not started |
 | 17-22 | RACS retrieval, RACS-Base, comparison | ⏳ Not started |
@@ -139,7 +139,7 @@ Phase 6 gate results:
 split_version  : 12154514113c19b4091b8f707a1a5c5eaef0a034e9142602da27c865d789ad65
 tokens_version : 201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1
 counts         : calibration 22/22/22, evaluation 22/22/22 (common/facial/style)
-selftest       : 29/29 PASS
+selftest       : 54/54 PASS
 dummy run      : 264 cases, 12 cells, approximate=False
 artifacts      : phase6_selftest.json, phase6_dummy_eval.json,
                  phase6_build_summary.json, phase6_splits_grid.png
