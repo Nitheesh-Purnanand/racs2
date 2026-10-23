@@ -156,7 +156,7 @@ would make Tx/Rx vectors non-identical. Do not switch back to fp16.
 (`huggingface_hub`'s single-stream download resets). It resumes from
 `pytorch_model.bin.parts.json` and verifies the SHA-256.
 
-**Next: Phase 6 — evaluation harness and 3-class test set**
+**Next: Phase 6, evaluation harness and 3-class test set** (full detail in `phase6_instructions.md`)
 1. Install `lpips`, `scipy`, `scikit-image`.
 2. Extend `evaluation/metrics.py` with LPIPS and a distribution `report()` helper.
 3. Build two role-tagged splits, never mixed:

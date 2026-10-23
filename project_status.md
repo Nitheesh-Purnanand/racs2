@@ -360,11 +360,12 @@ changed on 2026-10-23: see `racs2_implementation_plan.md` v2.
 
 Active next steps (new numbering):
 
-- [ ] **Phase 6**: Install `lpips`, `scipy`, `scikit-image`; extend `evaluation/metrics.py`;
-  build TWO role-tagged splits: `data/calibration/unistega/` (paper dataset, approximate
-  check only) and `data/test_set/` (our authoritative evaluation set, no UniStega), plus
-  `data/metadata/tokens.json`; write `scripts/eval_report.py` with loader role enforcement.
-  Create `docs/DEVIATIONS.md`.
+- [ ] **Phase 6**: Follow `phase6_instructions.md`. Install `lpips`, `scipy`,
+  `scikit-image`; extend `evaluation/metrics.py`; build TWO role-tagged splits:
+  `data/calibration/unistega/` (paper dataset, approximate check only) and
+  `data/test_set/` (our authoritative evaluation set, no UniStega), plus
+  `data/metadata/tokens.json`; write `evaluation/splits.py`, `evaluation/report.py`,
+  `scripts/eval_report.py` with loader role enforcement. Create `docs/DEVIATIONS.md`.
 - [ ] **Phase 7**: Public conditions (`Kpub` + `Xfeat`), cached and deterministic.
 - [ ] **Phase 8**: Reference generator (PicX-Real or SD + ControlNet + IPAdapter-plus) with
   token-seeded noise; fit the 6 GB budget.

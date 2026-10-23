@@ -352,6 +352,8 @@ fp16 varied by about 7e-4 across batch sizes and would break Tx/Rx identity.
 > **Why**: You cannot "land on the paper's numbers" without the paper's metrics, classes and
 > SNRs. Building this before the baseline avoids retrofitting numbers later, and it is also
 > exactly what RACS needs, so it is not baseline-only work.
+>
+> **Full build detail**: `phase6_instructions.md`.
 
 **Theory**: LPIPS and why perceptual distance differs from PSNR and SSIM, distribution
 reporting versus single-image anecdotes, class-conditional evaluation, and frozen test splits.
