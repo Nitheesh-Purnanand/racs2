@@ -45,6 +45,8 @@ from common.paths import (
     RAW_SOURCES_DIR,
     RESULTS_DIR,
     TEST_SET_DIR,
+    TEST_SPLIT_PATH,
+    TOKENS_PATH,
 )
 from common.seed import set_seed
 from evaluation.splits import (
@@ -624,10 +626,27 @@ def main():
         "records": tokens,
     }
 
-    split_path, token_path = write_manifests(split_payload, token_payload)
-    log(f"[build] wrote {split_path}")
-    log(f"[build] wrote {token_path}")
-
+    # Idempotent rerun: identical records must not churn the tracked manifests.
+    unchanged = False
+    if TEST_SPLIT_PATH.exists() and TOKENS_PATH.exists():
+        try:
+            existing_split = json.loads(TEST_SPLIT_PATH.read_text(encoding="utf-8"))
+            existing_tokens = json.loads(TOKENS_PATH.read_text(encoding="utf-8"))
+            unchanged = (
+                existing_split.get("split_version") == split_version
+                and existing_tokens.get("tokens_version") == tokens_version
+            )
+            if unchanged:
+                split_payload["created_utc"] = existing_split.get("created_utc")
+                token_payload["created_utc"] = existing_tokens.get("created_utc")
+        except (OSError, ValueError):
+            unchanged = False
+    if not unchanged:
+        split_path, token_path = write_manifests(split_payload, token_payload)
+        log(f"[build] wrote {split_path}")
+        log(f"[build] wrote {token_path}")
+    else:
+        log("[build] manifests unchanged; left files untouched")
     bytes_total = sum((PROJECT_ROOT / r["path"]).stat().st_size for r in ordered)
     summary = {
         "split_version": split_version,
