@@ -1,5 +1,5 @@
 {
-  "split_version": "12154514113c19b4091b8f707a1a5c5eaef0a034e9142602da27c865d789ad65",
+  "split_version": "a57d9c8c500e712fe6e8a15dbfb0eaa7cd2080ba1c5fd772610b90e9ecd5b9d3",
   "tokens_version": "201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1",
   "counts": {
     "calibration": {
@@ -14,9 +14,9 @@
     }
   },
   "manifest_records": 132,
-  "bytes_on_disk": 50780016,
+  "bytes_on_disk": 51246145,
   "canonical": "shortest_side_512_bicubic -> center_crop_512",
   "per_class": 22,
   "corpus_version": "cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff",
-  "created_utc": "2026-10-23T09:11:02Z"
+  "created_utc": "2026-10-23T09:50:08Z"
 }

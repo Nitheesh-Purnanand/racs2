@@ -81,10 +81,9 @@ evaluation:
     coco:
       base_url: "http://images.cocodataset.org/val2017"
     facial:
-      dataset: "Norod78/Vintage-Faces-FFHQAligned"
-      config: "default"
-      split: "train"
-      commons_fallback: "filetype:bitmap portrait photograph person"
+      commons: "filetype:bitmap portrait photograph person face -painting -drawing -engraving"
+      prefer_commons: true
+      filter_human_face: true
     style:
       commons: "filetype:bitmap cat photograph"
       prefer_commons: true

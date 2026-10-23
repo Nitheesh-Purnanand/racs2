@@ -1,5 +1,5 @@
 {
-  "passed": 75,
+  "passed": 83,
   "failed": 0,
   "checks": [
     {
@@ -105,7 +105,7 @@
     {
       "check": "split_version recomputes",
       "pass": true,
-      "detail": "12154514113c19b4091b8f707a1a5c5eaef0a034e9142602da27c865d789ad65"
+      "detail": "a57d9c8c500e712fe6e8a15dbfb0eaa7cd2080ba1c5fd772610b90e9ecd5b9d3"
     },
     {
       "check": "calibration x evaluation disjoint",
@@ -129,6 +129,26 @@
     },
     {
       "check": "record schema and pixels are 512x512 RGB",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "provenance complete and role-consistent",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "manifest paths are relative and forward-slash",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "no near-blank images",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "check": "manifest metadata consistent",
       "pass": true,
       "detail": ""
     },
@@ -203,6 +223,11 @@
       "detail": "unique=True wrong_unique=True differ=True"
     },
     {
+      "check": "token and wrong-token sets do not collide",
+      "pass": true,
+      "detail": "overlap=0"
+    },
+    {
       "check": "evaluation report marked approximate=False",
       "pass": true,
       "detail": ""
@@ -259,6 +284,21 @@
     },
     {
       "check": "report_digest ignores created_utc",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "report distribution matches hand computation",
+      "pass": true,
+      "detail": "mean=22.0 expected=22.0"
+    },
+    {
+      "check": "report metadata matches split",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "config_hash stable and sensitive",
       "pass": true,
       "detail": ""
     },
@@ -378,7 +418,7 @@
       "detail": ""
     }
   ],
-  "split_version": "12154514113c19b4091b8f707a1a5c5eaef0a034e9142602da27c865d789ad65",
+  "split_version": "a57d9c8c500e712fe6e8a15dbfb0eaa7cd2080ba1c5fd772610b90e9ecd5b9d3",
   "tokens_version": "201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1",
   "counts": {
     "calibration": {

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "split_version": "12154514113c19b4091b8f707a1a5c5eaef0a034e9142602da27c865d789ad65",
-  "created_utc": "2026-10-23T09:11:02Z",
+  "split_version": "a57d9c8c500e712fe6e8a15dbfb0eaa7cd2080ba1c5fd772610b90e9ecd5b9d3",
+  "created_utc": "2026-10-23T09:50:08Z",
   "canonical": "shortest_side_512_bicubic -> center_crop_512",
   "classes": [
     "common",
@@ -1259,308 +1259,308 @@
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0000.png",
-      "sha256": "923241d6266836c3b9958defe6413e6047fdd458179ade23efc4d708e8872933",
+      "sha256": "52434c545f05e49af9788b384bb78f1ef3489125a04b0de8dd80263fbc9d884e",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0000"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 2.0",
+      "source_ref": "File:Elderly Gambian woman face portrait.jpg",
+      "original_id": "faces_eval_b14afc18_0000"
     },
     {
       "image_id": "eva_facial_0001",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0001.png",
-      "sha256": "d510770e20fd8f58a97b56eecd386097d56272fe06fef24c0bbb7dac7f241b06",
+      "sha256": "ca1093a0df9faf4e6b4706c787791848defcf3bfdf8bb16e813f4a9190d83277",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0001"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC0",
+      "source_ref": "File:Boy Face from Venezuela.jpg",
+      "original_id": "faces_eval_b14afc18_0002"
     },
     {
       "image_id": "eva_facial_0002",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0002.png",
-      "sha256": "1084b53a67de26dc4f9319085294204222d93bf400ce932a1ddb5937609ee6a4",
+      "sha256": "6b6109793cd78a0cc64ed6ac4506474dc6f5a7a0fdb8d26cd309113bd75292f3",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0002"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 4.0",
+      "source_ref": "File:Portrait of a smiling girl with wet face at golden hour in Laos.jpg",
+      "original_id": "faces_eval_b14afc18_0003"
     },
     {
       "image_id": "eva_facial_0003",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0003.png",
-      "sha256": "e176e4564840263719b906c39e8949df7ae6384c35b56876beabae4daa7ef1f6",
+      "sha256": "fa9776547e41d5fe71198c954228aefe4e52d880ede8edda93ca7e1a4c7a453d",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0003"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY 3.0",
+      "source_ref": "File:Example of person portrait.jpg",
+      "original_id": "faces_eval_b14afc18_0004"
     },
     {
       "image_id": "eva_facial_0004",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0004.png",
-      "sha256": "fb790e80760a1db16c6912412720fcc1f5e32cd4a33ddb2732333cd17021b42f",
+      "sha256": "53fa3a5a16e933c1f04a1e60e499776920eb39283e5929082c6eef8a933d371e",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0004"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC0",
+      "source_ref": "File:John Thomas Rowntree Portrait Face.jpg",
+      "original_id": "faces_eval_b14afc18_0008"
     },
     {
       "image_id": "eva_facial_0005",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0005.png",
-      "sha256": "27c5f12b94e2226fc088bfb774d12fd49a144ac8402f21035d739c74008b03da",
+      "sha256": "ea7a3343142bb32c7d042738c0de979acdbb8e2303ead2abd98bd100b9f77e64",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0005"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC0",
+      "source_ref": "File:Face portrait (Unsplash).jpg",
+      "original_id": "faces_eval_b14afc18_0009"
     },
     {
       "image_id": "eva_facial_0006",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0006.png",
-      "sha256": "c6c9fe5507c17077e945fbfba6a8b4d119bf0d00ee916998109d16d0632cdd71",
+      "sha256": "c919da65b4a5e8335d33e4b56a15cb6e4c77ebab2b7f5c258591804134e8746f",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0006"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 4.0",
+      "source_ref": "File:Portrait Peru 46.jpg",
+      "original_id": "faces_eval_b14afc18_0010"
     },
     {
       "image_id": "eva_facial_0007",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0007.png",
-      "sha256": "4f694bdfd3d57cbf84d2db5e610dea461d4d76edf37a4221d6a8b4b0a632e83d",
+      "sha256": "e4f69299f8341fe9b1853477772807c6d0fbd1164c5d0ec2af7ff5145613cf19",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0007"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 2.0",
+      "source_ref": "File:Face of SpooSpa.jpg",
+      "original_id": "faces_eval_b14afc18_0013"
     },
     {
       "image_id": "eva_facial_0008",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0008.png",
-      "sha256": "5e46c4aabe1ae031723dd53789f7739481a0f577075cfc9cab60f5f8e1b02bad",
+      "sha256": "0bddf886958dd8521f8b64797a5aea9a6c19c34b6410c9a5f176f1b40929cccc",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0008"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC0",
+      "source_ref": "File:Girl with sad face.jpg",
+      "original_id": "faces_eval_b14afc18_0016"
     },
     {
       "image_id": "eva_facial_0009",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0009.png",
-      "sha256": "36ee634be5513b2660b3b7497ff7ad5dfd77b8297a137ffdeef76868c484151f",
+      "sha256": "62282fb9a8355ab6a999335e9c3dd8547c3ceb45e39cdd6ca42736895292f042",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0009"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 4.0",
+      "source_ref": "File:Face – Alexander.jpg",
+      "original_id": "faces_eval_b14afc18_0017"
     },
     {
       "image_id": "eva_facial_0010",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0010.png",
-      "sha256": "85ba99353c846e48586a0c92df6a7154e6f7257aa4030b5507bd58468dad13b7",
+      "sha256": "49d92da3de9e2622b8c2977c2683bcbe4cb9dfdc950be2bbff63741bc2dfc983",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0010"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 3.0",
+      "source_ref": "File:Oliver Smithies HD2009 AIC Gold Medal portrait (face crop).JPG",
+      "original_id": "faces_eval_b14afc18_0018"
     },
     {
       "image_id": "eva_facial_0011",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0011.png",
-      "sha256": "51f578a41b800e848b7c02d5912b5f274c7cb858c467facb1c3e5bc504e55169",
+      "sha256": "86cc989492fe67719565db1a348f4fe3fcc9d0e4fb7bec45ec2aae6ed9c141b1",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0011"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 2.0",
+      "source_ref": "File:Girl's face in shadow.jpg",
+      "original_id": "faces_eval_b14afc18_0022"
     },
     {
       "image_id": "eva_facial_0012",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0012.png",
-      "sha256": "82bf31d5e1c61398f528327301661b7f9488f8b1637d723359f1ccf68ce2c1b1",
+      "sha256": "6a910386c4607002a6aa22f781ec7b9478493711c0853ed55a4ec5a6908d4ee3",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0012"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 3.0",
+      "source_ref": "File:Baby portrait 1-year-old.jpg",
+      "original_id": "faces_eval_b14afc18_0023"
     },
     {
       "image_id": "eva_facial_0013",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0013.png",
-      "sha256": "6f5bc6aff622ee011cd806d093832ac500e6820c33b26b1f9eeaffc62bc1149a",
+      "sha256": "2748c404a79135a3c5814d0991eac1098750cc2036d927fd3004c9cfc6df356e",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0013"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY 4.0",
+      "source_ref": "File:EPFL 2020 Michael Herzog Portrait 2.jpg",
+      "original_id": "faces_eval_b14afc18_0024"
     },
     {
       "image_id": "eva_facial_0014",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0014.png",
-      "sha256": "4a488466a0a416a470b38758b23cf13a5fe66a0c1ad86d830304d4671bbda7a3",
+      "sha256": "0f058cd6d9caa9f3006f283709c182f4984f8ec2932e29330825e36c64bfcefe",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0014"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "Public domain",
+      "source_ref": "File:2004 Beverly Johnson (cropped to face).jpg",
+      "original_id": "faces_eval_b14afc18_0025"
     },
     {
       "image_id": "eva_facial_0015",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0015.png",
-      "sha256": "5310bc93645977b04718757a5acf6b3b76bae012dc4e214e85335aaa8c64b71c",
+      "sha256": "72f8ac1d1db132104404bb36e523ef9d762f353ebf9e771522a72c3d61c92680",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0015"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 4.0",
+      "source_ref": "File:Mugshot Portrait Photo User Vasyalstnv Front.jpg",
+      "original_id": "faces_eval_b14afc18_0027"
     },
     {
       "image_id": "eva_facial_0016",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0016.png",
-      "sha256": "af482e611bbd1d6a30767b8da8d6f4b774beb64d6806f3c0f2a832d4a878e476",
+      "sha256": "176a62faa3925cbac23275e20d4190fc44e471c3b6d3d604b1aa6cf80f49cb1a",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0016"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "Public domain",
+      "source_ref": "File:Face detail, Johnny Weissmuller 1924 (cropped).jpg",
+      "original_id": "faces_eval_b14afc18_0029"
     },
     {
       "image_id": "eva_facial_0017",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0017.png",
-      "sha256": "f7ea309f61d1fc36d90f2beefe6776c0fd2b3f113823b8e41844f95aa2b9f22a",
+      "sha256": "f160dae05ac77447b1889f7b108923775a7a21cbd976841139e3609462698c18",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0017"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 3.0",
+      "source_ref": "File:Portrait of Angélique Bègue 2.jpg",
+      "original_id": "faces_eval_b14afc18_0031"
     },
     {
       "image_id": "eva_facial_0018",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0018.png",
-      "sha256": "9fa9e086187b98160efbef7319068258134365b2e683185a075ae10c7b33afd4",
+      "sha256": "12329bb403f0f0e485ee9621a7eacaae879b22d26167e8940a206b9a9875aa94",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0018"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 4.0",
+      "source_ref": "File:Portrait in sunshine at golden hour of a smiling boy wearing a yellow sweater with hood pulled up in Laos.jpg",
+      "original_id": "faces_eval_b14afc18_0032"
     },
     {
       "image_id": "eva_facial_0019",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0019.png",
-      "sha256": "e6bf4567c1ad798ed9d16aebe5d4d8c9616b091aa40490b3510cf8d92d71a6c5",
+      "sha256": "7df61dbabd317b86817debc8993dd38ed57f1a90b35b99fe78b22cf067130191",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0019"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "Public domain",
+      "source_ref": "File:Faces of Liberty Portrait (6871239).jpg",
+      "original_id": "faces_eval_b14afc18_0033"
     },
     {
       "image_id": "eva_facial_0020",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0020.png",
-      "sha256": "92a41e214521eae2c27ad18ac1115c3b0e8874fa52d32346627f255412014a15",
+      "sha256": "61150b8839708f2ddc6ffbd41a0d968b194dded5c22589e547ce6024ad62425a",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0020"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY 2.0",
+      "source_ref": "File:Profile Photographic Portrait of Blonde Young Woman.jpg",
+      "original_id": "faces_eval_b14afc18_0035"
     },
     {
       "image_id": "eva_facial_0021",
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0021.png",
-      "sha256": "0e7dcce6c3cf217c3ba99e0bfc57340495c1a8681f90dfd5dfa60fa2ba55719d",
+      "sha256": "099470fbcf4545a0ba75764dc9cab7a0e362add26e5c4491e9df642f07190892",
       "width": 512,
       "height": 512,
       "mode": "RGB",
-      "source": "hf:Norod78/Vintage-Faces-FFHQAligned",
-      "license": "see dataset card (research use)",
-      "source_ref": "https://huggingface.co/datasets/Norod78/Vintage-Faces-FFHQAligned",
-      "original_id": "ffhq_eval_0021"
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 2.0",
+      "source_ref": "File:Face (51853261471).jpg",
+      "original_id": "faces_eval_b14afc18_0039"
     },
     {
       "image_id": "eva_style_0000",
@@ -1574,7 +1574,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 3.0",
       "source_ref": "File:Cat November 2010-1a.jpg",
-      "original_id": "afhq_eval_commons_0000"
+      "original_id": "style_eval_a5d83106_0000"
     },
     {
       "image_id": "eva_style_0001",
@@ -1588,7 +1588,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 3.0",
       "source_ref": "File:Felis catus-cat on snow.jpg",
-      "original_id": "afhq_eval_commons_0001"
+      "original_id": "style_eval_a5d83106_0001"
     },
     {
       "image_id": "eva_style_0002",
@@ -1602,7 +1602,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 4.0",
       "source_ref": "File:Cat playing with a lizard.jpg",
-      "original_id": "afhq_eval_commons_0002"
+      "original_id": "style_eval_a5d83106_0002"
     },
     {
       "image_id": "eva_style_0003",
@@ -1616,7 +1616,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY 2.0",
       "source_ref": "File:Sleeping cat on her back.jpg",
-      "original_id": "afhq_eval_commons_0003"
+      "original_id": "style_eval_a5d83106_0003"
     },
     {
       "image_id": "eva_style_0004",
@@ -1630,7 +1630,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 4.0",
       "source_ref": "File:Cat Sphynx. Kittens. img 11.jpg",
-      "original_id": "afhq_eval_commons_0004"
+      "original_id": "style_eval_a5d83106_0004"
     },
     {
       "image_id": "eva_style_0005",
@@ -1644,7 +1644,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC0",
       "source_ref": "File:Tabby cat with blue eyes-3336579.jpg",
-      "original_id": "afhq_eval_commons_0005"
+      "original_id": "style_eval_a5d83106_0005"
     },
     {
       "image_id": "eva_style_0006",
@@ -1658,7 +1658,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY 4.0",
       "source_ref": "File:Cat in Efremov, Russia1.jpg",
-      "original_id": "afhq_eval_commons_0006"
+      "original_id": "style_eval_a5d83106_0006"
     },
     {
       "image_id": "eva_style_0007",
@@ -1672,7 +1672,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 2.5",
       "source_ref": "File:Six weeks old cat (aka).jpg",
-      "original_id": "afhq_eval_commons_0007"
+      "original_id": "style_eval_a5d83106_0007"
     },
     {
       "image_id": "eva_style_0008",
@@ -1686,7 +1686,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 2.0",
       "source_ref": "File:Centre for Alternative Technology - geograph.org.uk - 27588.jpg",
-      "original_id": "afhq_eval_commons_0008"
+      "original_id": "style_eval_a5d83106_0008"
     },
     {
       "image_id": "eva_style_0009",
@@ -1700,7 +1700,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 4.0",
       "source_ref": "File:Tabby cats of Ōizumi Ryokuchi Park, January 2019 - 8816.jpg",
-      "original_id": "afhq_eval_commons_0009"
+      "original_id": "style_eval_a5d83106_0009"
     },
     {
       "image_id": "eva_style_0010",
@@ -1714,7 +1714,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY 2.0 fr",
       "source_ref": "File:Tired 20-year-old cat.jpg",
-      "original_id": "afhq_eval_commons_0010"
+      "original_id": "style_eval_a5d83106_0010"
     },
     {
       "image_id": "eva_style_0011",
@@ -1728,7 +1728,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 2.0",
       "source_ref": "File:Cat Deeley 2011.jpg",
-      "original_id": "afhq_eval_commons_0011"
+      "original_id": "style_eval_a5d83106_0011"
     },
     {
       "image_id": "eva_style_0012",
@@ -1742,7 +1742,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 4.0",
       "source_ref": "File:Forsten's Cat Snake photographed at Bardiya National Park.jpg",
-      "original_id": "afhq_eval_commons_0012"
+      "original_id": "style_eval_a5d83106_0012"
     },
     {
       "image_id": "eva_style_0013",
@@ -1756,7 +1756,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 4.0",
       "source_ref": "File:Cat in Notre Dame college Dhaka.jpg",
-      "original_id": "afhq_eval_commons_0013"
+      "original_id": "style_eval_a5d83106_0013"
     },
     {
       "image_id": "eva_style_0014",
@@ -1770,7 +1770,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 2.0",
       "source_ref": "File:Centre for Alternative Technology (28723902941).jpg",
-      "original_id": "afhq_eval_commons_0014"
+      "original_id": "style_eval_a5d83106_0014"
     },
     {
       "image_id": "eva_style_0015",
@@ -1784,7 +1784,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 3.0",
       "source_ref": "File:Domestic Cat Face Shot.jpg",
-      "original_id": "afhq_eval_commons_0015"
+      "original_id": "style_eval_a5d83106_0015"
     },
     {
       "image_id": "eva_style_0016",
@@ -1798,7 +1798,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "Public domain",
       "source_ref": "File:An Afghan elder and his cat sit outside his store at the Anaba bazaar in Panjshir province, Afghanistan.jpg",
-      "original_id": "afhq_eval_commons_0016"
+      "original_id": "style_eval_a5d83106_0016"
     },
     {
       "image_id": "eva_style_0017",
@@ -1812,7 +1812,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "Public domain",
       "source_ref": "File:Photograph of Socks the Cat - DPLA - 8e79cef8c53759b0385c95d83a4581a1.jpg",
-      "original_id": "afhq_eval_commons_0017"
+      "original_id": "style_eval_a5d83106_0017"
     },
     {
       "image_id": "eva_style_0018",
@@ -1826,7 +1826,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 4.0",
       "source_ref": "File:Tabby cat–IMG 6135 02.jpg",
-      "original_id": "afhq_eval_commons_0018"
+      "original_id": "style_eval_a5d83106_0018"
     },
     {
       "image_id": "eva_style_0019",
@@ -1840,7 +1840,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC0",
       "source_ref": "File:A photograph of a cat lying down 0002.jpg",
-      "original_id": "afhq_eval_commons_0019"
+      "original_id": "style_eval_a5d83106_0019"
     },
     {
       "image_id": "eva_style_0020",
@@ -1854,7 +1854,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 4.0",
       "source_ref": "File:Cat Porto Covo July 2026-2.jpg",
-      "original_id": "afhq_eval_commons_0020"
+      "original_id": "style_eval_a5d83106_0020"
     },
     {
       "image_id": "eva_style_0021",
@@ -1868,7 +1868,7 @@
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 2.0",
       "source_ref": "File:Centre for Alternative Technology (28801170625).jpg",
-      "original_id": "afhq_eval_commons_0021"
+      "original_id": "style_eval_a5d83106_0021"
     }
   ]
 }

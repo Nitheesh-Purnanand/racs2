@@ -179,6 +179,8 @@ def main():
 
     print("=== splits ===", flush=True)
     cal_split = Split.load(role="calibration", allow_calibration=True)
+    m_manifest = json.loads((PROJECT_ROOT / eval_cfg["splits_path"])
+                            .read_text(encoding="utf-8"))
     check("both roles load", len(eval_split) > 0 and len(cal_split) > 0,
           f"eval={len(eval_split)} cal={len(cal_split)}")
     expected = eval_cfg["per_class"] * 3
@@ -224,6 +226,53 @@ def main():
     check("record schema and pixels are 512x512 RGB", schema_ok,
           "; ".join(schema_detail[:3]))
 
+    provenance_ok, provenance_detail = True, []
+    paths_ok = True
+    blank_images = []
+    for role, split in (("calibration", cal_split), ("evaluation", eval_split)):
+        for record in split.records():
+            for field in ("source", "license", "source_ref", "original_id"):
+                if not str(record.get(field, "")).strip():
+                    provenance_ok = False
+                    provenance_detail.append(f"{record['image_id']} missing {field}")
+            source = str(record.get("source", "")).lower()
+            if role == "calibration" and "unistega" not in source:
+                provenance_ok = False
+                provenance_detail.append(f"{record['image_id']} not from UniStega")
+            if role == "evaluation" and "unistega" in source:
+                provenance_ok = False
+                provenance_detail.append(f"{record['image_id']} leaks UniStega")
+            raw_path = record["path"]
+            if Path(raw_path).is_absolute() or "\\" in raw_path:
+                paths_ok = False
+            resolved = resolve_path(raw_path)
+            if resolved.stat().st_size < 2048:
+                provenance_ok = False
+                provenance_detail.append(f"{record['image_id']} tiny file")
+            with PILImage.open(resolved) as image:
+                array = np.asarray(image.convert("RGB"), dtype=np.float32)
+            if float(array.std()) < (1.0 / 255.0):
+                blank_images.append(record["image_id"])
+    check("provenance complete and role-consistent", provenance_ok,
+          "; ".join(provenance_detail[:3]))
+    check("manifest paths are relative and forward-slash", paths_ok)
+    check("no near-blank images", not blank_images, blank_images[:3])
+
+    import re
+    manifest_meta_ok = (
+        m_manifest.get("corpus_version") == json.loads(
+            IMAGE_INDEX_PATH.read_text(encoding="utf-8"))["corpus_version"]
+        and m_manifest.get("counts") == {
+            role: {cls: len(cal_split.records(cls)) if role == "calibration"
+                   else len(eval_split.records(cls)) for cls in CLASSES}
+            for role in ("calibration", "evaluation")
+        }
+        and str(m_manifest.get("canonical", "")).startswith("shortest_side_512")
+        and re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$",
+                     str(m_manifest.get("created_utc", ""))) is not None
+    )
+    check("manifest metadata consistent", manifest_meta_ok)
+
     ids = [r["image_id"] for r in eval_split.records() + cal_split.records()]
     shas = [r["sha256"] for r in eval_split.records() + cal_split.records()]
     check("no duplicate ids or hashes", len(ids) == len(set(ids)) and len(shas) == len(set(shas)),
@@ -235,8 +284,7 @@ def main():
     if tmp_dir.exists():
         shutil.rmtree(tmp_dir)
     tmp_dir.mkdir(parents=True, exist_ok=True)
-    raw_manifest = json.loads((PROJECT_ROOT / eval_cfg["splits_path"])
-                              .read_text(encoding="utf-8"))
+    raw_manifest = m_manifest
 
     bad_version = dict(raw_manifest, split_version="0" * 64)
     bad_version_path = tmp_dir / "bad_version.json"
@@ -338,6 +386,10 @@ def main():
     check("tokens unique and different from wrong token",
           tokens_unique and wrong_unique and differ,
           f"unique={tokens_unique} wrong_unique={wrong_unique} differ={differ}")
+    token_values = {value["token"] for value in all_tokens.values()}
+    wrong_values = {value["wrong_token"] for value in all_tokens.values()}
+    check("token and wrong-token sets do not collide", not (token_values & wrong_values),
+          f"overlap={len(token_values & wrong_values)}")
 
     print("=== report ===", flush=True)
     synthetic = []
@@ -432,6 +484,44 @@ def main():
           and reloaded["approximate"] is False)
     check("report_digest ignores created_utc",
           report_digest(report) == report_digest(dict(report, created_utc="later")))
+
+    math_values = [20.0, 24.0, 22.0]
+    math_records = eval_split.records("common")[:3]
+    math_results = [
+        {"image_id": record["image_id"], "class": "common", "snr_db": 7,
+         "psnr": value, "mse": 0.01}
+        for record, value in zip(math_records, math_values)
+    ]
+    math_report = build_report("selftest", "evaluation", eval_split, math_results,
+                               approximate=False)
+    math_cell = math_report["cells"][0]
+    math_dist = math_cell["metrics"]["psnr"]
+    expected_mean = float(np.mean(math_values))
+    expected_std = float(np.std(math_values, ddof=0))
+    expected_p50 = float(np.percentile(math_values, 50))
+    math_ok = (
+        math_cell["n"] == 3
+        and abs(math_dist["mean"] - expected_mean) <= 1e-9
+        and abs(math_dist["std"] - expected_std) <= 1e-9
+        and abs(math_dist["p50"] - expected_p50) <= 1e-9
+        and math_dist["n_finite"] == 3
+    )
+    check("report distribution matches hand computation", math_ok,
+          f"mean={math_dist['mean']} expected={expected_mean}")
+
+    check("report metadata matches split",
+          report["n_expected"] == len(eval_split)
+          and report["split_counts"] == m_manifest["counts"]
+          and report["corpus_version"] == m_manifest["corpus_version"]
+          and report["split_version"] == m_manifest["split_version"])
+
+    hash_a = build_report("selftest", "evaluation", eval_split, synthetic,
+                          approximate=False, config={"x": 1})["config_hash"]
+    hash_b = build_report("selftest", "evaluation", eval_split, synthetic,
+                          approximate=False, config={"x": 1})["config_hash"]
+    hash_c = build_report("selftest", "evaluation", eval_split, synthetic,
+                          approximate=False, config={"x": 2})["config_hash"]
+    check("config_hash stable and sensitive", hash_a == hash_b and hash_a != hash_c)
 
     print("=== canonicalisation ===", flush=True)
     import importlib.util

@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import sys
 import time
@@ -320,6 +321,7 @@ def fetch_hf_images(spec, count, tag):
     dataset = spec["dataset"]
     config = spec.get("config", "default")
     split = spec.get("split", "train")
+    tag = f"{tag}_{dataset.replace('/', '_')}"
     raw_dir = RAW_SOURCES_DIR / tag
     raw_dir.mkdir(parents=True, exist_ok=True)
     items = []
@@ -415,32 +417,122 @@ def fetch_commons(search, count, tag):
     return items
 
 
-def fetch_eval_class(name, spec, count, corpus_ids=None):
+def query_tag(prefix, query):
+    """Cache directory suffix tied to the query, so a new query never reuses old files."""
+    digest = hashlib.sha1(query.encode("utf-8")).hexdigest()[:8]
+    return f"{prefix}_{digest}"
+
+
+FACE_PROMPTS = [
+    "a close-up photograph of a human face",
+    "a photograph of an animal",
+    "a photograph of a natural scene or object",
+    "a painting or artwork",
+]
+
+# Commons search is lexical: "portrait" still returns paintings, sculptures,
+# group photographs, and synthetic faces. Reject those titles before CLIP so
+# the facial class stays a set of single human faces.
+FACE_TITLE_EXCLUDE = re.compile(
+    r"painting|drawing|engraving|statue|sculpt|bust|collage|family|group|three|"
+    r"two men|two women|met |lccn|wellcome|dpla|nara|fortepan|google art|museum|"
+    r"does not exist|blender|national gallery|oscar wilde|tiger|animal|dog|cat\b|"
+    r"side of his head|mask|covered hood|face cannot be seen",
+    re.IGNORECASE,
+)
+
+
+def _base_title(title):
+    """Collapses '(cropped)' variants so one source photo cannot fill two slots."""
+    return re.sub(r"\s*\(cropped[^)]*\)", "", title, flags=re.IGNORECASE).strip().lower()
+
+
+def filter_face_titles(items):
+    """Rejects obviously non-single-face titles and near-duplicate crops."""
+    kept, seen = [], set()
+    for item in items:
+        title = str(item.get("source_ref", ""))
+        if FACE_TITLE_EXCLUDE.search(title):
+            continue
+        base = _base_title(title)
+        if base in seen:
+            continue
+        seen.add(base)
+        kept.append(item)
+    log(f"[facial] title filter kept {len(kept)}/{len(items)} candidates")
+    return kept
+
+
+def filter_human_faces(items, wanted, embedding_cfg=None):
+    """Keeps images whose best CLIP match is the human-face prompt."""
+    items = filter_face_titles(items)
+    if not items:
+        return items
+    try:
+        from models.clip_encoder import load_clip
+        embedding_cfg = embedding_cfg or {}
+        encoder = load_clip(
+            model_id=embedding_cfg.get("model_id", "openai/clip-vit-base-patch32"),
+            device=embedding_cfg.get("device"),
+            dtype=embedding_cfg.get("dtype", "float32"),
+            model_path=PROJECT_ROOT / embedding_cfg["model_path"]
+            if embedding_cfg.get("model_path") else None,
+        )
+        text = encoder.encode_texts(FACE_PROMPTS)
+    except Exception as error:  # noqa: BLE001
+        log(f"[facial] CLIP filter unavailable, keeping title-filtered candidates: {error}")
+        return items
+
+    kept = []
+    for start in range(0, len(items), 16):
+        batch = items[start:start + 16]
+        images = []
+        for item in batch:
+            with Image.open(item["path"]) as image:
+                images.append(image.convert("RGB"))
+        vectors = encoder.encode_images(images)
+        similarity = vectors @ text.T
+        for item, row in zip(batch, similarity):
+            if int(row.argmax()) == 0:
+                kept.append(item)
+        if len(kept) >= wanted:
+            break
+    log(f"[facial] CLIP filter kept {len(kept)}/{len(items)} human faces")
+    return kept
+
+
+def fetch_eval_class(name, spec, count, corpus_ids=None, embedding_cfg=None):
     if name == "common":
         if corpus_ids is None:
             index = json.loads(IMAGE_INDEX_PATH.read_text(encoding="utf-8"))
             corpus_ids = [record["source_id"] for record in index.get("images", [])]
         return fetch_coco(count, corpus_ids, spec["base_url"])
     if name == "facial":
+        if spec.get("prefer_commons") or not spec.get("dataset"):
+            query = spec.get("commons", "filetype:bitmap portrait photograph person")
+            candidates = fetch_commons(query, count + 30, query_tag("faces_eval", query))
+            if spec.get("filter_human_face"):
+                candidates = filter_human_faces(candidates, count, embedding_cfg)
+            return candidates
         items = []
         if spec.get("dataset"):
             items = fetch_hf_images(spec, count, "ffhq_eval")
         if len(items) < count:
             log("[facial] topping up from Wikimedia Commons")
-            items += fetch_commons(
-                spec.get("commons_fallback", "filetype:bitmap portrait photograph person"),
-                count - len(items), "ffhq_eval_commons")
+            query = spec.get("commons_fallback", "filetype:bitmap portrait photograph person")
+            items += fetch_commons(query, count - len(items),
+                                   query_tag("faces_eval_fallback", query))
         return items
     if name == "style":
         if spec.get("prefer_commons") or not spec.get("dataset"):
-            return fetch_commons(spec.get("commons", "filetype:bitmap cat photograph"),
-                                 count, "afhq_eval_commons")
+            query = spec.get("commons", "filetype:bitmap cat photograph")
+            return fetch_commons(query, count, query_tag("style_eval", query))
         items = fetch_hf_images(spec, count, "afhq_eval")
         if len(items) < count:
             log("[style] topping up from Wikimedia Commons")
-            items += fetch_commons(
-                spec.get("commons", "filetype:bitmap cat photograph"),
-                count - len(items), "afhq_eval_commons")
+            query = spec.get("commons", "filetype:bitmap cat photograph")
+            items += fetch_commons(query, count - len(items),
+                                   query_tag("style_eval_fallback", query))
         return items
     raise ValueError(f"unknown class {name!r}")
 
@@ -570,7 +662,8 @@ def main():
     evaluation_sources = {
         "common": fetch_eval_class("common", sources["coco"], per_class + 10,
                                    corpus_ids=[r["source_id"] for r in index.get("images", [])]),
-        "facial": fetch_eval_class("facial", sources["facial"], per_class + 10),
+        "facial": fetch_eval_class("facial", sources["facial"], per_class + 10,
+                                   embedding_cfg=config.get("embedding")),
         "style": fetch_eval_class("style", sources["style"], per_class + 10),
     }
 

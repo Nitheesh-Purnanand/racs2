@@ -136,10 +136,10 @@ cache/ temp/ pip_cache/   (gitignored)
 Phase 6 gate results:
 
 ```
-split_version  : 12154514113c19b4091b8f707a1a5c5eaef0a034e9142602da27c865d789ad65
+split_version  : a57d9c8c500e712fe6e8a15dbfb0eaa7cd2080ba1c5fd772610b90e9ecd5b9d3
 tokens_version : 201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1
 counts         : calibration 22/22/22, evaluation 22/22/22 (common/facial/style)
-selftest       : 75/75 PASS
+selftest       : 83/83 PASS
 dummy run      : 264 cases, 12 cells, approximate=False
 artifacts      : phase6_selftest.json, phase6_dummy_eval.json,
                  phase6_build_summary.json, phase6_splits_grid.png

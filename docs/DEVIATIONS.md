@@ -10,6 +10,7 @@ No entry, no claim.
 | 6 | LPIPS backbone | `alex` | Paper does not state a backbone | Reported metric depends on backbone; choice is frozen and recorded in every report | yes |
 | 6 | UniStega facial subset | 22 face images: 12 FFHQ + 10 CelebA-HQ entries from `similar_prompts/config.yaml` | The released `similar_prompts` folder also contains 8 COCO non-face images (stop sign, motorcycle, juice, building, jockey, donuts, bird, eagle). Including them would make the facial class incoherent | Calibration is approximate, by design | yes |
 | 6 | UniStega class counts | 22 per class per role, sampled deterministically | 22 is the number of clean face images in the release; the gate requires >= 20 | Calibration is approximate, by design | yes |
+| 6 | Evaluation facial source | Wikimedia Commons `portrait photograph person face` search, filtered by title (artworks, groups, sculptures, synthetic faces) and CLIP (single human face), then canonicalised | Supersedes the `Norod78/Vintage-Faces-FFHQAligned` row above: that dataset contains vintage illustrations, not natural photographs, and CLIP classified 2/6 sampled images as artwork. Commons gives real research-licensed portraits while staying independent of UniStega | Evaluation only; no calibration or paper-number impact | yes |
 
 ## Rules
 
