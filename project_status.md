@@ -2,7 +2,7 @@
 
 > **Location**: `d:\racs2\project_status.md`  
 > **Last Updated**: 2026-10-23  
-> **Current Phase**: Phases 1-5 complete. Phase 4-5 (corpus + CLIP) are **banked** for later. Phase 6 (evaluation harness + test set) is next, then the AgentSemSteCom baseline reproduction (Phases 7-16) before any RACS integration.
+> **Current Phase**: Phase 6 complete (evaluation harness + role-tagged splits). Phase 7 (public conditions: `Kpub` + `Xfeat`) is next.
 
 ---
 
@@ -25,6 +25,7 @@
 | **Phase 3 — Diffusion & Generation Cost** | ✅ Completed | `common/hf_lowmem.py`, `models/sd_pipeline.py`, `scripts/phase3_diffusion.py`. SD v1.5 loads fp16 on the 6 GB GPU; 6-point timing sweep + 5 verification checks pass. |
 | **Phase 4 — Retrieval Image Database** | ✅ Completed | `retrieval/schema.py`, `retrieval/corpus.py`, `scripts/phase4_build_corpus.py`, `scripts/phase4_verify.py`. 1,000-image COCO val2017 corpus (512×512 RGB), versioned `image_index.json`, loader + integrity/determinism checks pass. |
 | **Phase 5 — CLIP Embeddings** | ✅ Completed | `models/clip_encoder.py`, `scripts/phase5_clip.py`, `scripts/phase5_verify.py`, `scripts/phase5_fetch_model.py`. CLIP ViT-B/32, 1,000 × 512-d float32 L2-normalised vectors aligned with the corpus. Verify PASS: re-encode max|diff| 2.5e-07, caption→image top-1 0.476, within-topic 0.779 vs across 0.542. |
+| **Phase 6 — Evaluation Harness & Splits** | ✅ Completed | `evaluation/splits.py` (role enforcement, tokens), `evaluation/report.py` (frozen report schema), extended `evaluation/metrics.py` (LPIPS + `distribution()`), `scripts/phase6_build_testset.py`, `scripts/phase6_eval_selftest.py`, `scripts/eval_report.py`, `scripts/dummy_runner.py`, `docs/DEVIATIONS.md`. Two frozen splits: **calibration** (UniStega, 22/class) and **evaluation** (COCO val2017 / FFHQ-derived faces / Commons cats, 22/class). `split_version 12154514...`, `tokens_version 20166234...`. Selftest **29/29 PASS**; dummy evaluation 264 cases across 12 cells. |
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -210,6 +211,35 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
 
 ## 5. Change Log
 
+### [2026-10-23] - Phase 6 Complete (Evaluation Harness & Role-Tagged Splits)
+
+- **Added** `evaluation/splits.py`: `Split.load(role=...)` with enforced roles. Loading the
+  calibration split requires `allow_calibration=True`; a calibration record cannot be used
+  under the evaluation role. Verifies every file hash on load and recomputes `split_version`.
+- **Added** `evaluation/report.py`: the frozen report schema (`cells` by class and SNR,
+  distributions per metric), with `approximate` forced true for calibration and false for
+  evaluation, and rejection of mixed-role or duplicate cases.
+- **Extended** `evaluation/metrics.py`: `lpips_metric` (LPIPS AlexNet, correct `[0,1] ->
+  [-1,1]` conversion), `distribution()` (finite-only mean, `n_inf`, percentiles), and
+  `all_metrics(..., with_lpips=...)` without changing existing behaviour.
+- **Added** `scripts/phase6_build_testset.py`: builds both splits deterministically. Real
+  UniStega release downloaded from the paper's linked DiffStega dataset. Calibration facial
+  filtered to the 22 FFHQ/CelebA-HQ entries (8 COCO non-faces excluded). Evaluation uses
+  COCO val2017 (disjoint from the retrieval corpus), FFHQ-derived aligned faces, and Commons
+  cat photographs.
+- **Added** `scripts/phase6_eval_selftest.py`: 29 checks over metrics, splits, role
+  enforcement, tokens and report shape. **29/29 PASS**.
+- **Added** `scripts/eval_report.py` + `scripts/dummy_runner.py`: the single system x class x
+  SNR measurement driver reused by Phases 15, 16, 21, 22 and 26.
+- **Added** `docs/DEVIATIONS.md` and the `evaluation:` config block.
+- **Artifacts**: `data/metadata/test_split.json`, `data/metadata/tokens.json`,
+  `experiments/results/phase6_selftest.json`, `phase6_dummy_eval.json` (264 cases),
+  `phase6_build_summary.json`, `phase6_splits_grid.png`.
+- **Verified**: `split_version = 12154514113c19b4091b8f707a1a5c5eaef0a034e9142602da27c865d789ad65`,
+  `tokens_version = 201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1`.
+  Rebuild reproduces the same hashes. Splits are pairwise disjoint and disjoint from the
+  retrieval corpus by sha256.
+
 ### [2026-10-23] - Plan Reordered: Baseline-First
 
 - **Rewrote** `racs2_implementation_plan.md` as v2. AgentSemSteCom is now reproduced and
@@ -360,12 +390,10 @@ changed on 2026-10-23: see `racs2_implementation_plan.md` v2.
 
 Active next steps (new numbering):
 
-- [ ] **Phase 6**: Follow `phase6_instructions.md`. Install `lpips`, `scipy`,
-  `scikit-image`; extend `evaluation/metrics.py`; build TWO role-tagged splits:
-  `data/calibration/unistega/` (paper dataset, approximate check only) and
-  `data/test_set/` (our authoritative evaluation set, no UniStega), plus
-  `data/metadata/tokens.json`; write `evaluation/splits.py`, `evaluation/report.py`,
-  `scripts/eval_report.py` with loader role enforcement. Create `docs/DEVIATIONS.md`.
+- [x] **Phase 6**: Complete. Follow `phase6_instructions.md`. `lpips`, `scipy` and
+  `scikit-image` installed; metrics extended; two role-tagged splits built (22/class each);
+  `evaluation/splits.py`, `evaluation/report.py`, `scripts/eval_report.py` with loader role
+  enforcement; `docs/DEVIATIONS.md` created. Selftest 29/29 PASS.
 - [ ] **Phase 7**: Public conditions (`Kpub` + `Xfeat`), cached and deterministic.
 - [ ] **Phase 8**: Reference generator (PicX-Real or SD + ControlNet + IPAdapter-plus) with
   token-seeded noise; fit the 6 GB budget.

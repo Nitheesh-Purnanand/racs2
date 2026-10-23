@@ -12,6 +12,9 @@ Usage:
     print(mse(a, b), psnr(a, b), ssim(a, b))
 """
 
+import math
+
+import numpy as np
 import torch
 import torch.nn.functional as F
 
@@ -109,13 +112,116 @@ def ssim(
     return ssim_map.mean().item()
 
 
-def all_metrics(a: Tensor, b: Tensor, data_range: float = 1.0) -> dict:
-    """Convenience: returns {'mse', 'psnr', 'ssim'} in one call."""
-    return {
+_LPIPS_CACHE: dict = {}
+
+
+def _lpips_model(net: str = "alex", device=None):
+    """Loads and caches the LPIPS network. Imports lpips lazily."""
+    import lpips as lpips_lib
+
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    key = (net, str(device))
+    if key not in _LPIPS_CACHE:
+        model = lpips_lib.LPIPS(net=net, verbose=False).to(device).eval()
+        for param in model.parameters():
+            param.requires_grad_(False)
+        _LPIPS_CACHE[key] = model
+    return _LPIPS_CACHE[key]
+
+
+def lpips_metric(a: Tensor, b: Tensor, net: str = "alex", device=None,
+                 batch_size: int = 1) -> float:
+    """
+    Learned Perceptual Image Patch Similarity. Lower is better, 0 for identical.
+
+    Input tensors are unit-range ``[0, 1]`` (project convention). LPIPS expects
+    ``[-1, 1]``, so the conversion happens here and the input range is asserted.
+    """
+    a, b = _prepare(a, b)
+    if a.numel() == 0:
+        raise ValueError("lpips_metric received an empty tensor")
+    if float(a.min()) < -0.001 or float(a.max()) > 1.001:
+        raise ValueError("lpips_metric expects unit-range [0, 1] inputs")
+    if float(b.min()) < -0.001 or float(b.max()) > 1.001:
+        raise ValueError("lpips_metric expects unit-range [0, 1] inputs")
+    if a.shape[1] == 1:
+        a = a.repeat(1, 3, 1, 1)
+        b = b.repeat(1, 3, 1, 1)
+
+    model = _lpips_model(net=net, device=device)
+    run_device = next(model.parameters()).device
+    step = max(1, int(batch_size))
+    values = []
+    with torch.inference_mode():
+        for start in range(0, a.shape[0], step):
+            x = a[start:start + step].to(run_device) * 2.0 - 1.0
+            y = b[start:start + step].to(run_device) * 2.0 - 1.0
+            values.append(model(x, y).reshape(-1))
+    return torch.cat(values).mean().item()
+
+
+def distribution(values, percentiles=(5, 25, 50, 75, 95)) -> dict:
+    """
+    Summarises a list of metric values, handling ``inf`` and missing entries.
+
+    Means and standard deviations are computed over finite values only. ``n_inf``
+    counts infinities (identical images give infinite PSNR) and ``n_missing``
+    counts ``None`` entries.
+    """
+    seq = list(values)
+    finite, n_inf, n_missing = [], 0, 0
+    for value in seq:
+        if value is None:
+            n_missing += 1
+            continue
+        number = float(value)
+        if math.isnan(number):
+            n_missing += 1
+        elif math.isinf(number):
+            n_inf += 1
+        else:
+            finite.append(number)
+
+    out = {"n": len(seq), "n_inf": n_inf, "n_missing": n_missing,
+           "n_finite": len(finite)}
+    if finite:
+        array = np.asarray(finite, dtype=np.float64)
+        out.update({
+            "mean": float(array.mean()),
+            "median": float(np.median(array)),
+            "std": float(array.std(ddof=0)),
+            "min": float(array.min()),
+            "max": float(array.max()),
+            "mean_finite": float(array.mean()),
+        })
+        for percentile in percentiles:
+            key = f"p{int(percentile):02d}"
+            out[key] = float(np.percentile(array, percentile))
+    else:
+        out.update({"mean": None, "median": None, "std": None,
+                    "min": None, "max": None, "mean_finite": None})
+        for percentile in percentiles:
+            out[f"p{int(percentile):02d}"] = None
+    return out
+
+
+def all_metrics(a: Tensor, b: Tensor, data_range: float = 1.0,
+                with_lpips: bool = False, lpips_net: str = "alex") -> dict:
+    """
+    Convenience: returns {'mse', 'psnr', 'ssim'} in one call.
+
+    Pass ``with_lpips=True`` to add the perceptual metric. The default keeps the
+    Phase 2-3 behaviour unchanged.
+    """
+    result = {
         "mse": mse(a, b),
         "psnr": psnr(a, b, data_range=data_range),
         "ssim": ssim(a, b, data_range=data_range),
     }
+    if with_lpips:
+        result["lpips"] = lpips_metric(a, b, net=lpips_net)
+    return result
 
 
 if __name__ == "__main__":
@@ -123,8 +229,9 @@ if __name__ == "__main__":
     x = torch.rand(1, 3, 64, 64)
     y = (x + 0.05 * torch.randn_like(x)).clamp(0, 1)
     print("metrics on slightly-noisy image:")
-    for k, v in all_metrics(x, y).items():
+    for k, v in all_metrics(x, y, with_lpips=True).items():
         print(f"  {k}: {v:.6f}")
     print("identity check (expect mse=0, psnr=inf, ssim=1):")
-    for k, v in all_metrics(x, x).items():
+    for k, v in all_metrics(x, x, with_lpips=True).items():
         print(f"  {k}: {v:.6f}")
+    print("distribution check:", distribution([1.0, 2.0, 3.0, float("inf")]))

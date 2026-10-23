@@ -11,6 +11,7 @@ generation:
   # sweep values used by the timing experiment:
   steps_sweep: [20, 30, 50]
   seeds_sweep: [42, 123]
+
 retrieval:
   corpus_dir: "data/retrieval_images"
   metadata_dir: "data/metadata"
@@ -20,6 +21,22 @@ retrieval:
   canonical_size: 512        # stored image edge, matches SD/EDICT later
   resize_mode: "shortest_side_then_center_crop"   # documented, not implicit
   source: "coco_val2017"
+
+evaluation:
+  splits_path: "data/metadata/test_split.json"
+  tokens_path: "data/metadata/tokens.json"
+  calibration_dir: "data/calibration/unistega"
+  evaluation_dir: "data/test_set"
+  image_size: 512
+  classes: ["common", "facial", "style"]
+  per_class: 25                      # 25 x 3 = 75 minimum; freeze 100 if sources allow
+  total: 100
+  snr_db: [5, 10, 15, 20]
+  metrics: ["mse", "psnr", "ssim", "lpips"]
+  lpips_net: "alex"                  # paper does not state one; freeze this choice
+  lpips_dtype: "float32"
+  lpips_batch_size: 1                # keep deterministic and memory-safe on 6 GB
+  report_percentiles: [5, 25, 50, 75, 95]
 
 embedding:
   model_id: "openai/clip-vit-base-patch32"   # ViT-B/32: 512-d, ~600 MB, fast on 6 GB
@@ -51,3 +68,39 @@ embedding:
     - "a plate of food on a table"
     - "a stop sign"
     - "people playing a sport"
+
+evaluation:
+  splits_path: "data/metadata/test_split.json"
+  tokens_path: "data/metadata/tokens.json"
+  calibration_dir: "data/calibration/unistega"
+  evaluation_dir: "data/test_set"
+  image_size: 512
+  classes: ["common", "facial", "style"]
+  per_class: 22                      # 22 x 3 = 66 per role; UniStega has 22 clean faces
+  total: 66
+  snr_db: [5, 10, 15, 20]
+  metrics: ["mse", "psnr", "ssim", "lpips"]
+  lpips_net: "alex"                  # paper does not state one; frozen choice
+  lpips_dtype: "float32"
+  lpips_batch_size: 1                # deterministic and 6 GB safe
+  report_percentiles: [5, 25, 50, 75, 95]
+  raw_sources_dir: "data/_raw_sources"
+  unistega:
+    zip_path: "data/_raw_sources/unistega/Unistega.zip"
+    drive_id: "1ITaNvYAP8hB32TxwEo4Rdf-515plUOdA"
+    url: "https://drive.usercontent.google.com/download"
+    class_map:
+      content_prompts: "common"
+      similar_prompts: "facial"
+      style_prompts: "style"
+  sources:
+    coco:
+      base_url: "http://images.cocodataset.org/val2017"
+    facial:
+      dataset: "Norod78/Vintage-Faces-FFHQAligned"
+      config: "default"
+      split: "train"
+      commons_fallback: "filetype:bitmap portrait photograph person"
+    style:
+      commons: "filetype:bitmap cat photograph"
+      prefer_commons: true

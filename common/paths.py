@@ -28,6 +28,12 @@ RETRIEVAL_IMAGES_DIR: Path = DATA_DIR / "retrieval_images"
 METADATA_DIR: Path = DATA_DIR / "metadata"
 IMAGE_INDEX_PATH: Path = METADATA_DIR / "image_index.json"
 RAW_CORPUS_DIR: Path = DATA_DIR / "_raw_coco"
+CALIBRATION_DIR: Path = DATA_DIR / "calibration" / "unistega"
+TEST_SET_DIR: Path = DATA_DIR / "test_set"
+TEST_SPLIT_PATH: Path = METADATA_DIR / "test_split.json"
+TOKENS_PATH: Path = METADATA_DIR / "tokens.json"
+RAW_SOURCES_DIR: Path = DATA_DIR / "_raw_sources"
+DEVIATIONS_PATH: Path = PROJECT_ROOT / "docs" / "DEVIATIONS.md"
 
 EXPERIMENTS_DIR: Path = PROJECT_ROOT / "experiments"
 RESULTS_DIR: Path = EXPERIMENTS_DIR / "results"
@@ -52,6 +58,7 @@ for _dir in (
     HF_CACHE_DIR,
     HF_HUB_DIR,
     TORCH_CACHE_DIR,
+    RAW_SOURCES_DIR,
 ):
     _dir.mkdir(parents=True, exist_ok=True)
 

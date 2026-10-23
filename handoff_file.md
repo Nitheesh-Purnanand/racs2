@@ -29,8 +29,9 @@ diffusion (tens of seconds per reference).
 | 3 | Diffusion & generation cost (SD v1.5) | ✅ Complete (now read as a lower bound) |
 | 4 | Build the retrieval image database | ✅ Complete, **banked** |
 | 5 | CLIP embeddings | ✅ Complete, **banked** |
-| 6 | Evaluation harness + 3-class test set | ⏳ **Next** |
-| 7-16 | **AgentSemSteCom reproduction** (baseline gate at 15) | ⏳ Not started |
+| 6 | Evaluation harness + 3-class test set | ✅ Complete (29/29 selftest) |
+| 7 | Public conditions (`Kpub` + `Xfeat`) | ⏳ **Next** |
+| 8-16 | **AgentSemSteCom reproduction** (baseline gate at 15) | ⏳ Not started |
 | 17-22 | RACS retrieval, RACS-Base, comparison | ⏳ Not started |
 | 23-33 | Variants, evaluation, write-up | ⏳ Not started |
 
@@ -127,11 +128,24 @@ cache/ temp/ pip_cache/   (gitignored)
 
 ## 7. Where we are and what is next (plan v2)
 
-> Phases 1-5 are **complete and verified**. Phase 4 (corpus) and Phase 5 (CLIP) are now
-> **banked**: built and verified, but consumed later at Phase 17 (FAISS). The critical path
-> now runs through the AgentSemSteCom baseline, not through retrieval.
+> Phases 1-6 are **complete and verified**. Phase 4 (corpus) and Phase 5 (CLIP) are
+> **banked**: built and verified, but consumed later at Phase 17 (FAISS). Phase 6 produced the
+> evaluation harness and the frozen role-tagged splits. The critical path now runs through the
+> AgentSemSteCom baseline (Phases 7-16).
 
-Phase 5 gate results:
+Phase 6 gate results:
+
+```
+split_version  : 12154514113c19b4091b8f707a1a5c5eaef0a034e9142602da27c865d789ad65
+tokens_version : 201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1
+counts         : calibration 22/22/22, evaluation 22/22/22 (common/facial/style)
+selftest       : 29/29 PASS
+dummy run      : 264 cases, 12 cells, approximate=False
+artifacts      : phase6_selftest.json, phase6_dummy_eval.json,
+                 phase6_build_summary.json, phase6_splits_grid.png
+```
+
+Phase 5 gate results (banked):
 
 ```
 model          : openai/clip-vit-base-patch32 (local: models/clip-vit-base-patch32)
@@ -156,34 +170,26 @@ would make Tx/Rx vectors non-identical. Do not switch back to fp16.
 (`huggingface_hub`'s single-stream download resets). It resumes from
 `pytorch_model.bin.parts.json` and verifies the SHA-256.
 
-**Next: Phase 6, evaluation harness and 3-class test set** (full detail in `phase6_instructions.md`)
-1. Install `lpips`, `scipy`, `scikit-image`.
-2. Extend `evaluation/metrics.py` with LPIPS and a distribution `report()` helper.
-3. Build two role-tagged splits, never mixed:
-   - `data/calibration/unistega/`: the paper's dataset, **approximate check only**.
-   - `data/test_set/`: our authoritative evaluation set, openly licensed sources only,
-     no UniStega images.
-   Both 100 images, 20+ per class. Freeze in `data/metadata/test_split.json` with `role`,
-   per-file sha256 and `split_version`. Both disjoint from `data/retrieval_images/` and from
-   each other.
-4. Write `data/metadata/tokens.json` (one fixed token per image in both splits).
-5. Write `scripts/eval_report.py`, the single driver used by the baseline, RACS and the
-   comparison, with loader enforcement that rejects calibration images for `role=evaluation`.
-6. Create `docs/DEVIATIONS.md` (the deviation register).
+**Next: Phase 7: public conditions (`Kpub` + `Xfeat`)**
+1. `semantic/keygen.py`: deterministic `Kpub` per image (local LLM/VLM or a frozen template
+   plus CLIP content words). Record the method in the manifest.
+2. `semantic/features.py`: segmentation for common, pose skeleton for facial, `None` for
+   style.
+3. Cache to `experiments/results/public_conditions/<image_id>.npz` plus a manifest.
+4. Gate: all three classes produce deterministic, visually inspected conditions.
 
-**Then Phases 7-16: reproduce AgentSemSteCom**
-1. Phase 7: `Kpub` + `Xfeat` (LLM key, segmentation for common, pose skeleton for facial).
-2. Phase 8: reference generator (PicX-Real or SD v1.5 + ControlNet + IPAdapter-plus) with
+**Then Phases 8-16: reproduce AgentSemSteCom**
+1. Phase 8: reference generator (PicX-Real or SD v1.5 + ControlNet + IPAdapter-plus) with
    token-seeded noise; fp16 + sequential offload on the 6 GB card.
-3. Phase 9: ControlNet zero-conv fine-tune, or a documented deviation.
-4. Phase 10: EDICT in isolation; inversion to machine precision.
-5. Phase 11: local hide/recover with eta = 0.05 and a manual reference.
-6. Phases 12-14: AWGN, semantic codec (SwinJSCC-style C=48 / MDJCM mod 64), CodeFormer.
-7. **Phase 15 gate**: 15A approximate reproduction on the UniStega calibration split
+2. Phase 9: ControlNet zero-conv fine-tune, or a documented deviation.
+3. Phase 10: EDICT in isolation; inversion to machine precision.
+4. Phase 11: local hide/recover with eta = 0.05 and a manual reference.
+5. Phases 12-14: AWGN, semantic codec (SwinJSCC-style C=48 / MDJCM mod 64), CodeFormer.
+6. **Phase 15 gate**: 15A approximate reproduction on the UniStega calibration split
    (facial 5 dB PSNR 22.73, facial 20 dB LPIPS 0.2127, style 5 dB LPIPS 0.3850, common
    5 dB PSNR 19.71, wide tolerance). 15B authoritative baseline on our evaluation split.
    Calibration numbers never enter any claim table.
-8. Phase 16: baseline security and steganalysis, then freeze the baseline.
+7. Phase 16: baseline security and steganalysis, then freeze the baseline.
 
 **Only then Phases 17-22**: FAISS (loads the banked `.npz`), token selection, structural
 reranking, RACS-Base with `Xref_tx == Xref_rx`, and the controlled comparison.

@@ -5,7 +5,10 @@ cache
 
 # Large/binary artifacts kept on disk but out of git
 data/_raw_coco/
+data/_raw_sources/
 data/retrieval_images/
+data/calibration/
+data/test_set/
 __pycache__/
 *.pyc
 *.log

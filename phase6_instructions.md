@@ -79,8 +79,8 @@ evaluation:
   evaluation_dir: "data/test_set"
   image_size: 512
   classes: ["common", "facial", "style"]
-  per_class: 25                      # 25 x 3 = 75 minimum; freeze 100 if sources allow
-  total: 100
+  per_class: 22                      # 22 x 3 = 66 per role; UniStega has 22 clean faces
+  total: 66
   snr_db: [5, 10, 15, 20]
   metrics: ["mse", "psnr", "ssim", "lpips"]
   lpips_net: "alex"                  # paper does not state one; freeze this choice
@@ -326,11 +326,17 @@ Builds both splits, canonicalises pixels, and freezes the manifests.
 | Role | Class | Preferred source | Fallback, must be logged |
 | :-- | :-- | :-- | :-- |
 | calibration | common | UniStega-Content (paper reference [46]) | documented surrogate |
-| calibration | facial | UniStega-Similar face subset | documented surrogate |
-| calibration | style | UniStega-Style | documented surrogate |
+| calibration | facial | UniStega-Similar, **filtered** to `original_dataset in {FFHQ, CelebA-HQ}` (22 images) | documented surrogate |
+| calibration | style | UniStega-Style (AFHQ cat source images) | documented surrogate |
 | evaluation | common | COCO val2017, **disjoint** from `data/retrieval_images/` | any openly licensed natural-image set |
-| evaluation | facial | an openly licensed face set (for example FFHQ or CelebA-HQ) | documented alternative |
-| evaluation | style | an openly licensed artwork set (for example WikiArt public domain) | documented alternative |
+| evaluation | facial | `Norod78/Vintage-Faces-FFHQAligned` (FFHQ-derived aligned faces) | Commons portraits, human-only |
+| evaluation | style | Wikimedia Commons cat photographs, matching UniStega-Style's cat source | documented alternative |
+
+> **Class leakage is the trap.** The released `similar_prompts` folder mixes 22 face images with
+> 8 COCO non-face images (stop sign, motorcycle, juice, building, jockey, donuts, bird, eagle).
+> Filter on the config's `original_dataset` field. Likewise, a Commons search for "face" returns
+> animal faces; use a human-only query and inspect the contact sheet. UniStega-Style is AFHQ cat
+> source images (the *target* caption is a Van Gogh painting), not paintings.
 
 Locate UniStega through the paper's reference rather than guessing a URL. If the official
 release is gated or unavailable, do not substitute silently: write the surrogate construction
@@ -353,6 +359,7 @@ into `docs/DEVIATIONS.md` in the same commit that builds the set.
      calibration x retrieval = empty
      evaluation x retrieval = empty
      (compare sha256 sets, not just paths)
+   also assert class content: calibration facial contains only FFHQ/CelebA-HQ entries
 5. assert class balance: each role has >= 20 per class
 6. build split_version = sha256 over ordered tuples
 7. build tokens deterministically: seed = int(sha256(image_id)[:16], 16) mod 10**8
@@ -477,8 +484,10 @@ cd d:\racs2
     --runner scripts.dummy_runner:run_case --out experiments/results/phase6_dummy_eval.json
 ```
 
-Expect roughly 86 MB of PNGs for 200 images at 512x512. The selftest should take seconds;
-LPIPS on a handful of pairs is the slowest part.
+Expect roughly 48 MB of PNGs for 132 images at 512x512. The selftest should take seconds;
+LPIPS on a handful of pairs is the slowest part. Open `phase6_splits_grid.png` and confirm
+each row is visually coherent: faces in the facial rows, cats in the style rows, natural
+scenes in the common rows.
 
 ### ✅ Checklist (all must pass):
 
@@ -488,7 +497,9 @@ LPIPS on a handful of pairs is the slowest part.
 [ ] lpips_metric converts [0,1] -> [-1,1] and is correct on identical and noisy pairs
 [ ] distribution() handles inf PSNR correctly (n_inf, finite-only mean)
 [ ] data/calibration/unistega/{common,facial,style} populated, >= 20 each
+[ ] calibration facial contains only FFHQ/CelebA-HQ faces (no stop signs, motorcycles, etc.)
 [ ] data/test_set/{common,facial,style} populated, >= 20 each, sourced independently
+[ ] phase6_splits_grid.png inspected: each row is visually coherent
 [ ] Calibration and evaluation are disjoint by sha256
 [ ] Both splits are disjoint from data/retrieval_images via image_index.json
 [ ] test_split.json schema valid; split_version recomputes exactly
