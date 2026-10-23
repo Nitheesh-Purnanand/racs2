@@ -22,22 +22,6 @@ retrieval:
   resize_mode: "shortest_side_then_center_crop"   # documented, not implicit
   source: "coco_val2017"
 
-evaluation:
-  splits_path: "data/metadata/test_split.json"
-  tokens_path: "data/metadata/tokens.json"
-  calibration_dir: "data/calibration/unistega"
-  evaluation_dir: "data/test_set"
-  image_size: 512
-  classes: ["common", "facial", "style"]
-  per_class: 25                      # 25 x 3 = 75 minimum; freeze 100 if sources allow
-  total: 100
-  snr_db: [5, 10, 15, 20]
-  metrics: ["mse", "psnr", "ssim", "lpips"]
-  lpips_net: "alex"                  # paper does not state one; freeze this choice
-  lpips_dtype: "float32"
-  lpips_batch_size: 1                # keep deterministic and memory-safe on 6 GB
-  report_percentiles: [5, 25, 50, 75, 95]
-
 embedding:
   model_id: "openai/clip-vit-base-patch32"   # ViT-B/32: 512-d, ~600 MB, fast on 6 GB
   model_path: "models/clip-vit-base-patch32" # self-contained download (scripts/phase5_fetch_model.py)

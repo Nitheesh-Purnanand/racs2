@@ -1,5 +1,5 @@
 {
-  "passed": 54,
+  "passed": 75,
   "failed": 0,
   "checks": [
     {
@@ -269,6 +269,111 @@
     },
     {
       "check": "canonicalise outputs 512x512 RGB for RGB/gray/RGBA",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "canonicalise handles 1x1, palette and CMYK",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "ssim is symmetric",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "lpips is symmetric",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "records() returns defensive copies",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "manifest returns a defensive copy",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "unknown class rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "assert_disjoint rejects non-Split",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "retrieval-corpus overlap detected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "evaluation common ids disjoint from corpus ids",
+      "pass": true,
+      "detail": "overlap=0"
+    },
+    {
+      "check": "tokens reproducible from image_id",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "report accepts infinite PSNR and counts n_inf",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "report rejects non-finite non-PSNR metrics",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "cells sorted by class then SNR",
+      "pass": true,
+      "detail": "[('common', 5), ('facial', 10), ('style', 20)]"
+    },
+    {
+      "check": "cell n sums to result count",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "write_report rejects NaN and cleans temp",
+      "pass": true,
+      "detail": "raised=True leftover=False"
+    },
+    {
+      "check": "paths module constants resolve",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "config is internally consistent",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "config has no duplicate YAML keys",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "relative manifest paths resolve under project root",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "builder rejects unknown eval class",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "hf_image_url handles dict, string and missing",
       "pass": true,
       "detail": ""
     }

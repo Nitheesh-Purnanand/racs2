@@ -20,6 +20,7 @@ import datetime as _dt
 import hashlib
 import io
 import json
+import math
 from pathlib import Path
 
 from evaluation.metrics import distribution
@@ -98,8 +99,16 @@ def build_report(system: str, role: str, split: Split, results: list,
                                         "extra": {}, "n": 0})
         bucket["n"] += 1
         for name in METRIC_NAMES:
-            if name in result:
-                bucket["metrics"][name].append(result[name])
+            if name not in result:
+                continue
+            value = result[name]
+            if value is not None and name != "psnr":
+                number = float(value)
+                if not math.isfinite(number):
+                    raise ValueError(
+                        f"{image_id}: {name} must be finite, got {value!r}"
+                    )
+            bucket["metrics"][name].append(value)
         for name in ("reference_latency_s", "total_latency_s", "peak_vram_gb"):
             if name in result:
                 bucket["extra"].setdefault(name, []).append(result[name])
@@ -147,10 +156,17 @@ def write_report(report: dict, out_path):
     path = Path(out_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
-    with io.open(tmp, "w", encoding="utf-8", newline="\n") as handle:
-        json.dump(report, handle, indent=2, ensure_ascii=False)
-        handle.write("\n")
-    tmp.replace(path)
+    try:
+        with io.open(tmp, "w", encoding="utf-8", newline="\n") as handle:
+            json.dump(report, handle, indent=2, ensure_ascii=False, allow_nan=False)
+            handle.write("\n")
+        tmp.replace(path)
+    except Exception:
+        try:
+            tmp.unlink()
+        except OSError:
+            pass
+        raise
     return path
 
 

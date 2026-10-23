@@ -309,8 +309,15 @@ def write_manifests(split_payload, token_payload, split_path=None,
     token_path = Path(token_path or TOKENS_PATH)
     for path, payload in ((split_path, split_payload), (token_path, token_payload)):
         tmp = path.with_suffix(path.suffix + ".tmp")
-        with io.open(tmp, "w", encoding="utf-8", newline="\n") as handle:
-            json.dump(payload, handle, indent=2, ensure_ascii=False)
-            handle.write("\n")
-        tmp.replace(path)
+        try:
+            with io.open(tmp, "w", encoding="utf-8", newline="\n") as handle:
+                json.dump(payload, handle, indent=2, ensure_ascii=False, allow_nan=False)
+                handle.write("\n")
+            tmp.replace(path)
+        except Exception:
+            try:
+                tmp.unlink()
+            except OSError:
+                pass
+            raise
     return split_path, token_path

@@ -97,6 +97,8 @@ def main():
         raise SystemExit(
             "refusing to report calibration data as authoritative; pass --approximate"
         )
+    if args.limit is not None and args.limit < 1:
+        raise SystemExit("--limit must be at least 1")
 
     config = load_config(args.config)
     eval_cfg = config.get("evaluation", {})

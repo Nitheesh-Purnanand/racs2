@@ -24,10 +24,11 @@ import torch
 import yaml
 
 import common.paths  # noqa: F401
-from common.paths import PROJECT_ROOT, RESULTS_DIR
+from common.paths import IMAGE_INDEX_PATH, PROJECT_ROOT, RESULTS_DIR
 from evaluation.metrics import all_metrics, distribution
 from evaluation.report import build_report
 from evaluation.splits import (
+    CLASSES,
     Split,
     SplitError,
     RoleError,
@@ -38,6 +39,19 @@ from evaluation.splits import (
 )
 
 CHECKS = []
+
+
+class UniqueKeyLoader(yaml.SafeLoader):
+    """YAML loader that rejects duplicate mapping keys."""
+
+    def construct_mapping(self, node, deep=False):
+        seen = set()
+        for key_node, _value_node in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            if key in seen:
+                raise ValueError(f"duplicate YAML key: {key!r}")
+            seen.add(key)
+        return super().construct_mapping(node, deep=deep)
 
 
 def check(name, condition, detail=""):
@@ -451,7 +465,169 @@ def main():
             size_ok = size_ok and output.size == (512, 512) and output.mode == "RGB"
     check("canonicalise is deterministic", deterministic)
     check("canonicalise outputs 512x512 RGB for RGB/gray/RGBA", size_ok)
+
+    edge_cases = {
+        "tiny": (PILImage.new("RGB", (1, 1), (1, 2, 3)), ".png"),
+        "palette": (PILImage.new("P", (10, 10)), ".png"),
+        "cmyk": (PILImage.new("CMYK", (20, 30), (0, 10, 20, 30)), ".tiff"),
+    }
+    edge_ok = True
+    for name, (image, suffix) in edge_cases.items():
+        source = canon_dir / f"{name}{suffix}"
+        output_path = canon_dir / f"{name}_out.png"
+        try:
+            image.save(source)
+            builder.canonicalise(source, output_path)
+            with PILImage.open(output_path) as output:
+                edge_ok = edge_ok and output.size == (512, 512) and output.mode == "RGB"
+        except Exception:  # noqa: BLE001
+            edge_ok = False
+    check("canonicalise handles 1x1, palette and CMYK", edge_ok)
     shutil.rmtree(canon_dir, ignore_errors=True)
+
+    print("=== cross-checks ===", flush=True)
+    from evaluation.metrics import ssim, lpips_metric
+    check("ssim is symmetric", abs(ssim(base, noisy) - ssim(noisy, base)) <= 1e-6)
+    check("lpips is symmetric", abs(lpips_metric(base, noisy) - lpips_metric(noisy, base)) <= 1e-5)
+
+    records = eval_split.records()
+    copy_test = dict(records[0])
+    copy_test["class"] = "style"
+    check("records() returns defensive copies", eval_split.records()[0]["class"] != "style")
+    manifest_copy = eval_split.manifest
+    manifest_copy["split_version"] = "mutated"
+    check("manifest returns a defensive copy", eval_split.version != "mutated")
+
+    unknown_class_raised = False
+    try:
+        eval_split.records("nope")
+    except ValueError:
+        unknown_class_raised = True
+    check("unknown class rejected", unknown_class_raised)
+
+    type_raised = False
+    try:
+        eval_split.assert_disjoint("not a split")
+    except TypeError:
+        type_raised = True
+    check("assert_disjoint rejects non-Split", type_raised)
+
+    index_for_overlap = json.loads(IMAGE_INDEX_PATH.read_text(encoding="utf-8"))
+    corpus_record = index_for_overlap["images"][0]
+    fake = Split([{
+        "image_id": "fake_overlap", "role": "evaluation", "class": "common",
+        "path": corpus_record["image_path"], "sha256": corpus_record["sha256"],
+    }], {"split_version": "x"}, role="evaluation", verify=False)
+    overlap_raised = False
+    try:
+        fake.assert_disjoint_from_index()
+    except SplitError:
+        overlap_raised = True
+    check("retrieval-corpus overlap detected", overlap_raised)
+
+    corpus_ids = {record["source_id"] for record in index_for_overlap["images"]}
+    eval_common_ids = {record["original_id"] for record in records
+                       if record["class"] == "common"}
+    check("evaluation common ids disjoint from corpus ids",
+          not (corpus_ids & eval_common_ids),
+          f"overlap={len(corpus_ids & eval_common_ids)}")
+
+    import hashlib as _hashlib
+    token_formula_ok = True
+    for record in records + cal_split.records():
+        value = int(_hashlib.sha256(record["image_id"].encode("utf-8")).hexdigest()[:16], 16)
+        expected = f"{value % 100_000_000:08d}"
+        if all_tokens[record["image_id"]]["token"] != expected:
+            token_formula_ok = False
+    check("tokens reproducible from image_id", token_formula_ok)
+
+    inf_ok = True
+    try:
+        inf_report = build_report(
+            "selftest", "evaluation", eval_split,
+            [{"image_id": records[0]["image_id"], "class": records[0]["class"],
+              "snr_db": 5, "psnr": float("inf")}], approximate=False)
+        inf_ok = inf_report["cells"][0]["metrics"]["psnr"]["n_inf"] == 1
+    except Exception:  # noqa: BLE001
+        inf_ok = False
+    check("report accepts infinite PSNR and counts n_inf", inf_ok)
+
+    nonfinite_raised = False
+    try:
+        build_report("selftest", "evaluation", eval_split,
+                     [{"image_id": records[0]["image_id"], "class": records[0]["class"],
+                       "snr_db": 5, "mse": float("inf")}], approximate=False)
+    except ValueError:
+        nonfinite_raised = True
+    check("report rejects non-finite non-PSNR metrics", nonfinite_raised)
+
+    ordered_results = []
+    for cls_name, snr_value in (("style", 20), ("common", 5), ("facial", 10)):
+        sample = eval_split.records(cls_name)[0]
+        ordered_results.append({
+            "image_id": sample["image_id"], "class": cls_name,
+            "snr_db": snr_value, "mse": 0.01,
+        })
+    ordered_report = build_report("selftest", "evaluation", eval_split,
+                                  ordered_results, approximate=False)
+    order = [(cell["class"], cell["snr_db"]) for cell in ordered_report["cells"]]
+    check("cells sorted by class then SNR",
+          order == sorted(order, key=lambda item: (["common", "facial", "style"].index(item[0]),
+                                                   item[1])),
+          order)
+    check("cell n sums to result count",
+          sum(cell["n"] for cell in ordered_report["cells"]) == len(ordered_results))
+
+    nan_report = dict(ordered_report)
+    nan_report["meta"] = {"bad": float("nan")}
+    nan_path = PROJECT_ROOT / "temp" / "phase6_nan_report.json"
+    nan_raised = False
+    try:
+        write_report(nan_report, nan_path)
+    except ValueError:
+        nan_raised = True
+    leftover = nan_path.with_suffix(nan_path.suffix + ".tmp").exists()
+    check("write_report rejects NaN and cleans temp", nan_raised and not leftover,
+          f"raised={nan_raised} leftover={leftover}")
+
+    from common.paths import CALIBRATION_DIR, DEVIATIONS_PATH, TEST_SET_DIR, TEST_SPLIT_PATH, TOKENS_PATH
+    paths_ok = (CALIBRATION_DIR.is_dir() and TEST_SET_DIR.is_dir()
+                and TEST_SPLIT_PATH.is_file() and TOKENS_PATH.is_file()
+                and DEVIATIONS_PATH.is_file())
+    check("paths module constants resolve", paths_ok)
+
+    config_ok = (list(eval_cfg["classes"]) == list(CLASSES)
+                 and int(eval_cfg["per_class"]) * len(CLASSES) == int(eval_cfg["total"])
+                 and all(isinstance(value, int) for value in eval_cfg["snr_db"])
+                 and eval_cfg["snr_db"] == sorted(eval_cfg["snr_db"]))
+    check("config is internally consistent", config_ok)
+
+    duplicate_key_free = True
+    try:
+        yaml.load((PROJECT_ROOT / "configs/base.yaml").read_text(encoding="utf-8"),
+                  Loader=UniqueKeyLoader)
+    except ValueError as error:
+        duplicate_key_free = False
+        check("config has no duplicate YAML keys", False, str(error))
+    if duplicate_key_free:
+        check("config has no duplicate YAML keys", True)
+
+    from evaluation.splits import resolve_path as _resolve
+    check("relative manifest paths resolve under project root",
+          _resolve(records[0]["path"]).exists()
+          and str(_resolve(records[0]["path"])).startswith(str(PROJECT_ROOT)))
+
+    builder_guard = False
+    try:
+        builder.fetch_eval_class("not_a_class", {}, 1)
+    except ValueError:
+        builder_guard = True
+    check("builder rejects unknown eval class", builder_guard)
+
+    check("hf_image_url handles dict, string and missing",
+          builder.hf_image_url({"row": {"image": {"src": "http://a"}}}) == "http://a"
+          and builder.hf_image_url({"row": {"image": "http://b"}}) == "http://b"
+          and builder.hf_image_url({"row": {}}) is None)
 
     passed = sum(1 for item in CHECKS if item["pass"])
     failed = len(CHECKS) - passed
