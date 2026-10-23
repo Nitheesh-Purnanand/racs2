@@ -159,11 +159,16 @@ would make Tx/Rx vectors non-identical. Do not switch back to fp16.
 **Next: Phase 6 — evaluation harness and 3-class test set**
 1. Install `lpips`, `scipy`, `scikit-image`.
 2. Extend `evaluation/metrics.py` with LPIPS and a distribution `report()` helper.
-3. Build `data/test_set/{common,facial,style}`; freeze 100 images (20+ per class) in
-   `data/metadata/test_split.json` with per-file sha256 and a `split_version`.
-4. Write `data/metadata/tokens.json` (one fixed token per test image).
+3. Build two role-tagged splits, never mixed:
+   - `data/calibration/unistega/`: the paper's dataset, **approximate check only**.
+   - `data/test_set/`: our authoritative evaluation set, openly licensed sources only,
+     no UniStega images.
+   Both 100 images, 20+ per class. Freeze in `data/metadata/test_split.json` with `role`,
+   per-file sha256 and `split_version`. Both disjoint from `data/retrieval_images/` and from
+   each other.
+4. Write `data/metadata/tokens.json` (one fixed token per image in both splits).
 5. Write `scripts/eval_report.py`, the single driver used by the baseline, RACS and the
-   comparison.
+   comparison, with loader enforcement that rejects calibration images for `role=evaluation`.
 6. Create `docs/DEVIATIONS.md` (the deviation register).
 
 **Then Phases 7-16: reproduce AgentSemSteCom**
@@ -174,8 +179,10 @@ would make Tx/Rx vectors non-identical. Do not switch back to fp16.
 4. Phase 10: EDICT in isolation; inversion to machine precision.
 5. Phase 11: local hide/recover with eta = 0.05 and a manual reference.
 6. Phases 12-14: AWGN, semantic codec (SwinJSCC-style C=48 / MDJCM mod 64), CodeFormer.
-7. **Phase 15 gate**: reproduce Table II within tolerance (facial 5 dB PSNR 22.73,
-   facial 20 dB LPIPS 0.2127, style 5 dB LPIPS 0.3850, common 5 dB PSNR 19.71).
+7. **Phase 15 gate**: 15A approximate reproduction on the UniStega calibration split
+   (facial 5 dB PSNR 22.73, facial 20 dB LPIPS 0.2127, style 5 dB LPIPS 0.3850, common
+   5 dB PSNR 19.71, wide tolerance). 15B authoritative baseline on our evaluation split.
+   Calibration numbers never enter any claim table.
 8. Phase 16: baseline security and steganalysis, then freeze the baseline.
 
 **Only then Phases 17-22**: FAISS (loads the banked `.npz`), token selection, structural

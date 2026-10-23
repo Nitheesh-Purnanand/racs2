@@ -98,7 +98,7 @@ Every existing artifact has a named consumer in the new order. This is the contr
 | `experiments/results/phase3_timings.json` | 3 | Phase 30 efficiency analysis | Retained, but relabelled as the **SD-only lower bound**, not the baseline cost. |
 | `scripts/phase3_img2img.py` | 3 | Phase 24 lightweight editing | Img2img is the editing primitive. The strength sweep is a direct prior for edit strength 0.5. |
 | `retrieval/schema.py`, `retrieval/corpus.py` | 4 | Phase 17 FAISS, Phase 21 RACS | Index schema and deterministic loader reused as the protocol resource. |
-| `data/retrieval_images/` (1,000 COCO PNGs) | 4 | Phase 17 corpus, Phase 6 common-class secrets | Dual use: retrieval database for RACS and a dev substitute for the common class. |
+| `data/retrieval_images/` (1,000 COCO PNGs) | 4 | Phase 17 corpus, Phase 6 evaluation `common` class | Dual use: retrieval database for RACS and a disjoint dev subset for the evaluation `common` class. Never used for calibration. |
 | `data/metadata/image_index.json` | 4 | Phase 17, Phase 21 | Row order and `corpus_version` provenance must match the FAISS index. |
 | `models/clip_encoder.py` | 5 | Phase 17, Phase 20 | Unchanged. float32 stays. |
 | `experiments/results/phase5_corpus_embeddings.npz` | 5 | Phase 17 | Direct input to `IndexFlatIP`. |
@@ -157,14 +157,39 @@ Use this to translate existing scripts, notes and commit messages.
 
 Before Phase 15 is declared passed, all of the following must hold.
 
+**Dataset policy: two roles, never mixed**
+
+The paper's dataset (UniStega) is used **only as a calibration reference**, to check that the
+reimplementation lands approximately on the published numbers. It is never the evaluation
+dataset for any claim, never the RACS retrieval corpus, and never merged into the frozen
+evaluation split.
+
+- **Calibration set** (`data/calibration/unistega/`, read-only): a 100-image, three-class
+  subset drawn from UniStega-Content, UniStega-Similar (face subset) and UniStega-Style,
+  matching the paper's class definitions. Purpose: approximate reproduction only.
+- **Evaluation set** (`data/test_set/`, authoritative): 100 images, three classes, from
+  openly licensed sources. This is the only dataset used for baseline-versus-RACS claims,
+  for the security matrix, for ablations, and for the headline tables.
+- Both sets are frozen by hash before Phase 7, disjoint from `data/retrieval_images/`, and
+  disjoint from each other. Tokens are fixed per image in both.
+
+**Why approximate only.** UniStega gating, licensing and exact splits cannot be reconstructed
+from the paper, and several modules (PicX-Real, ControlNet zero-conv, MDJCM) may be
+substituted. A calibrated reimplementation can match the direction and rough magnitude of
+Table II, but it cannot honestly claim exact reproduction. Calibration is a sanity anchor,
+not a target to overfit.
+
+**"Approximate" means**: the same qualitative ordering across classes and SNRs, monotone
+improvement as SNR rises, and metrics inside the widened tolerance below. It does not mean
+matching every cell.
+
 **Inputs**
 
-- 100 secret images, 20+ per class: `common` (UniStega-Content), `facial`
-  (UniStega-Similar face subset), `style` (UniStega-Style). If UniStega cannot be obtained,
-  document the substitute and its class balance in `docs/DEVIATIONS.md`.
+- Calibration: 100 images, 20+ per class, from UniStega. Evaluation: 100 images, 20+ per
+  class, from our own sources. Both three-class.
 - Four SNR points: 5, 10, 15, 20 dB.
-- Fixed digital tokens per image, stored in `data/metadata/tokens.json` so Tx and Rx use the
-  same values.
+- Fixed digital tokens per image in both sets, stored in `data/metadata/tokens.json` so Tx
+  and Rx use the same values.
 
 **Parameters** (from the paper, do not tune to hit numbers)
 
@@ -178,7 +203,7 @@ Before Phase 15 is declared passed, all of the following must hold.
   modulation 64.
 - Optional enhancement: CodeFormer at fidelity 0.5, facial class only.
 
-**Reported targets** (Table II and Section VI of the paper)
+**Calibration targets** (paper Table II and Section VI; approximate check only)
 
 | Condition | Paper value |
 | :-- | :-- |
@@ -188,18 +213,20 @@ Before Phase 15 is declared passed, all of the following must hold.
 | common, 5 dB | PSNR 19.71 dB, MSE 1.207e-2 |
 | common, 10 dB | SSIM 0.5643 |
 
-**Acceptance tolerance**
+**Calibration tolerance (approximate, deliberately wide)**
 
-- PSNR within +/- 1.5 dB of the paper value.
-- SSIM within +/- 0.05.
-- LPIPS within +/- 0.03.
-- MSE within +/- 30 percent relative.
+- PSNR within +/- 2.5 dB of the paper value.
+- SSIM within +/- 0.07.
+- LPIPS within +/- 0.05.
+- MSE within +/- 40 percent relative.
 - Monotone improvement from 5 dB to 20 dB in every class.
-- At least 90 percent of images recover with PSNR above 18 dB at 10 dB SNR.
+- Class ordering preserved: facial at least as good as common on PSNR at 5 dB and 20 dB,
+  as the paper reports.
+- At least 90 percent of calibration images recover with PSNR above 18 dB at 10 dB SNR.
 
-If a target is missed, the phase does not pass. Either fix the pipeline or file the deviation
-with a diagnosis and a measured explanation. Do not proceed to Phase 17 with an unexplained
-gap: every later RACS number would be unanchored.
+A calibration miss outside these bounds does not automatically fail the phase. It requires a
+written diagnosis in `docs/DEVIATIONS.md` and, if the direction or ordering is wrong, a fix.
+The authoritative numbers are always the evaluation-set numbers from Phase 15B.
 
 ---
 
@@ -335,23 +362,29 @@ reporting versus single-image anecdotes, class-conditional evaluation, and froze
 2. Extend `evaluation/metrics.py` with `lpips` (AlexNet or VGG backbone, state which), and a
    `report(metric_dict)` helper that emits mean, median, std, min, max and N per
    (class, SNR) cell.
-3. Build `data/test_set/` with three class folders:
-   - `common`: UniStega-Content, or the COCO pool if UniStega is unavailable.
-   - `facial`: UniStega-Similar face subset.
-   - `style`: UniStega-Style.
-4. Freeze 100 images (at least 20 per class) in `data/metadata/test_split.json` with sha256
-   per file and a `split_version`. Test images must be disjoint from
-   `data/retrieval_images/`.
-5. Create `data/metadata/tokens.json`: one fixed digital token per test image, versioned.
+3. Build two dataset roles, never mixed:
+   - `data/calibration/unistega/` (paper dataset, read-only, **approximate check only**):
+     `common` = UniStega-Content, `facial` = UniStega-Similar face subset, `style` =
+     UniStega-Style. 100 images, 20+ per class.
+   - `data/test_set/` (our evaluation set, **authoritative**): 100 images, 20+ per class.
+     `common` from the COCO pool but disjoint from `data/retrieval_images/`; `facial` and
+     `style` from openly licensed sources. Do NOT draw this set from UniStega.
+4. Freeze both in `data/metadata/test_split.json` with `role` = `calibration` or
+   `evaluation`, sha256 per file, and a `split_version`. Calibration, evaluation and the
+   retrieval corpus are pairwise disjoint.
+5. Create `data/metadata/tokens.json`: one fixed digital token per image in both splits,
+   versioned.
 6. Write `scripts/phase6_eval_selftest.py`: metrics on identical images return PSNR infinity
    or a sentinel, LPIPS near 0, and the report shape is correct.
-7. Write `scripts/eval_report.py`: a reusable driver that takes a system name, runs the SNR
-   sweep, and writes `experiments/results/<system>_<class>_<snr>.json`.
+7. Write `scripts/eval_report.py`: a reusable driver that takes a system name and a split
+   role, runs the SNR sweep, and writes `experiments/results/<system>_<class>_<snr>.json`.
+   The loader must reject a `calibration` image when `role=evaluation`.
 
 **Gate**: Metrics verified against known cases (identical, slightly noisy, structurally
-different), the frozen split is reproducible by hash, and the report driver produces a
-well-formed table for a dummy system. The `common` class has at least 20 images; facial and
-style are present or their substitution is logged.
+different), both splits frozen and reproducible by hash, and the report driver produces a
+well-formed table for a dummy system. Each split has at least 20 images per class. The
+`role` field is enforced by the loader, and a test proves that a calibration image cannot be
+loaded under `role=evaluation`. The evaluation set contains no UniStega images.
 
 **Reuse**: `evaluation/metrics.py` from Phase 2 is extended, not replaced. `eval_report.py` is
 used by Phase 15 (baseline), Phase 21 (RACS) and Phase 22 (comparison), so the comparison is
@@ -599,33 +632,47 @@ module is cleanly switchable by config.
 
 1. `pipelines/agentsemstecom.py`: one function that takes a secret image, class and SNR and
    returns the recovered image plus all intermediates.
-2. `scripts/phase15_baseline.py`: run the frozen 100-image split across 3 classes and 4 SNRs.
-3. Write `experiments/results/baseline_table.json` with mean, median, std and N per cell.
-4. Write `experiments/results/baseline_manifest.json`: model hashes, config hash, split
-   version, token file hash, and code commit.
-5. Visual grids: `baseline_<class>_<snr>.png`.
-6. Fill `docs/DEVIATIONS.md` for anything not reproduced exactly.
+2. `scripts/phase15_baseline.py` with a `--split calibration|evaluation` switch.
+3. **15A, approximate reproduction**: run the calibration split, 3 classes x 4 SNRs, and
+   write `experiments/results/phase15A_calibration_table.json`. Every entry is labelled
+   `"approximate": true`.
+4. **15B, authoritative baseline**: run the evaluation split through the identical code and
+   write `experiments/results/baseline_table.json`. This is the frozen baseline that Phase
+   22 compares against.
+5. Manifests for both runs: model hashes, config hash, `split_version`, `role`, token file
+   hash, and code commit.
+6. Visual grids for both, prefixed `calibration_` and `baseline_`.
+7. Fill `docs/DEVIATIONS.md` for anything that departs from the paper.
 
-**Gate**
+**Gate, part A: calibration (approximate only)**
 
 - Determinism: the same image, token and seed reproduce a bit-identical `Xref` and a
   bit-identical stego image.
-- Quality targets within tolerance:
+- Approximate agreement with the paper, deliberately wide:
 
-| Cell | Target | Tolerance |
+| Cell | Paper value | Approximate tolerance |
 | :-- | :-- | :-- |
-| facial 5 dB | PSNR 22.73, SSIM 0.6989 | +/- 1.5 dB, +/- 0.05 |
-| facial 20 dB | PSNR 26.29, LPIPS 0.2127 | +/- 1.5 dB, +/- 0.03 |
-| style 5 dB | MSE 0.721e-2, LPIPS 0.3850 | +/- 30 percent, +/- 0.03 |
-| common 5 dB | PSNR 19.71, MSE 1.207e-2 | +/- 1.5 dB, +/- 30 percent |
-| common 10 dB | SSIM 0.5643 | +/- 0.05 |
+| facial 5 dB | PSNR 22.73, SSIM 0.6989 | +/- 2.5 dB, +/- 0.07 |
+| facial 20 dB | PSNR 26.29, LPIPS 0.2127 | +/- 2.5 dB, +/- 0.05 |
+| style 5 dB | MSE 0.721e-2, LPIPS 0.3850 | +/- 40 percent, +/- 0.05 |
+| common 5 dB | PSNR 19.71, MSE 1.207e-2 | +/- 2.5 dB, +/- 40 percent |
+| common 10 dB | SSIM 0.5643 | +/- 0.07 |
 
 - Monotone improvement from 5 dB to 20 dB in every class.
-- At least 90 percent of images above 18 dB PSNR at 10 dB SNR.
-- Any missed target has a written, measured diagnosis in `docs/DEVIATIONS.md`.
+- Class ordering preserved (facial at least as good as common on PSNR at 5 and 20 dB).
+- Any miss has a written diagnosis in `docs/DEVIATIONS.md`.
 
-> **Do not proceed to Phase 17 with an unexplained miss.** A silent gap here contaminates
-> every RACS number later.
+**Gate, part B: authoritative baseline (our evaluation split)**
+
+- The evaluation split is used, and the loader rejects any `calibration` image.
+- Determinism as above.
+- Metrics reported as distributions (mean, median, std, N) per class and SNR cell.
+- No paper tolerance applies here, because no paper numbers exist for this data. These are
+  the numbers that Phase 22 uses.
+- Artifacts are hashed and labelled `"approximate": false`.
+
+> **Do not proceed to Phase 17 with an unexplained calibration gap or a non-deterministic
+> evaluation baseline.** Calibration numbers never appear in Phase 22 or in any claim table.
 
 ---
 
@@ -638,16 +685,20 @@ module is cleanly switchable by config.
 
 **Build tasks**
 
-1. Three receiver conditions on the same stego images: correct token, wrong token, no token.
+1. Three receiver conditions on the same stego images, from the **evaluation split only**:
+   correct token, wrong token, no token.
 2. Report PSNR, SSIM and LPIPS distributions for each, plus the correct-minus-wrong gap.
-3. Compare against the paper's 25.37 dB correct versus 18.91 dB wrong (gap 6.46 dB).
-4. Train or obtain XuNet on the baseline stego set (target detection about 50.91 percent,
-   near chance). Record training setup and epochs.
-5. Save `experiments/results/baseline_security.json` and `baseline_steganalysis.json`.
+3. Treat the paper's 25.37 dB correct versus 18.91 dB wrong (gap 6.46 dB) as an
+   **approximate anchor**, not an exact target, because the data differs.
+4. Train or obtain XuNet on our evaluation stego set. The paper's 50.91 percent detection
+   rate is an approximate anchor only.
+5. Save `experiments/results/baseline_security.json` and `baseline_steganalysis.json`, both
+   labelled `"approximate": false` for our data.
 
-**Gate**: The correct-token advantage is reproduced within tolerance (gap at least 4 dB), the
-wrong-token and no-token conditions both underperform the correct one, and the XuNet detection
-rate is reported with its training setup. Baseline results are now frozen.
+**Gate**: The correct-token advantage holds on our data (gap at least 4 dB), the wrong-token
+and no-token conditions both underperform the correct one, and the XuNet detection rate is
+reported with its training setup. Baseline results on the evaluation split are now frozen.
+The paper's numbers are recorded beside ours as approximate anchors, clearly separated.
 
 ---
 
@@ -768,7 +819,8 @@ that honestly as a negative result; it is a valid finding.
 
 1. `pipelines/racs_base.py`, importing the same downstream modules as Phase 15. Any
    duplication of the downstream code is a bug.
-2. Run the same frozen 100-image split, 3 classes, 4 SNRs, same tokens.
+2. Run the same frozen **evaluation** split, 3 classes, 4 SNRs, same tokens. Never the
+   calibration split.
 3. **Before looking at PSNR**, verify `Xref_tx == Xref_rx` bit-exactly for every image:
    - recompute the receiver-side reference from the same query, index, ranking and token;
    - compare SHA-256 of the tensors and of the saved PNG.
@@ -792,12 +844,17 @@ matters until it holds.
 **Build tasks**
 
 1. `scripts/phase22_compare.py`: load both frozen result sets and emit the comparison table.
+   Both must carry `role = evaluation`. The script must refuse to run on calibration data.
 2. Table rows: system, class, SNR, PSNR, SSIM, MSE, LPIPS, reference latency, total latency,
    peak VRAM.
 3. Security comparison: correct versus wrong token gap for both systems.
 4. Visual grids: baseline versus RACS recovered images at 5 and 20 dB.
 5. State the efficiency claim only if the measured latency difference supports it.
 6. Save `experiments/results/phase22_comparison.json` and `.md`.
+
+**Dataset rule**: this comparison runs on our evaluation split only. The paper's numbers may
+appear in a separate, explicitly labelled "paper reference (approximate)" column, but they
+are never mixed into the measured rows and never used to compute a delta.
 
 **Gate**: The comparison table exists, both systems were measured with the same code path,
 `Xref_tx == Xref_rx` holds, and the conclusion is stated in terms of measured numbers,
@@ -864,9 +921,9 @@ on quality and cost, with a fixed documented threshold.
 
 ### Phase 26: Security Matrix
 
-Test correct token, wrong token and no token for both systems on a proper test set. Report
+Test correct token, wrong token and no token for both systems on the evaluation split. Report
 distributions and the correct-minus-wrong gap. Gate: distributions, not single images, and the
-gap is compared against the paper's 6.46 dB.
+gap is stated alongside the paper's 6.46 dB as an approximate anchor only.
 
 ### Phase 27: RACS Steganalysis
 
@@ -943,10 +1000,13 @@ Critical path: `6 -> 8 -> 10 -> 11 -> 13 -> 15 -> 17 -> 18 -> 21 -> 22`.
 
 - Phase 10 (EDICT) is the highest technical risk. If exact inversion does not reach machine
   precision, stop and understand why before building anything else.
-- Phase 15 (baseline numbers) is the highest scientific risk. If the targets are missed, the
-  project has no control condition. Options in order: fix the pipeline, substitute the closest
-  documented component, or narrow the claim to the classes that do reproduce. Do not silently
+- Phase 15 (baseline numbers) is the highest scientific risk. If calibration drifts outside
+  the wide tolerance, diagnose it; if the direction or class ordering is wrong, fix it. If the
+  authoritative evaluation baseline is non-deterministic, stop. Options in order: fix the
+  pipeline, substitute the closest documented component, or narrow the claim. Do not silently
   proceed.
+- Calibration data must never leak into an evaluation run. If a `role=evaluation` result
+  contains any image from `data/calibration/`, the phase is invalid.
 - Phase 21 (`Xref_tx == Xref_rx`) is a hard invariant. A single mismatch invalidates the
   security and recovery results.
 - Phase 6 is cheap and unblocks everything, so it comes next.
@@ -977,8 +1037,9 @@ measured impact on PSNR, SSIM, MSE and LPIPS, and whether the impact is acceptab
 
 Deviation entries are required for, at minimum: the reference generator if PicX-Real weights
 are unavailable, the ControlNet branch if it is not fine-tuned, the semantic codec if a
-substitute is used, the dataset if UniStega cannot be obtained, and the public-key generator if
-a local model replaces the paper's LLM setup.
+substitute is used, the acquisition and composition of the UniStega calibration set, the
+sourcing of the evaluation classes, and the public-key generator if a local model replaces
+the paper's LLM setup.
 
 ---
 

@@ -223,10 +223,19 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
   reuse map in the plan's Section 4.
 - **Phase 3 timing** is reclassified as the SD-only **lower bound**, not the baseline cost,
   since the paper's baseline adds ControlNet and IPAdapter-plus.
-- **New baseline gate** (Phase 15) requires the paper's Table II numbers within tolerance:
-  facial 5 dB PSNR 22.73, facial 20 dB LPIPS 0.2127, style 5 dB LPIPS 0.3850, common 5 dB
-  PSNR 19.71. Deviations must be logged in `docs/DEVIATIONS.md`.
+- **New baseline gate** (Phase 15) has two parts. 15A checks **approximate** reproduction on
+  the UniStega calibration set: facial 5 dB PSNR 22.73, facial 20 dB LPIPS 0.2127, style
+  5 dB LPIPS 0.3850, common 5 dB PSNR 19.71, with wide tolerance. 15B produces the
+  **authoritative** baseline on our own evaluation split. Deviations go in
+  `docs/DEVIATIONS.md`.
 - **Phase 22** is now the primary comparison and the minimum viable research result.
+- **Dataset policy added**: UniStega (the paper's dataset) is used **only as a read-only
+  calibration set** to check approximate reproduction. All claims, the security matrix,
+  ablations and the headline tables use our own authoritative evaluation split. Both splits
+  are frozen by hash, pairwise disjoint from each other and from the retrieval corpus, and
+  tagged with an enforced `role` field. Calibration tolerance is deliberately wide
+  (+/- 2.5 dB PSNR, +/- 0.07 SSIM, +/- 0.05 LPIPS, +/- 40 percent MSE) and no exact
+  reproduction is claimed.
 
 ### [2026-10-20] - Phase 5 Complete (CLIP Embeddings)
 
@@ -352,8 +361,10 @@ changed on 2026-10-23: see `racs2_implementation_plan.md` v2.
 Active next steps (new numbering):
 
 - [ ] **Phase 6**: Install `lpips`, `scipy`, `scikit-image`; extend `evaluation/metrics.py`;
-  build the frozen 3-class 100-image test split and `data/metadata/tokens.json`; write
-  `scripts/eval_report.py`. Create `docs/DEVIATIONS.md`.
+  build TWO role-tagged splits: `data/calibration/unistega/` (paper dataset, approximate
+  check only) and `data/test_set/` (our authoritative evaluation set, no UniStega), plus
+  `data/metadata/tokens.json`; write `scripts/eval_report.py` with loader role enforcement.
+  Create `docs/DEVIATIONS.md`.
 - [ ] **Phase 7**: Public conditions (`Kpub` + `Xfeat`), cached and deterministic.
 - [ ] **Phase 8**: Reference generator (PicX-Real or SD + ControlNet + IPAdapter-plus) with
   token-seeded noise; fit the 6 GB budget.
@@ -361,7 +372,9 @@ Active next steps (new numbering):
 - [ ] **Phase 10**: EDICT isolated, exact inversion to machine precision.
 - [ ] **Phase 11**: Local hide/recover with eta = 0.05 and a manual reference.
 - [ ] **Phase 12-14**: AWGN, semantic codec, optional CodeFormer enhancement.
-- [ ] **Phase 15 (GATE)**: Assemble AgentSemSteCom and reproduce Table II within tolerance.
+- [ ] **Phase 15 (GATE)**: Assemble AgentSemSteCom. 15A: approximate reproduction on the
+  UniStega calibration split (wide tolerance). 15B: authoritative baseline on our evaluation
+  split. Calibration numbers never appear in any claim table.
 - [ ] **Phase 16**: Baseline security and steganalysis, then freeze the baseline.
 - [ ] **Phase 17-20**: FAISS, token selection, structural reranking (consumes the banked
   Phase 4-5 artifacts).
