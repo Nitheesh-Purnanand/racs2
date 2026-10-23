@@ -1,0 +1,13 @@
+RACS2 Overview (GenAI project) RACS2 is a retrieval-augmented GenAI research project built on AgentSemSteCom, a coverless semantic steganography system. It replaces expensive diffusion-based reference image generation with deterministic retrieval: an LLM-generated semantic key and structural features are encoded with CLIP, matched against a FAISS-indexed image database, reranked by semantic and structural similarity, and one candidate is selected using a digital token. The rest of the pipeline, including EDICT exact diffusion inversion, token perturbation, and semantic communication over AWGN channels, remains unchanged for a controlled comparison. The goal is to reduce latency and VRAM while preserving image quality, security, and robustness.
+
+Resume bullet Built a retrieval-augmented GenAI pipeline for coverless semantic steganography, replacing 50-step diffusion reference generation with CLIP + FAISS retrieval and token-controlled selection, while preserving EDICT-based hiding and recovery for a controlled baseline comparison. Implemented the foundation through Phases 1-6: Stable Diffusion VAE, SD v1.5 generation benchmarking, COCO retrieval corpus, CLIP embeddings, and a reproducible evaluation harness with role-tagged splits and PSNR/SSIM/LPIPS metrics.
+
+Skills used
+
+• GenAI: Stable Diffusion, VAEs, CLIP, diffusion inversion (EDICT), ControlNet and IPAdapter concepts
+• Retrieval/RAG: CLIP embeddings, FAISS/ANN search, semantic and structural reranking, deterministic token selection
+• ML engineering: PyTorch, Diffusers, Transformers, CUDA, fp16 inference, low-VRAM optimization
+• Evaluation: PSNR, SSIM, MSE, LPIPS, SNR robustness, steganalysis (XuNet), reproducibility
+• Data engineering: COCO, UniStega, Wikimedia Commons, deterministic splits, SHA-256 manifests
+• Programming: Python, YAML, Git, experiment tracking, reproducible pipelines
+• Research: paper reproduction, controlled experiments, ablation design, baseline-versus-variant comparison

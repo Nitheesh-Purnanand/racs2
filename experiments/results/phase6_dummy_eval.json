@@ -26,13 +26,13 @@
     75,
     95
   ],
-  "created_utc": "2026-10-23T09:51:24Z",
+  "created_utc": "2026-10-23T10:14:25Z",
   "meta": {
     "lpips_net": "alex",
     "runner": "scripts.dummy_runner:run_case",
     "tokens_version": "201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1",
     "device": "cuda",
-    "seconds_total": 32.564
+    "seconds_total": 34.623
   },
   "cells": [
     {

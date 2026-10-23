@@ -16,9 +16,9 @@
       "num_inference_steps": 20,
       "guidance_scale": 7.5,
       "seed": 42,
-      "seconds": 5.331,
-      "seconds_per_step": 0.2666,
-      "peak_vram_gb": 2.601,
+      "seconds": 5.5195,
+      "seconds_per_step": 0.276,
+      "peak_vram_gb": 2.604,
       "image_hash": "b62eb5a5d75316e7c555ae5ea46db6d0984d43e16c533dbba7bbef91cae1eee7",
       "pixel_std": 56.221,
       "image_path": "experiments/results/phase3_seed42_steps20.png"
@@ -28,9 +28,9 @@
       "num_inference_steps": 20,
       "guidance_scale": 7.5,
       "seed": 123,
-      "seconds": 5.3178,
-      "seconds_per_step": 0.2659,
-      "peak_vram_gb": 2.601,
+      "seconds": 5.534,
+      "seconds_per_step": 0.2767,
+      "peak_vram_gb": 2.604,
       "image_hash": "b96d94de0216af71416873c3955a9773a9f120175bf4a470bafce017e7a070eb",
       "pixel_std": 48.446,
       "image_path": "experiments/results/phase3_seed123_steps20.png"
@@ -40,9 +40,9 @@
       "num_inference_steps": 30,
       "guidance_scale": 7.5,
       "seed": 42,
-      "seconds": 7.8703,
-      "seconds_per_step": 0.2623,
-      "peak_vram_gb": 2.601,
+      "seconds": 8.1569,
+      "seconds_per_step": 0.2719,
+      "peak_vram_gb": 2.604,
       "image_hash": "f9672b51265735b8f8bf2074e14b9c9c4fdd97c65670a456867b752c8469b5a3",
       "pixel_std": 56.847,
       "image_path": "experiments/results/phase3_seed42_steps30.png"
@@ -52,9 +52,9 @@
       "num_inference_steps": 30,
       "guidance_scale": 7.5,
       "seed": 123,
-      "seconds": 7.8864,
-      "seconds_per_step": 0.2629,
-      "peak_vram_gb": 2.601,
+      "seconds": 8.1713,
+      "seconds_per_step": 0.2724,
+      "peak_vram_gb": 2.604,
       "image_hash": "4df7aa339d0af68089b1a1bc9ae8575ef651733a285aca631c4d21ffa18dc2d0",
       "pixel_std": 50.002,
       "image_path": "experiments/results/phase3_seed123_steps30.png"
@@ -64,9 +64,9 @@
       "num_inference_steps": 50,
       "guidance_scale": 7.5,
       "seed": 42,
-      "seconds": 12.9775,
-      "seconds_per_step": 0.2596,
-      "peak_vram_gb": 2.601,
+      "seconds": 13.4369,
+      "seconds_per_step": 0.2687,
+      "peak_vram_gb": 2.604,
       "image_hash": "032572bf2df911eb262dac288e432be369da8febe12b007cc4961b33323eff98",
       "pixel_std": 58.251,
       "image_path": "experiments/results/phase3_seed42_steps50.png"
@@ -76,9 +76,9 @@
       "num_inference_steps": 50,
       "guidance_scale": 7.5,
       "seed": 123,
-      "seconds": 12.9671,
-      "seconds_per_step": 0.2593,
-      "peak_vram_gb": 2.601,
+      "seconds": 13.4732,
+      "seconds_per_step": 0.2695,
+      "peak_vram_gb": 2.604,
       "image_hash": "7d4c4d7a88f615c67062e7d4a409cc3954926ae4e196f5bcbe4295772c80353b",
       "pixel_std": 61.564,
       "image_path": "experiments/results/phase3_seed123_steps50.png"
@@ -89,13 +89,13 @@
     "seed": 42,
     "cfg_off": {
       "guidance_scale": 1.0,
-      "seconds": 4.489,
-      "seconds_per_step": 0.1496
+      "seconds": 4.653,
+      "seconds_per_step": 0.1551
     },
     "cfg_on": {
       "guidance_scale": 7.5,
-      "seconds": 7.8703,
-      "seconds_per_step": 0.2623
+      "seconds": 8.1569,
+      "seconds_per_step": 0.2719
     },
     "speedup_no_cfg": 1.75
   },
