@@ -116,3 +116,106 @@ evaluation:
     style:
       commons: "filetype:bitmap cat photograph"
       prefer_commons: true
+
+edict:
+  scheduler: "ddim"
+  steps: 20
+  mixing: 0.93
+  image_size: 256
+  latent_size: 32
+  guidance_scale: 1.0
+  dtype: "float16"
+  latent_dtype: "float32"
+  sweep_steps: [10, 20, 50]
+  sweep_mixing: [0.5, 0.7, 0.93, 0.99]
+  num_random_latents: 20
+  num_image_latents: 20
+  results_path: "experiments/results/phase10_edict.json"
+  grid_path: "experiments/results/phase10_edict_sweep.png"
+  max_rel_error: 0.005
+
+reference:
+  cache_dir: "experiments/results/references"
+  manifest_path: "experiments/results/phase8_references.json"
+  backend: "sd_controlnet"
+  model_id: "stable-diffusion-v1-5/stable-diffusion-v1-5"
+  controlnet_id: "lllyasviel/control_v11p_sd15_seg"
+  facial_controlnet_id: "lllyasviel/control_v11p_sd15_openpose"
+  use_ipadapter: false
+  ipadapter_id: "h94/IP-Adapter"
+  device: "cuda"
+  dtype: "float16"
+  scheduler: "ddim"
+  steps: 20
+  guidance_scale: 7.5
+  eta: 0.0
+  output_size: 256
+  seed_scheme: "sha256_token_v1"
+  max_peak_vram_gb: 5.5
+
+controlnet_train:
+  base_model_id: "stable-diffusion-v1-5/stable-diffusion-v1-5"
+  controlnet_id: "lllyasviel/control_v11p_sd15_seg"
+  train_role: "calibration"
+  classes: ["common", "facial"]
+  image_size: 256
+  batch_size: 1
+  grad_accum_steps: 1
+  learning_rate: 0.00001
+  max_steps: 50
+  warmup_steps: 5
+  dtype: "bfloat16"
+  checkpoint_dir: "experiments/checkpoints"
+  probe_size: 10
+  probe_snr_db: 10
+
+steganography:
+  eta: 0.05
+  mask_fraction: 0.05
+  mask_domain: "racs2-mask-v1"
+  edict_steps: 20
+  edict_mixing: 0.93
+  edict_strength: 0.2
+  guidance_scale: 3.0
+  image_size: 256
+  latent_dtype: "float32"
+  num_images: 20
+  probe_class: "facial"
+  results_dir: "experiments/results/phase11"
+  manifest_path: "experiments/results/phase11_local.json"
+
+channel:
+  kind: "awgn"
+  snr_db: [5, 10, 15, 20]
+  h: 1.0
+  complex_noise: true
+  seed: 1234
+  results_dir: "experiments/results/phase12"
+  manifest_path: "experiments/results/phase12_awgn.json"
+  curve_path: "experiments/results/phase12/phase12_awgn_curve.png"
+
+codec:
+  kind: "sd_vae_substitute"       # pretrained substitute; see docs/DEVIATIONS.md
+  checkpoint: "stable-diffusion-v1-5/stable-diffusion-v1-5#vae"
+  checkpoint_sha256: ""
+  compression_ratio: 12            # 256x256x3 -> 32x32x4 at 256 px
+  trained_snr_db: 10
+  modulation: 64
+  input_size: 256
+  dtype: "float16"
+  results_dir: "experiments/results/phase13"
+  manifest_path: "experiments/results/phase13_codec.json"
+  curve_path: "experiments/results/phase13/phase13_codec_curve.png"
+  grid_path: "experiments/results/phase13/phase13_codec_grid.png"
+
+enhancement:
+  enabled: false
+  kind: "codeformer"
+  model_id: "sczhou/CodeFormer"
+  fidelity_weight: 0.5
+  classes: ["facial"]
+  input_size: 256
+  dtype: "float16"
+  results_dir: "experiments/results/phase14"
+  manifest_path: "experiments/results/phase14_codeformer.json"
+  grid_path: "experiments/results/phase14/phase14_enhance_grid.png"

@@ -1,0 +1,2738 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-27T17:15:43Z",
+  "phase": 12,
+  "approximate": false,
+  "split_role": "evaluation",
+  "class": "facial",
+  "model": {
+    "eta": 0.05,
+    "mask_fraction": 0.05,
+    "mask_domain": "racs2-mask-v1",
+    "edict_steps": 20,
+    "edict_mixing": 0.93,
+    "image_size": 256,
+    "guidance_scale": 3.0
+  },
+  "channel": {
+    "kind": "awgn",
+    "snr_db": [
+      5,
+      10,
+      15,
+      20
+    ],
+    "h": 1.0,
+    "complex_noise": true,
+    "seed": 1234
+  },
+  "normalization": "pixels [0,1]; received is not clipped before recovery, PNG saves are clipped for display only",
+  "snr_db": [
+    5.0,
+    10.0,
+    15.0,
+    20.0
+  ],
+  "results": {
+    "5": {
+      "snr_db": 5.0,
+      "seed": 1234,
+      "n": 20,
+      "distribution": {
+        "mse": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.05503452904522419,
+          "median": 0.05675077065825462,
+          "std": 0.010163284870933775,
+          "min": 0.03359749913215637,
+          "max": 0.06853392720222473,
+          "mean_finite": 0.05503452904522419,
+          "p05": 0.03573996517807245,
+          "p25": 0.05040571000427008,
+          "p50": 0.05675077065825462,
+          "p75": 0.06274109240621328,
+          "p95": 0.06704838573932648
+        },
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 12.678421795368195,
+          "median": 12.461521625518799,
+          "std": 0.8892648446710522,
+          "min": 11.6409432888031,
+          "max": 14.736930131912231,
+          "mean_finite": 12.678421795368195,
+          "p05": 11.736171960830688,
+          "p25": 12.024771571159363,
+          "p50": 12.461521625518799,
+          "p75": 12.978047728538513,
+          "p95": 14.468886017799377
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.13214315921068193,
+          "median": 0.13059934973716736,
+          "std": 0.02116858735120508,
+          "min": 0.09439992904663086,
+          "max": 0.18234603106975555,
+          "mean_finite": 0.13214315921068193,
+          "p05": 0.09997224546968937,
+          "p25": 0.11874986067414284,
+          "p50": 0.13059934973716736,
+          "p75": 0.1378738395869732,
+          "p95": 0.167086049169302
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.814336609840393,
+          "median": 0.813864141702652,
+          "std": 0.059137831351581335,
+          "min": 0.7241158485412598,
+          "max": 0.9403356313705444,
+          "mean_finite": 0.814336609840393,
+          "p05": 0.7318224877119064,
+          "p25": 0.7668070495128632,
+          "p50": 0.813864141702652,
+          "p75": 0.861004501581192,
+          "p95": 0.9137177973985672
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "metrics": {
+            "mse": 0.054247815161943436,
+            "psnr": 12.656177282333374,
+            "ssim": 0.13635660707950592,
+            "lpips": 0.7434385418891907
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.1953473836183548,
+            "variance_target": 0.06177426502108574,
+            "variance_measured": 0.06191464886069298,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "1f9e2d92f09941008309d52a464f11dfa2df3aedfe37d0b20af925e9a380e5a7",
+          "recovered_sha256": "861390720b131836ddad3bcf9ed29e1bcfd81ab1532bb7b3f3e9ff0a430838d6",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "metrics": {
+            "mse": 0.060120608657598495,
+            "psnr": 12.209765911102295,
+            "ssim": 0.11783293634653091,
+            "lpips": 0.8157327175140381
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.18602538108825684,
+            "variance_target": 0.05882639065384865,
+            "variance_measured": 0.058960068970918655,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "2bd88bc91ff52f9620324378363f6ca92f50a09adf46386a9c6e37d520e0950c",
+          "recovered_sha256": "dea566157f34a4497f2a0d745dfb4a81f75bad3b3c3ffc4733d530144549bd6f",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "metrics": {
+            "mse": 0.047290265560150146,
+            "psnr": 13.25228214263916,
+            "ssim": 0.18234603106975555,
+            "lpips": 0.8076320886611938
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.31560030579566956,
+            "variance_target": 0.09980157762765884,
+            "variance_measured": 0.1000283733010292,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "92ff1ba8539d3f42f4896485a3ee4ab37dfbe2627d5e9389cc6a2637d6d0daf1",
+          "recovered_sha256": "9973609231b6388e5ac90d1e709149d58fd5d33cb022b465efd00c7f18b3ec53",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "metrics": {
+            "mse": 0.06853392720222473,
+            "psnr": 11.6409432888031,
+            "ssim": 0.09439992904663086,
+            "lpips": 0.8764801621437073
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.259103387594223,
+            "variance_target": 0.08193568140268326,
+            "variance_measured": 0.08212187886238098,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "45704448a0bde260c9b22162d954afdfb38c726d4f13b2aabe054c2158d38e55",
+          "recovered_sha256": "a83cf228a7fad830139d25ee1fd78840e4196482495f07504d481d7837dc1293",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "metrics": {
+            "mse": 0.06689665466547012,
+            "psnr": 11.74595594406128,
+            "ssim": 0.11697819083929062,
+            "lpips": 0.8612438440322876
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.28008636832237244,
+            "variance_target": 0.08857108652591705,
+            "variance_measured": 0.08877235651016235,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "d3917d62360cd634b88b2725484b1b7149adcf34edf20fe0113248a42b51b6fc",
+          "recovered_sha256": "c8765110911a8c42401808da8d91f1564d71ac59b21e3f33934073b10d144a17",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "metrics": {
+            "mse": 0.059909600764513016,
+            "psnr": 12.225035429000854,
+            "ssim": 0.1331080198287964,
+            "lpips": 0.8327010869979858
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.2396288514137268,
+            "variance_target": 0.07577729225158691,
+            "variance_measured": 0.07594949007034302,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "037aca61ceab851188fc17329784e309e8730e704cb0b88d706f9874c236f887",
+          "recovered_sha256": "c352e218d18f18281443aab9608bb74d8c3b780dcad2b9d182373872251f6257",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "metrics": {
+            "mse": 0.0581061951816082,
+            "psnr": 12.357776165008545,
+            "ssim": 0.12397843599319458,
+            "lpips": 0.9403356313705444
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.5127353668212891,
+            "variance_target": 0.16214115917682648,
+            "variance_measured": 0.16250963509082794,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "a0d73fbba91e62775d87f5219c3dd8ca55a714852557d23cc87ad22b56d19dfd",
+          "recovered_sha256": "43fe6c860413bb35ba5e657bc762ce10000f7882a546e52b9995f3145d357c1a",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "metrics": {
+            "mse": 0.06448096036911011,
+            "psnr": 11.905685663223267,
+            "ssim": 0.10026552528142929,
+            "lpips": 0.9123168587684631
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.4306991398334503,
+            "variance_target": 0.13619902729988098,
+            "variance_measured": 0.1365085393190384,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "00d6f07a46f3ce5a9c37614f243c1c8ee7f94d95a0958338c37c1045da622cb5",
+          "recovered_sha256": "dd32743a981ad5bdf87a5e47ffe76f6c2408bb71089fa22128c4c76e34a46475",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "metrics": {
+            "mse": 0.06697019934654236,
+            "psnr": 11.741183996200562,
+            "ssim": 0.13282285630702972,
+            "lpips": 0.753865659236908
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.4654722511768341,
+            "variance_target": 0.1471952497959137,
+            "variance_measured": 0.1475297212600708,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "c5183e573af1b8a240de0977aacf3276a4f60745ab19111bd1a6f6621d0d3a41",
+          "recovered_sha256": "a62b24b03bd5ff0c1ec1f90b8000e2cc98229ead97885a45cd005219f318c4a4",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "metrics": {
+            "mse": 0.05233527347445488,
+            "psnr": 12.812055349349976,
+            "ssim": 0.11905550211668015,
+            "lpips": 0.7833813428878784
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.16569599509239197,
+            "variance_target": 0.05239767208695412,
+            "variance_measured": 0.052516743540763855,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "772dfa9cf276987f755a2905cf91bdcaf23fc3fb03c76f2ac8b4bb9d3a29502d",
+          "recovered_sha256": "c92d47ced90fcaa7162b615d49c2a3006cc6cf74139adbcbc1d6fdc0b695e915",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "metrics": {
+            "mse": 0.03585272654891014,
+            "psnr": 14.45477843284607,
+            "ssim": 0.157174214720726,
+            "lpips": 0.8609247207641602
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.07780903577804565,
+            "variance_target": 0.02460537664592266,
+            "variance_measured": 0.024661289528012276,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "b808c5465923e91dc2f2e98042371703f3350b5f34ec9657ae660696af92550f",
+          "recovered_sha256": "dadb0675e21430604c5d615cab29f35c76b5182e9b346beed77024f82cc06a01",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "metrics": {
+            "mse": 0.06231914833188057,
+            "psnr": 12.05378532409668,
+            "ssim": 0.11949601024389267,
+            "lpips": 0.7440178990364075
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.21766121685504913,
+            "variance_target": 0.06883051991462708,
+            "variance_measured": 0.06898694485425949,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "0d324013208ffd8c25e723d4c343e12676d6c98a848b9b133383da5fca2b2918",
+          "recovered_sha256": "c2126c33a177730f4d1de4813026b94c7eb6a6f5c7530c998942cd9fda6ec160",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "metrics": {
+            "mse": 0.05539534613490105,
+            "psnr": 12.565267086029053,
+            "ssim": 0.142425537109375,
+            "lpips": 0.7241158485412598
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.317493200302124,
+            "variance_target": 0.1004001647233963,
+            "variance_measured": 0.1006283164024353,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "2cbf421ebc0876c239f73346295eea1af5d5d09feb4d3a14bdfe06054785a042",
+          "recovered_sha256": "3293dd1fd3fc9b99aec2012dcc9f7ef6ec0633488303da02ce777204eb508aaa",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "metrics": {
+            "mse": 0.045812249183654785,
+            "psnr": 13.390183448791504,
+            "ssim": 0.11406714469194412,
+            "lpips": 0.8169699311256409
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.11145172268152237,
+            "variance_target": 0.03524412959814072,
+            "variance_measured": 0.03532421961426735,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "834162dc538aa1f3006ab14eac35df4ac8dfb1b4786e916a17f76d9ef9230fde",
+          "recovered_sha256": "5bb32e0ccae6ff482ea8d76db48446c5effec24f2815b3afe81a226667efbb53",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "metrics": {
+            "mse": 0.060543645173311234,
+            "psnr": 12.179313898086548,
+            "ssim": 0.13504517078399658,
+            "lpips": 0.7970625162124634
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.5059171915054321,
+            "variance_target": 0.15998506546020508,
+            "variance_measured": 0.16034863889217377,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "8218f9abf6caf98dc36582e67356f7c3feeccfdf21bd9b5dd37142e29a0aaf39",
+          "recovered_sha256": "dc6bd4236ecc805d0799bf1ebd3b708ef300d9c733a734a06c463a63a91c15fa",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "metrics": {
+            "mse": 0.06400692462921143,
+            "psnr": 11.937730312347412,
+            "ssim": 0.13505928218364716,
+            "lpips": 0.8786827325820923
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.5013419389724731,
+            "variance_target": 0.15853823721408844,
+            "variance_measured": 0.15889853239059448,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "5c8d36b4e049fb92877a4b38c2e84ba1e3c34486b65f17311213ea6296636556",
+          "recovered_sha256": "d4cd654e25b0bb99ce61a854d336a8b2193cea813ae2cc28d689b82b44773b4a",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "metrics": {
+            "mse": 0.054961856454610825,
+            "psnr": 12.599385976791382,
+            "ssim": 0.128375843167305,
+            "lpips": 0.8224861025810242
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.23257236182689667,
+            "variance_target": 0.07354583591222763,
+            "variance_measured": 0.07371297478675842,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "27739f19266faee8218252182b6f0989c258cb6b62c54640b62f3ee72d37c849",
+          "recovered_sha256": "b53e6622ce7181d7a0c1cc25de9843f13f7bcb1aead09756d29549311ba677bd",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "metrics": {
+            "mse": 0.037865493446588516,
+            "psnr": 14.21756386756897,
+            "ssim": 0.16628289222717285,
+            "lpips": 0.7711208462715149
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.11847154051065445,
+            "variance_target": 0.03746398910880089,
+            "variance_measured": 0.03754912689328194,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "b78c59f9f1fe1e0475fbfa08a981e2e86f0032960984b117c59390210a8ab73a",
+          "recovered_sha256": "fe6b5daf88202ea90bd216ab108e2888ff6800eda68ae1f42ccae8f0a745abef",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "metrics": {
+            "mse": 0.05144419148564339,
+            "psnr": 12.88663625717163,
+            "ssim": 0.12632712721824646,
+            "lpips": 0.8119955658912659
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.2792109251022339,
+            "variance_target": 0.08829424530267715,
+            "variance_measured": 0.08849488943815231,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "2f63f47deefc1515f8227fa066aa986ea4f4e8481678c8bae436ebdc88e1256e",
+          "recovered_sha256": "4eddde75b65a5d31aede1e61589bf30bef2d0d9f788f627141f8e8d3f1b5a3de",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr5_received.png"
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "metrics": {
+            "mse": 0.03359749913215637,
+            "psnr": 14.736930131912231,
+            "ssim": 0.16146592795848846,
+            "lpips": 0.7322281002998352
+          },
+          "channel": {
+            "snr_db": 5.0,
+            "signal_power": 0.10354288667440414,
+            "variance_target": 0.03274313360452652,
+            "variance_measured": 0.032817546278238297,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1234,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "7997837b1cad14609265c3472eea3f7b9b4aded6952918c92cabc75f3d44b43d",
+          "recovered_sha256": "2a9c3921cb6bcf5fe04b68ca0d95f1b5ba9ab5a7b670f31b29598abc2ac091e7",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr5_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr5_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr5_received.png"
+        }
+      ]
+    },
+    "10": {
+      "snr_db": 10.0,
+      "seed": 1235,
+      "n": 20,
+      "distribution": {
+        "mse": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.033384572435170415,
+          "median": 0.03360085189342499,
+          "std": 0.009509013006879086,
+          "min": 0.01790807954967022,
+          "max": 0.04960106685757637,
+          "mean_finite": 0.033384572435170415,
+          "p05": 0.018415322806686164,
+          "p25": 0.02707928651943803,
+          "p50": 0.03360085189342499,
+          "p75": 0.040255382657051086,
+          "p95": 0.04776136800646782
+        },
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 14.957684993743896,
+          "median": 14.736572504043579,
+          "std": 1.3310074130828617,
+          "min": 13.04508924484253,
+          "max": 17.469509840011597,
+          "mean_finite": 14.957684993743896,
+          "p05": 13.209397435188293,
+          "p25": 13.957367539405823,
+          "p50": 14.736572504043579,
+          "p75": 15.678730905056,
+          "p95": 17.348295092582703
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.19289354532957076,
+          "median": 0.18782832473516464,
+          "std": 0.0342106039604869,
+          "min": 0.13010498881340027,
+          "max": 0.27801260352134705,
+          "mean_finite": 0.19289354532957076,
+          "p05": 0.1423496924340725,
+          "p25": 0.17509805411100388,
+          "p50": 0.18782832473516464,
+          "p75": 0.1991579420864582,
+          "p95": 0.25171588659286503
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.7444217443466187,
+          "median": 0.722850501537323,
+          "std": 0.07871289013820727,
+          "min": 0.6220372319221497,
+          "max": 0.9124789834022522,
+          "mean_finite": 0.7444217443466187,
+          "p05": 0.6257681578397751,
+          "p25": 0.6977261602878571,
+          "p50": 0.722850501537323,
+          "p75": 0.7947811633348465,
+          "p95": 0.8775729209184647
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "metrics": {
+            "mse": 0.03168347850441933,
+            "psnr": 14.991670846939087,
+            "ssim": 0.19111619889736176,
+            "lpips": 0.6860686540603638
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.1953473836183548,
+            "variance_target": 0.01953473873436451,
+            "variance_measured": 0.019497593864798546,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "f47db2f0a7b0726892a6c129af4452b3926a76b4c464b32b3538aa310478ca7a",
+          "recovered_sha256": "5caa614ebeba635cba9e8eb8180fce888049ed0e0d5b66fcc2c9ad1d774e890e",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "metrics": {
+            "mse": 0.030769094824790955,
+            "psnr": 15.118852853775024,
+            "ssim": 0.18385939300060272,
+            "lpips": 0.7211060523986816
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.18602538108825684,
+            "variance_target": 0.018602538853883743,
+            "variance_measured": 0.018567169085144997,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "c55096d4fad9c1fe88224c2d1bd8f05acce6e8b91f60d808e746b269ea31f817",
+          "recovered_sha256": "1494eb8d303517a87c73226a06ba7da08121620e0b8bdbcd5a350a78d17e46ce",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "metrics": {
+            "mse": 0.02782271057367325,
+            "psnr": 15.556005239486694,
+            "ssim": 0.250331848859787,
+            "lpips": 0.7094480991363525
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.31560030579566956,
+            "variance_target": 0.031560029834508896,
+            "variance_measured": 0.03150002658367157,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "411746d2dc192681e1a6145efef3b456aa64645d448486f85e9ee6858298bee9",
+          "recovered_sha256": "acb842d2701b9eb6146544a3a2471c98ebef01b4a9feb9c80a0adacaaf4654a0",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "metrics": {
+            "mse": 0.039051976054906845,
+            "psnr": 14.0835702419281,
+            "ssim": 0.14299415051937103,
+            "lpips": 0.808724045753479
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.259103387594223,
+            "variance_target": 0.025910338386893272,
+            "variance_measured": 0.025861071422696114,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "67430a2c9b5e53e5a3bdd8c4ef293c66d641b034bb774ee8315cc3324d6049e5",
+          "recovered_sha256": "55a05e480ddeb450537cf41c6cb44576a9c2b92896a9ff71e03b3eb32beabcbc",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "metrics": {
+            "mse": 0.03379848226904869,
+            "psnr": 14.711028337478638,
+            "ssim": 0.18219925463199615,
+            "lpips": 0.8000376224517822
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.28008636832237244,
+            "variance_target": 0.028008636087179184,
+            "variance_measured": 0.027955377474427223,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "307551fc4206008d54e4b2ec9e0876c671e4143e3e991a63fba6b8f164725e10",
+          "recovered_sha256": "3d0dd8efecc137f69ed831c2f29a55b35704ca76b2276e177be62858d3039a13",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "metrics": {
+            "mse": 0.0374995619058609,
+            "psnr": 14.259737730026245,
+            "ssim": 0.192923903465271,
+            "lpips": 0.7527769804000854
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.2396288514137268,
+            "variance_target": 0.02396288514137268,
+            "variance_measured": 0.023917317390441895,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "ac441c9ad528b74f4bfa14b3b31ef6846eaef2104262bd4c5ec6f743212917f2",
+          "recovered_sha256": "045719f7861863edc8035fc316905f6053b66bee9377a132b91846a46d9dd132",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "metrics": {
+            "mse": 0.04386560246348381,
+            "psnr": 13.57875943183899,
+            "ssim": 0.1638137549161911,
+            "lpips": 0.8757357597351074
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.5127353668212891,
+            "variance_target": 0.05127353593707085,
+            "variance_measured": 0.0511760413646698,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "c79cdbf6f1f18b3751ed23fb971e581a65dd3934b141b47cca72fdfe20c413a5",
+          "recovered_sha256": "743e32d8c000e0ef0e7fae5bbfb5258f14172892278e3453c005a723c06517bb",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "metrics": {
+            "mse": 0.044280413538217545,
+            "psnr": 13.537882566452026,
+            "ssim": 0.13010498881340027,
+            "lpips": 0.9124789834022522
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.4306991398334503,
+            "variance_target": 0.04306991398334503,
+            "variance_measured": 0.042988020926713943,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "054deffb8e9f113db6ee3a2e8756dda228ce5b852edf7adec0ad391de5584002",
+          "recovered_sha256": "e6716b96068817e64f0c091e0cc88697b20a6d2dfa6e1b8bb736c23928bca5aa",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "metrics": {
+            "mse": 0.047664541751146317,
+            "psnr": 13.218045234680176,
+            "ssim": 0.17648173868656158,
+            "lpips": 0.7187422513961792
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.4654722511768341,
+            "variance_target": 0.04654722660779953,
+            "variance_measured": 0.04645872116088867,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "386a9e437c47a7994d9417bc6ef4c26fef9a7d86162605509091b7d2128abbc2",
+          "recovered_sha256": "93dcb214d721ebe15370c9956beaca82c5c8873163a663a282be2e41076549ff",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "metrics": {
+            "mse": 0.02484901435673237,
+            "psnr": 16.046907901763916,
+            "ssim": 0.20308180153369904,
+            "lpips": 0.7016119956970215
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.16569599509239197,
+            "variance_target": 0.016569599509239197,
+            "variance_measured": 0.016538091003894806,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "3a1edfa7818562205dd3f214040eff1838fbdcbf57c9186cae7f13e91c3f66b2",
+          "recovered_sha256": "387fbd7f70a8c3dba9d59b05242f614d444a5f55bf48f3e23d041c3086821af4",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "metrics": {
+            "mse": 0.018442019820213318,
+            "psnr": 17.341915369033813,
+            "ssim": 0.23721402883529663,
+            "lpips": 0.7930290102958679
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.07780903577804565,
+            "variance_target": 0.007780903484672308,
+            "variance_measured": 0.007766108959913254,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "5035abf56efaf668ce7b0e7c59278272c99fd40ad3b5b3ddc1960d427c50f26b",
+          "recovered_sha256": "bad6a341a1de1fdc9142c81e877080b2a196547be581c6e8f46639295d0c2ce2",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "metrics": {
+            "mse": 0.03392598405480385,
+            "psnr": 14.694675207138062,
+            "ssim": 0.19784998893737793,
+            "lpips": 0.6587729454040527
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.21766121685504913,
+            "variance_target": 0.021766122430562973,
+            "variance_measured": 0.02172473631799221,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "a1b03ffe34c3c2490a2f7e4892ea6dbe55d6964247f27ffa44c9a9441df99b68",
+          "recovered_sha256": "2bf4efe3ee12ddd8fba7e0bbabb3ae482e14888e9df3e9a15685a581869937ba",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "metrics": {
+            "mse": 0.036162760108709335,
+            "psnr": 14.417383670806885,
+            "ssim": 0.18578006327152252,
+            "lpips": 0.7245949506759644
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.317493200302124,
+            "variance_target": 0.03174931928515434,
+            "variance_measured": 0.03168895095586777,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "a45f4a1be99a0498bb274f386d52f0a62b5940d9bdb69b0cb7557efc0fd9da80",
+          "recovered_sha256": "982086790927f9001ac48ae88a6b91941b06c9c681e5266331b2584dc25803c8",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "metrics": {
+            "mse": 0.023121528327465057,
+            "psnr": 16.359834671020508,
+            "ssim": 0.18776261806488037,
+            "lpips": 0.671545147895813
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.11145172268152237,
+            "variance_target": 0.011145172640681267,
+            "variance_measured": 0.011123981326818466,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "47dc2419e96d6030a3ce53fcefea77cdad5279f3abd3309b136b855abd7aed2d",
+          "recovered_sha256": "72f868e700215e30ed428ad222d03e2393fc112e871c74b5923d79bb8d6e4e4e",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "metrics": {
+            "mse": 0.04566771909594536,
+            "psnr": 13.40390682220459,
+            "ssim": 0.16789822280406952,
+            "lpips": 0.7805313467979431
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.5059171915054321,
+            "variance_target": 0.05059171840548515,
+            "variance_measured": 0.05049552023410797,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "5254a6031e1dff9188c1fa0a737c3f61e34160fab840a6be757474ac88f25768",
+          "recovered_sha256": "3c5798851c4459524bc0d6bc950fc7e257fbc4d04d545dbf2afab0c5058411d1",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "metrics": {
+            "mse": 0.04960106685757637,
+            "psnr": 13.04508924484253,
+            "ssim": 0.17094700038433075,
+            "lpips": 0.874697208404541
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.5013419389724731,
+            "variance_target": 0.050134193152189255,
+            "variance_measured": 0.050038859248161316,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "84190bbabacc1a566ba72de67c7ac91486384fdc07011dbb2ce775f14578baf5",
+          "recovered_sha256": "2dda5a88f352679839522e55a376fb73fbfb5c6817287c8297968312419efb9d",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "metrics": {
+            "mse": 0.033403221517801285,
+            "psnr": 14.76211667060852,
+            "ssim": 0.1878940314054489,
+            "lpips": 0.7299582958221436
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.23257236182689667,
+            "variance_target": 0.023257236927747726,
+            "variance_measured": 0.023213014006614685,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "7f288348ce7e4d2ce824d92260d9cfe63435c328f3f2b22dbf325e379a174dd5",
+          "recovered_sha256": "4f4862cfd490884bbb7bed553933de1b4a377e2e3d49ff1c0bc224a66095ced0",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "metrics": {
+            "mse": 0.01790807954967022,
+            "psnr": 17.469509840011597,
+            "ssim": 0.27801260352134705,
+            "lpips": 0.6259645223617554
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.11847154051065445,
+            "variance_target": 0.01184715423732996,
+            "variance_measured": 0.011824626475572586,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "6708f81538e761885be54ea28913856c9fb99017206cbd82abec8ebf14b61b3e",
+          "recovered_sha256": "bc4a90b157262bba337df9747bb2a475b7f18d271be0b043827283ac39489bc7",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "metrics": {
+            "mse": 0.02910253219306469,
+            "psnr": 15.360692739486694,
+            "ssim": 0.19211137294769287,
+            "lpips": 0.7205737829208374
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.2792109251022339,
+            "variance_target": 0.02792109176516533,
+            "variance_measured": 0.0278679970651865,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "ce7271e62fe16215ab86dd5ad2dd29a41292e3267fea7044ba064e51728be665",
+          "recovered_sha256": "a31e686829a9daaedf5620281963733cd516b029003affb27142f02a9e778fa9",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr10_received.png"
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "metrics": {
+            "mse": 0.019071660935878754,
+            "psnr": 17.196115255355835,
+            "ssim": 0.23549394309520721,
+            "lpips": 0.6220372319221497
+          },
+          "channel": {
+            "snr_db": 10.0,
+            "signal_power": 0.10354288667440414,
+            "variance_target": 0.01035428885370493,
+            "variance_measured": 0.010334601625800133,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1235,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "710f8415996fb67dd42385c47bb4f0a8538a1d0aba91cf3593b4f4712f878cce",
+          "recovered_sha256": "320481feb7afb86f7b4b53eec66deef5dbc63e72cb68d96a385889474713fb31",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr10_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr10_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr10_received.png"
+        }
+      ]
+    },
+    "15": {
+      "snr_db": 15.0,
+      "seed": 1236,
+      "n": 20,
+      "distribution": {
+        "mse": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.017269681161269545,
+          "median": 0.016101082786917686,
+          "std": 0.006251890492793774,
+          "min": 0.008756306953728199,
+          "max": 0.02768164686858654,
+          "mean_finite": 0.017269681161269545,
+          "p05": 0.008800864173099398,
+          "p25": 0.012698277365416288,
+          "p50": 0.016101082786917686,
+          "p75": 0.022823526989668608,
+          "p95": 0.02685297867283225
+        },
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 17.926491022109985,
+          "median": 17.93570339679718,
+          "std": 1.6383991138846563,
+          "min": 15.578080415725708,
+          "max": 20.576789379119873,
+          "mean_finite": 17.926491022109985,
+          "p05": 15.710181772708893,
+          "p25": 16.422426104545593,
+          "p50": 17.93570339679718,
+          "p75": 18.9768049120903,
+          "p95": 20.55474889278412
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.2954625405371189,
+          "median": 0.29583442211151123,
+          "std": 0.05435121035697852,
+          "min": 0.19487912952899933,
+          "max": 0.4226829707622528,
+          "mean_finite": 0.2954625405371189,
+          "p05": 0.22465281188488007,
+          "p25": 0.24988174438476562,
+          "p50": 0.29583442211151123,
+          "p75": 0.3261387497186661,
+          "p95": 0.3647009879350663
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.601180662214756,
+          "median": 0.5677346885204315,
+          "std": 0.10862727391287472,
+          "min": 0.45310983061790466,
+          "max": 0.8123972415924072,
+          "mean_finite": 0.601180662214756,
+          "p05": 0.4601397231221199,
+          "p25": 0.5167153626680374,
+          "p50": 0.5677346885204315,
+          "p75": 0.6671072542667389,
+          "p95": 0.8117452681064605
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "metrics": {
+            "mse": 0.015291559509932995,
+            "psnr": 18.155481815338135,
+            "ssim": 0.2963186502456665,
+            "lpips": 0.507710874080658
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.1953473836183548,
+            "variance_target": 0.006177426781505346,
+            "variance_measured": 0.006148712709546089,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "5348ab2f1c2568193f19494242c05e38477650509544b955da657ce9b2ea9d28",
+          "recovered_sha256": "9d3cf6c7ffc555c4f3120290ab2c7f919edcfa5c2e83f46391a5fdb4896e88b0",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "metrics": {
+            "mse": 0.01327292900532484,
+            "psnr": 18.77033233642578,
+            "ssim": 0.3032539188861847,
+            "lpips": 0.5197168588638306
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.18602538108825684,
+            "variance_target": 0.005882638972252607,
+            "variance_measured": 0.005855295341461897,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "6e7480917412eda32a3af8f891631f50c161791c25a5ba1b4feb3ba7146f9aa3",
+          "recovered_sha256": "9bad2287cc7ddafb59dcc30977b435ef7b17a94b7054048918cf58660f3b5bc9",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "metrics": {
+            "mse": 0.01476892177015543,
+            "psnr": 18.306511640548706,
+            "ssim": 0.3601551055908203,
+            "lpips": 0.5560771226882935
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.31560030579566956,
+            "variance_target": 0.0099801579490304,
+            "variance_measured": 0.009933769702911377,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "1956a8bfe86d0bc45c295464a7d816c0ef2115f082beaf2665c3295fd6506f4b",
+          "recovered_sha256": "804b5c45f6eebe50e01028463301623ef9908f4a750cab69ee95368e41ee67fd",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "metrics": {
+            "mse": 0.016813378781080246,
+            "psnr": 17.7434504032135,
+            "ssim": 0.2499687671661377,
+            "lpips": 0.7226652503013611
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.259103387594223,
+            "variance_target": 0.00819356832653284,
+            "variance_measured": 0.00815548375248909,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "a001dcd29eb2416b8945e9b98478613258c43b401d1e6053efebd83e7d3af07a",
+          "recovered_sha256": "6468d890fc1a86784f45abd78b6d8456c90dac0b858f3140a3d908700d7b2e6d",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "metrics": {
+            "mse": 0.015388786792755127,
+            "psnr": 18.12795639038086,
+            "ssim": 0.2986028492450714,
+            "lpips": 0.5943797826766968
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.28008636832237244,
+            "variance_target": 0.008857108652591705,
+            "variance_measured": 0.008815939538180828,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "ef9c49da9d2c8cac39fe1685dd778e3d1664cc44b021d642075c3dae602886c8",
+          "recovered_sha256": "06a2116c66ab15c45c689a97ef9a96b52bb562bf8702f67f7b56d56e64c7a680",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "metrics": {
+            "mse": 0.018195925280451775,
+            "psnr": 17.400258779525757,
+            "ssim": 0.29535019397735596,
+            "lpips": 0.5655033588409424
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.2396288514137268,
+            "variance_target": 0.007577729877084494,
+            "variance_measured": 0.007542507257312536,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "3ca6ce7c87088b822e511034bb1c05f826c0c52df4e33a52e00181bed1ef97fe",
+          "recovered_sha256": "8bff917788a301a4733b0d9d0cbb987530d8233d74a2744aef91ebee0b29862a",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "metrics": {
+            "mse": 0.026001140475273132,
+            "psnr": 15.850075483322144,
+            "ssim": 0.22621984779834747,
+            "lpips": 0.8117109537124634
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.5127353668212891,
+            "variance_target": 0.016214115545153618,
+            "variance_measured": 0.016138752922415733,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "1a1481898872e023bdab665d4676a0428730eab5384ff300ae8c9e47d15da081",
+          "recovered_sha256": "21a848a16151d9ecee0a2bfffb3b6991df67f82fd6d1c34c2c74c0d6dfece840",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "metrics": {
+            "mse": 0.024987436830997467,
+            "psnr": 16.02278232574463,
+            "ssim": 0.19487912952899933,
+            "lpips": 0.8123972415924072
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.4306991398334503,
+            "variance_target": 0.013619902543723583,
+            "variance_measured": 0.013556594960391521,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "bbcaf34809001d1df481d2ece71dae5353f1d56e308ae11f19e0f9d6f2698adc",
+          "recovered_sha256": "850b018ca62cbf46b290874cae50509a4f187e1026163e0d1141ae39193cca59",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "metrics": {
+            "mse": 0.026809364557266235,
+            "psnr": 15.717134475708008,
+            "ssim": 0.24933236837387085,
+            "lpips": 0.6617593765258789
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.4654722511768341,
+            "variance_target": 0.0147195253521204,
+            "variance_measured": 0.014651107601821423,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "25d693b2d771b11d3430fa1681237574144709555d4e926a1085745e162c0325",
+          "recovered_sha256": "af1a37a7a5a444c56962e96d041204d128e53f06e6280743e2ffc34ed26b3bf8",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "metrics": {
+            "mse": 0.010974322445690632,
+            "psnr": 19.596222639083862,
+            "ssim": 0.33785387873649597,
+            "lpips": 0.5520046949386597
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.16569599509239197,
+            "variance_target": 0.005239767488092184,
+            "variance_measured": 0.005215412005782127,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "44a9564dd4f4eeb944c2e05ec1fe9f01414e1a7f6194809de59951fba4a7d714",
+          "recovered_sha256": "a7415777265be7ac3c084702e11d30875d8674e37578b00a7272f1f6ed92ffe4",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "metrics": {
+            "mse": 0.008756306953728199,
+            "psnr": 20.576789379119873,
+            "ssim": 0.3609764575958252,
+            "lpips": 0.6670464277267456
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.07780903577804565,
+            "variance_target": 0.002460537711158395,
+            "variance_measured": 0.0024491006042808294,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "41df129d8f44ab113707891b103e19052ebfd6cbf953f8e548302e7790f97a4e",
+          "recovered_sha256": "be4906cb9d300d14fe1b01b553aeb90e3cdd3d04770dcbb124b8e79b40e57518",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "metrics": {
+            "mse": 0.022102223709225655,
+            "psnr": 16.555640697479248,
+            "ssim": 0.2902478873729706,
+            "lpips": 0.49864867329597473
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.21766121685504913,
+            "variance_target": 0.0068830521777272224,
+            "variance_measured": 0.00685105798766017,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "bd55bfde147462cd7e9e5992e13b13f7d04779c33700d47afba4e6dc3355777e",
+          "recovered_sha256": "ad55d6ca37c3a1c781896833f2d66992ac31ad18a0e4055c3d698f18a56cba10",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "metrics": {
+            "mse": 0.020409150049090385,
+            "psnr": 16.901750564575195,
+            "ssim": 0.2553844451904297,
+            "lpips": 0.5981117486953735
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.317493200302124,
+            "variance_target": 0.01004001684486866,
+            "variance_measured": 0.009993350133299828,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "82aa0bf183806af025d56b41bce68667cf2c22a3020ab2af163864251822c376",
+          "recovered_sha256": "5aa4409d77ae57fa21b618e28d10fd3ec01aa82d88bde7ae911ec9e21b437d4e",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "metrics": {
+            "mse": 0.010165262967348099,
+            "psnr": 19.92881417274475,
+            "ssim": 0.3222337067127228,
+            "lpips": 0.45310983061790466
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.11145172268152237,
+            "variance_target": 0.003524413099512458,
+            "variance_measured": 0.0035080311354249716,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "1c85df71e09d2ef1e9a5487eff6c396331f2563d49feb34c70a712d38db10d1f",
+          "recovered_sha256": "543646ae2bc47a366bb0090ba81f6ec2105e74b6dae1621053dba09b8a1f9898",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "metrics": {
+            "mse": 0.02768164686858654,
+            "psnr": 15.578080415725708,
+            "ssim": 0.22958119213581085,
+            "lpips": 0.6672897338867188
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.5059171915054321,
+            "variance_target": 0.015998506918549538,
+            "variance_measured": 0.01592414267361164,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "fae229acdb86ef7dd0fdd35663d3fe74c86114f1cbe042209227b095d217a289",
+          "recovered_sha256": "5fec3067e414efb378a09b6f6a6f0d34cf55e797697a27a92fe617b34eb8a0a4",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "metrics": {
+            "mse": 0.025562653318047523,
+            "psnr": 15.923939943313599,
+            "ssim": 0.24962067604064941,
+            "lpips": 0.7702755928039551
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.5013419389724731,
+            "variance_target": 0.015853824093937874,
+            "variance_measured": 0.0157801304012537,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "a4329d30bd5fbf37b2797a0fcee3306987c985c1b982ba13d5385f0c46521a27",
+          "recovered_sha256": "46a55c231c1804d54b836c2c9566839c71cfe383c03e6785b3c51ccba9a9d018",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "metrics": {
+            "mse": 0.016820818185806274,
+            "psnr": 17.741528749465942,
+            "ssim": 0.2932394742965698,
+            "lpips": 0.5556238293647766
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.23257236182689667,
+            "variance_target": 0.00735458405688405,
+            "variance_measured": 0.007320398930460215,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "7f3d2032e8cbe0ea5010ce1d0f2b6fc3c8cc4ea54ede26b34d6e64edfb8e9ca0",
+          "recovered_sha256": "88c5d949d2efa1bb1cabedb61a46da59813565c3f969591dac8dffbd28f705ed",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "metrics": {
+            "mse": 0.008803209289908409,
+            "psnr": 20.5535888671875,
+            "ssim": 0.4226829707622528,
+            "lpips": 0.460509717464447
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.11847154051065445,
+            "variance_target": 0.003746399190276861,
+            "variance_measured": 0.0037289855536073446,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "e2a66d47fcf8e090dcdf53d291bbb20904fe8902bf64aa1e4a0aa3e20bafcb43",
+          "recovered_sha256": "1bc678c8c1fa26c0e1d66e0877420f9f38d4f2b624acc1769711599209a3264d",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "metrics": {
+            "mse": 0.013282152824103832,
+            "psnr": 18.76731514930725,
+            "ssim": 0.3116999864578247,
+            "lpips": 0.5699660181999207
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.2792109251022339,
+            "variance_target": 0.00882942508906126,
+            "variance_measured": 0.008788385428488255,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "6d791674e9242a7f9516a8754b3feb254ff82be040d58255519e75ef9438815c",
+          "recovered_sha256": "443fa1e4576c576d68283155c2ea005fcf8b5244a1966cb32b53648ed866ab00",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr15_received.png"
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "metrics": {
+            "mse": 0.009306433610618114,
+            "psnr": 20.312166213989258,
+            "ssim": 0.3616493046283722,
+            "lpips": 0.4791061580181122
+          },
+          "channel": {
+            "snr_db": 15.0,
+            "signal_power": 0.10354288667440414,
+            "variance_target": 0.0032743136398494244,
+            "variance_measured": 0.0032590937335044146,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1236,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "438235ef51d6abe707875450c9748de784e9478360cd12738e4ff89afa3de2b3",
+          "recovered_sha256": "7db25cccea764d960c3a2928910ffb1358c91efd75ea6711d49e10c960a09597",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr15_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr15_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr15_received.png"
+        }
+      ]
+    },
+    "20": {
+      "snr_db": 20.0,
+      "seed": 1237,
+      "n": 20,
+      "distribution": {
+        "mse": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.008357110968790948,
+          "median": 0.006970180431380868,
+          "std": 0.0031460190793075374,
+          "min": 0.004573756828904152,
+          "max": 0.014832191169261932,
+          "mean_finite": 0.008357110968790948,
+          "p05": 0.004646452842280269,
+          "p25": 0.006116910371929407,
+          "p50": 0.006970180431380868,
+          "p75": 0.011096616508439183,
+          "p95": 0.01390767376869917
+        },
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 21.07520455121994,
+          "median": 21.56759262084961,
+          "std": 1.5898398191353018,
+          "min": 18.287947177886963,
+          "max": 23.397269248962402,
+          "mean_finite": 21.07520455121994,
+          "p05": 18.567940175533295,
+          "p25": 19.54953819513321,
+          "p50": 21.56759262084961,
+          "p75": 22.13483214378357,
+          "p95": 23.32881259918213
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.43156095445156095,
+          "median": 0.44035790860652924,
+          "std": 0.06463754897882,
+          "min": 0.3067757189273834,
+          "max": 0.5714695453643799,
+          "mean_finite": 0.43156095445156095,
+          "p05": 0.3384421855211258,
+          "p25": 0.3978551924228668,
+          "p50": 0.44035790860652924,
+          "p75": 0.4649643898010254,
+          "p95": 0.527415469288826
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.4379573419690132,
+          "median": 0.40046675503253937,
+          "std": 0.12457364657087525,
+          "min": 0.2707518935203552,
+          "max": 0.6915624141693115,
+          "mean_finite": 0.4379573419690132,
+          "p05": 0.30915196537971495,
+          "p25": 0.34731393307447433,
+          "p50": 0.40046675503253937,
+          "p75": 0.5280218124389648,
+          "p95": 0.6684243202209473
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "metrics": {
+            "mse": 0.006768117193132639,
+            "psnr": 21.69532060623169,
+            "ssim": 0.4462161064147949,
+            "lpips": 0.3111730217933655
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.1953473836183548,
+            "variance_target": 0.0019534737803041935,
+            "variance_measured": 0.0019485652446746826,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "ac8b89ed2d5015110e674e7f534638f8aa1788cddab38f2584e47e37e6c8cf6a",
+          "recovered_sha256": "36d1564f9cf2947af83fd60d59e6fb4b42de96b79071831b3324cd23657d4904",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "metrics": {
+            "mse": 0.006028442177921534,
+            "psnr": 22.19794988632202,
+            "ssim": 0.4540717303752899,
+            "lpips": 0.3299349844455719
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.18602538108825684,
+            "variance_target": 0.00186025386210531,
+            "variance_measured": 0.0018555792048573494,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "912c8cef9ffdc6cf4cc9ddd447ff0ca970bce14f27f367f75ca2de94224b04ba",
+          "recovered_sha256": "ac057b96eb5390852fafda6ab812759a51aace3a7ee83b222f118756770009cc",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "metrics": {
+            "mse": 0.00879212748259306,
+            "psnr": 20.55906057357788,
+            "ssim": 0.47576189041137695,
+            "lpips": 0.3942103683948517
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.31560030579566956,
+            "variance_target": 0.003156003076583147,
+            "variance_measured": 0.0031480726320296526,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "7975c56a8317b67de668a8cff54824d6cc446dfe846fa86922602819dd86c607",
+          "recovered_sha256": "b8cf3ee919d43e0ab0bf880543f4cf4af454abeb171f83bec11c3f4271789389",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "metrics": {
+            "mse": 0.006997298914939165,
+            "psnr": 21.55069589614868,
+            "ssim": 0.40681973099708557,
+            "lpips": 0.5516327619552612
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.259103387594223,
+            "variance_target": 0.0025910339318215847,
+            "variance_measured": 0.0025845228228718042,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "146a6edfdd0d2fc9350a20ffe0aceda606ef6c6ec410dbb24edb6565346e81e1",
+          "recovered_sha256": "6b83cd5c1a80cbef1adb2e73f492a1ee17af787109dc917a1c3ac2749cc1a40c",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "metrics": {
+            "mse": 0.006405234336853027,
+            "psnr": 21.93464994430542,
+            "ssim": 0.4511958062648773,
+            "lpips": 0.4188555181026459
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.28008636832237244,
+            "variance_target": 0.002800863701850176,
+            "variance_measured": 0.002793825464323163,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "96abc43e3f0fc6e17cf905a9ff9601da119ea201abedf6997a499f317caeeed1",
+          "recovered_sha256": "9cbacd88d9303fd614357237b0549dadef63a2a75bb316d4fe6f019d962ab3ac",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "metrics": {
+            "mse": 0.010173319838941097,
+            "psnr": 19.92537260055542,
+            "ssim": 0.42545339465141296,
+            "lpips": 0.40672314167022705
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.2396288514137268,
+            "variance_target": 0.002396288560703397,
+            "variance_measured": 0.0023902670945972204,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "ab18f40644fb070f89f054a4f070780efbb894b01612f0d0e322851fab3b7849",
+          "recovered_sha256": "d0a6f51b32c09ce37a0561bf172024358715db4c86180cb16bcc853bdf99fb09",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "metrics": {
+            "mse": 0.012274272739887238,
+            "psnr": 19.110041856765747,
+            "ssim": 0.3418327867984772,
+            "lpips": 0.6672065258026123
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.5127353668212891,
+            "variance_target": 0.005127353593707085,
+            "variance_measured": 0.005114469211548567,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "14f0fc7f5c0714407d4df18a7d7a717b3fc2622362694c0c2f9792e8df0ef5ec",
+          "recovered_sha256": "f706e5b66eb4ca819b4dbc0888afa2830c4d2de8c3062f9793a235eb5c7a070e",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "metrics": {
+            "mse": 0.01159704476594925,
+            "psnr": 19.35652732849121,
+            "ssim": 0.3067757189273834,
+            "lpips": 0.6915624141693115
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.4306991398334503,
+            "variance_target": 0.004306991584599018,
+            "variance_measured": 0.004296168219298124,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "35e4fbdec3f83e300a9bfba2ff6f5a93531a4ae17c74f099782a65ba3e0c2e57",
+          "recovered_sha256": "219fae78fcec20faab08e9bbd0ac6b7de75bf46794ceaa2a0d5b14162483605d",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "metrics": {
+            "mse": 0.014832191169261932,
+            "psnr": 18.287947177886963,
+            "ssim": 0.35811176896095276,
+            "lpips": 0.4893346130847931
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.4654722511768341,
+            "variance_target": 0.004654722288250923,
+            "variance_measured": 0.00464302534237504,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "a41056889d173fa0f3316bfc480379413ab9fe5ee994e2b4cfeb2ce1c0f23ca3",
+          "recovered_sha256": "c223f50078d5a01edc3e502f2b672d830c6d757d68030faf95afc4a43517ea54",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "metrics": {
+            "mse": 0.005152580328285694,
+            "psnr": 22.87975311279297,
+            "ssim": 0.5062680244445801,
+            "lpips": 0.3797748386859894
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.16569599509239197,
+            "variance_target": 0.0016569599974900484,
+            "variance_measured": 0.001652796403504908,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "2d166f72c080f29b668a5538986b0e7d9a7ac77e73d78657c5567ee74220f391",
+          "recovered_sha256": "890cca947946c7322425cf8fe56928730dc987428298ad92ea2ab332273c66a2",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "metrics": {
+            "mse": 0.004573756828904152,
+            "psnr": 23.397269248962402,
+            "ssim": 0.4864097535610199,
+            "lpips": 0.5278459787368774
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.07780903577804565,
+            "variance_target": 0.0007780903833918273,
+            "variance_measured": 0.000776135188061744,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "7f2e84b923886138022e07157c410c8f540cf1bd4979baedbbb31a49976b844b",
+          "recovered_sha256": "ca08af2c71c741811385599ce3c66ebd654d26e59b79871c189c086107f3b069",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "metrics": {
+            "mse": 0.013859014958143234,
+            "psnr": 18.582676649093628,
+            "ssim": 0.4109114408493042,
+            "lpips": 0.35941261053085327
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.21766121685504913,
+            "variance_target": 0.00217661214992404,
+            "variance_measured": 0.002171142725273967,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "898788df2a1dfbc5ac0568e96b9ef078ef0e41fa9836df8cbee1ec92208182db",
+          "recovered_sha256": "a6c2ae87d59478982205ab2109306dcd9d50806ee0742c88673d61e5a10f45bb",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "metrics": {
+            "mse": 0.006943061947822571,
+            "psnr": 21.584489345550537,
+            "ssim": 0.41167309880256653,
+            "lpips": 0.35310691595077515
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.317493200302124,
+            "variance_target": 0.003174931975081563,
+            "variance_measured": 0.003166954033076763,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "32e0aeb776aecfac6fbbd9a12cd4ad313be528848e49a581643c3f8d827d53ac",
+          "recovered_sha256": "dfcd974fe3f9fa59927b31baa2c1c948f5ed3b6af4ea29f3f1d9550fe6fcba05",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "metrics": {
+            "mse": 0.006146399769932032,
+            "psnr": 22.113792896270752,
+            "ssim": 0.4372674226760864,
+            "lpips": 0.2707518935203552
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.11145172268152237,
+            "variance_target": 0.001114517217501998,
+            "variance_measured": 0.0011117166141048074,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "845eda8f6d1231e20b808d24bb9f1fd80958210fd07c3d5635cf422ab8d65dbd",
+          "recovered_sha256": "b5896da1a1b980a6e13a59d8750f043d79fe159ff4afc631dcb83a0371341b94",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "metrics": {
+            "mse": 0.012218363583087921,
+            "psnr": 19.12986993789673,
+            "ssim": 0.34010884165763855,
+            "lpips": 0.528549313545227
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.5059171915054321,
+            "variance_target": 0.005059171933680773,
+            "variance_measured": 0.005046458914875984,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "6255720e2432c726490e0e46c7eb7cee74f89ce0149ff92f0fb51e0061e878d5",
+          "recovered_sha256": "d71022d14c2e351a1d1989157f1a98513d46bf15cc3a26eda82e5f3103a9cf0f",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "metrics": {
+            "mse": 0.010929807089269161,
+            "psnr": 19.613875150680542,
+            "ssim": 0.37096157670021057,
+            "lpips": 0.6634719967842102
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.5013419389724731,
+            "variance_target": 0.0050134193152189255,
+            "variance_measured": 0.005000821780413389,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "6a4ed21d372a49ec3fd7900369dc50f9037f1fb6d9b05759bdb676c363a0848a",
+          "recovered_sha256": "50e8f7f87d5681e796c79ac2212bc67e0c051ed5ca621e94c6cf342e003d203b",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "metrics": {
+            "mse": 0.007407710421830416,
+            "psnr": 21.303160190582275,
+            "ssim": 0.44344839453697205,
+            "lpips": 0.3793845772743225
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.23257236182689667,
+            "variance_target": 0.002325723646208644,
+            "variance_measured": 0.002319879364222288,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "972033676c92cc3fc4c64e43e00340dfcb22d481b13f0db80ef312bfa682ad58",
+          "recovered_sha256": "2f8b7551c1e9d1dc29186e23bc40f873fdb52073c699aa9b1d15b897cf1b78ee",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "metrics": {
+            "mse": 0.004982736427336931,
+            "psnr": 23.02532196044922,
+            "ssim": 0.5714695453643799,
+            "lpips": 0.3157331049442291
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.11847154051065445,
+            "variance_target": 0.001184715423732996,
+            "variance_measured": 0.0011817385675385594,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "ac2886b6f2e73dfe48f6390e2d9651304e856ac329803defe29b200459eb9e26",
+          "recovered_sha256": "0f116095a51043a5f26ba2cd12a6c2ef19eb43b52ada44ec25ac09c3503f704d",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "metrics": {
+            "mse": 0.006410460453480482,
+            "psnr": 21.93110704421997,
+            "ssim": 0.4613652229309082,
+            "lpips": 0.40839430689811707
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.2792109251022339,
+            "variance_target": 0.0027921092696487904,
+            "variance_measured": 0.0027850931510329247,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "d2bcca15ec97e90bc5e14011f6c77512d227d87fc18539204d17e1d3f3c9709d",
+          "recovered_sha256": "32550c97dd4df4f07ac134bcbe467a0e99a3ce935a8413d6c5eaecf6e755cfa1",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr20_received.png"
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "metrics": {
+            "mse": 0.004650278948247433,
+            "psnr": 23.325209617614746,
+            "ssim": 0.5250968337059021,
+            "lpips": 0.3120879530906677
+          },
+          "channel": {
+            "snr_db": 20.0,
+            "signal_power": 0.10354288667440414,
+            "variance_target": 0.0010354288388043642,
+            "variance_measured": 0.001032827072776854,
+            "complex": false,
+            "h": "(1+0j)",
+            "seed": 1237,
+            "shape": [
+              1,
+              3,
+              256,
+              256
+            ]
+          },
+          "received_sha256": "9d670be8adc79fad561bdd7d0b1b98b38d1e94abd87b1118888e41d1fc25cd37",
+          "recovered_sha256": "7018143a84cfcdb994f60faf13b59b9a32a5682851745ea4f489e5f1085e1b2f",
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr20_recovered.png",
+          "secret_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr20_secret.png",
+          "received_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr20_received.png"
+        }
+      ]
+    }
+  },
+  "no_noise_control": {
+    "mse": {
+      "n": 20,
+      "n_inf": 0,
+      "n_missing": 0,
+      "n_finite": 20,
+      "mean": 0.0024728558055358008,
+      "median": 0.001989716198295355,
+      "std": 0.001729849489484119,
+      "min": 0.000959442462772131,
+      "max": 0.00885254517197609,
+      "mean_finite": 0.0024728558055358008,
+      "p05": 0.0009625004575354978,
+      "p25": 0.0014696322323288769,
+      "p50": 0.001989716198295355,
+      "p75": 0.0026191493961960077,
+      "p95": 0.0044743916019797355
+    },
+    "psnr": {
+      "n": 20,
+      "n_inf": 0,
+      "n_missing": 0,
+      "n_finite": 20,
+      "mean": 26.771623611450195,
+      "median": 27.012109756469727,
+      "std": 2.3031940959597716,
+      "min": 20.52931785583496,
+      "max": 30.179810523986816,
+      "mean_finite": 26.771623611450195,
+      "p05": 23.56263554096222,
+      "p25": 25.819661021232605,
+      "p50": 27.012109756469727,
+      "p75": 28.328009843826294,
+      "p95": 30.16599190235138
+    },
+    "ssim": {
+      "n": 20,
+      "n_inf": 0,
+      "n_missing": 0,
+      "n_finite": 20,
+      "mean": 0.7963538050651551,
+      "median": 0.8194891512393951,
+      "std": 0.07499745247236111,
+      "min": 0.6355043053627014,
+      "max": 0.898474395275116,
+      "mean_finite": 0.7963538050651551,
+      "p05": 0.6649442434310913,
+      "p25": 0.7539770156145096,
+      "p50": 0.8194891512393951,
+      "p75": 0.8470894545316696,
+      "p95": 0.8970806419849395
+    },
+    "lpips": {
+      "n": 20,
+      "n_inf": 0,
+      "n_missing": 0,
+      "n_finite": 20,
+      "mean": 0.08280076049268245,
+      "median": 0.08646272867918015,
+      "std": 0.01790005054027314,
+      "min": 0.04857673496007919,
+      "max": 0.12558402121067047,
+      "mean_finite": 0.08280076049268245,
+      "p05": 0.05784714221954346,
+      "p25": 0.07188819721341133,
+      "p50": 0.08646272867918015,
+      "p75": 0.09455172531306744,
+      "p95": 0.10109536424279215
+    }
+  },
+  "monotone_psnr": true,
+  "elapsed_s": 544.2469096183777
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "phase": 13,
+  "created_utc": "2026-10-27T17:39:34Z",
+  "pass": true,
+  "checks": [
+    {
+      "check": "checkpoint hash matches manifest",
+      "pass": true,
+      "detail": "9e82d56dda5e7f16"
+    },
+    {
+      "check": "codec is in eval mode and frozen",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "isolated round-trip finite on 20 images x 4 SNR cells",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "codec reconstruction improves as SNR rises",
+      "pass": true,
+      "detail": "[17.88, 22.88, 26.7, 28.51]"
+    },
+    {
+      "check": "same seed -> identical codec output",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "isolated floor above 20 dB at 20 dB SNR",
+      "pass": true,
+      "detail": "mean=28.514432072639465"
+    },
+    {
+      "check": "raw and codec paths both measured and differ",
+      "pass": true,
+      "detail": "[1.45, 2.275, 2.332, 1.404]"
+    },
+    {
+      "check": "no reference/retrieval/VLM import in codec module",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "phase13 json, curve and grid exist",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "total": 9
+  },
+  "isolated_psnr_by_snr": {
+    "5": 17.88213473558426,
+    "10": 22.884752333164215,
+    "15": 26.6950466632843,
+    "20": 28.514432072639465
+  },
+  "delta_psnr_codec_minus_raw": {
+    "5": 1.4503318667411804,
+    "10": 2.274544894695282,
+    "15": 2.3318804502487183,
+    "20": 1.4040533900260925
+  }
+}

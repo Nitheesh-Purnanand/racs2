@@ -2,7 +2,8 @@
 
 > **Location**: `d:\racs2\project_status.md`  
 > **Last Updated**: 2026-10-27  
-> **Current Phase**: Phase 7 complete (public conditions cached and verified). Phase 8 (reference generator) is next.
+> **Current Phase**: Phases 11-14 complete (local hide/recover, AWGN channel, semantic codec,
+> optional enhancement). Phase 15 (baseline gate) is next.
 
 ---
 
@@ -27,6 +28,13 @@
 | **Phase 5 — CLIP Embeddings** | ✅ Completed | `models/clip_encoder.py`, `scripts/phase5_clip.py`, `scripts/phase5_verify.py`, `scripts/phase5_fetch_model.py`. CLIP ViT-B/32, 1,000 × 512-d float32 L2-normalised vectors aligned with the corpus. Verify PASS: re-encode max|diff| 2.5e-07, caption→image top-1 0.476, within-topic 0.779 vs across 0.542. |
 | **Phase 6 — Evaluation Harness & Splits** | ✅ Completed | `evaluation/splits.py` (role enforcement, tokens), `evaluation/report.py` (frozen report schema), extended `evaluation/metrics.py` (LPIPS + `distribution()`), `scripts/phase6_build_testset.py`, `scripts/phase6_eval_selftest.py`, `scripts/eval_report.py`, `scripts/dummy_runner.py`, `docs/DEVIATIONS.md`. Two frozen splits: **calibration** (UniStega, 22/class) and **evaluation** (COCO val2017 / Commons human portraits / Commons cats, 22/class). `split_version a57d9c8c...`, `tokens_version 20166234...`. Selftest **83/83 PASS**; dummy evaluation 264 cases across 12 cells. |
 | **Phase 7 — Public Conditions (`Kpub` + `Xfeat`)** | ✅ Completed | `semantic/keygen.py` (BLIP + template), `semantic/features.py` (SegFormer-B0 segmentation, MediaPipe FaceLandmarker skeleton, style `none`), `semantic/cache.py`, `scripts/phase7_build_conditions.py`, `scripts/phase7_verify.py`. 132 records (22 per class per role), `config_hash 6e5eec49...`, `split_version e52d2ddf...` (live split; earlier notes used a57d9c8c before the split manifest was regenerated). Determinism exact for Kpub and features; `phase7_verify.json` PASS; grid inspected. |
+| **Phase 8 — Reference Generator** | ✅ Completed | `reference/seed.py`, `reference/conditions.py`, `reference/generate.py`, `scripts/phase8_reference.py`, `scripts/phase8_verify.py`. SD v1.5 + seg/OpenPose ControlNet, 256 px, 20 DDIM steps. 132 references, exact rerun hashes, peak 2.84 GB, `phase8_verify.json` PASS. PicX-Real/IPAdapter and 512 px are deviations. |
+| **Phase 9 — ControlNet Zero-Conv Fine-Tune** | ✅ Completed | `reference/train_controlnet.py`, `scripts/phase9_train_controlnet.py`, `scripts/phase9_verify.py`. 50 bf16 steps on calibration common+facial, only zero-conv blocks trainable (11.48M trainable / 349.8M frozen), probe MSE 0.1488 -> 0.1296, checkpoint `controlnet_zero_conv_50_88159c58.safetensors`, verify PASS. |
+| **Phase 10 — EDICT** | ✅ Completed | `steganography/edict.py`, `scripts/phase10_edict.py`, `scripts/phase10_verify.py`. 256 px / 32x32 float32 latent, fp16 SD UNet, 20 steps, mixing 0.93, guidance 1.0. 20 random + 20 image latents; max relative error 3.58e-3, max abs 9.49e-3; verify PASS with the documented fp16 numerical-floor deviation. |
+| **Phase 11 — Local Steganography Core** | ✅ Completed | `steganography/mask.py`, `hide.py`, `recover.py`, `pipeline.py`, `scripts/phase11_local.py`, `scripts/phase11_verify.py`. Token mask from the Phase 8 seed contract, bounded-strength EDICT hide/recover at 256 px, 20 steps, eta 0.05, strength 0.2, guidance 3.0. 20 matched + 20 mismatched evaluation images. Recovery PSNR 26.77 dB (matched) vs 26.62 dB (mismatched); stego PSNR 23.28 dB; deterministic reruns; verify 12/12 PASS. |
+| **Phase 12 — AWGN Channel** | ✅ Completed | `communication/awgn.py`, `scripts/phase12_awgn.py`, `scripts/phase12_verify.py`. sigma^2 = P_signal / 10^(SNR/10) from the measured power, fixed seed per cell. Mean recovery PSNR 12.68 / 14.96 / 17.93 / 21.08 dB at 5/10/15/20 dB. Analytic variance max relative error 0.46 percent; seed replay exact; verify 7/7 PASS. |
+| **Phase 13 — Semantic Codec** | ✅ Completed | `communication/semantic_codec.py`, `scripts/phase13_codec.py`, `scripts/phase13_verify.py`. Frozen SD-VAE analog JSCC substitute (paper checkpoints unavailable), explicit invertible power normalisation, pinned state-dict hash. Isolated PSNR 17.88 / 22.88 / 26.70 / 28.51 dB. Codec+recovery beats raw AWGN by +1.40 to +2.33 dB PSNR. Verify 9/9 PASS. |
+| **Phase 14 — Optional CodeFormer Enhancement** | ✅ Completed | `enhancement/codeformer.py`, `scripts/phase14_enhance.py`, `scripts/phase14_verify.py`. CodeFormer/facelib stack unavailable in this environment, so the module is a documented deterministic pass-through kept **off by default** and restricted to the facial class; deltas are exactly 0 at all four SNR cells. Non-facial control unchanged. Verify 13/13 PASS. |
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -211,6 +219,42 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
 ---
 
 ## 5. Change Log
+
+### [2026-10-27] - Phases 11-14 Complete (stego core, channel, codec, enhancement)
+
+- **Phase 11**: added `steganography/{mask,hide,recover,pipeline}.py` and
+  `scripts/phase11_local.py` / `phase11_verify.py`. Full-inversion EDICT produced noise-like
+  stego (11.3 dB), so hiding uses a bounded-strength EDICT chain (strength 0.2) that keeps the
+  secret image intact while still conditioning on the reference `Kpub`. Matched recovery
+  26.77 dB, stego 23.28 dB, mismatched 26.62 dB (gap 0.15 dB, documented). 12/12 PASS.
+- **Phase 12**: added `communication/awgn.py` and `scripts/phase12_awgn.py` / `phase12_verify.py`.
+  20 images x 4 SNR cells, per-cell seeds, real-valued AWGN with the complex-model variance.
+  PSNR falls monotonically 21.08 -> 12.68 dB; 7/7 PASS.
+- **Phase 13**: added `communication/semantic_codec.py` and `scripts/phase13_codec.py` /
+  `phase13_verify.py`. SD-VAE substitute for the unavailable SwinJSCC/MDJCM checkpoints,
+  isolated curve plus raw-vs-codec comparison (+1.40 to +2.33 dB); 9/9 PASS.
+- **Phase 14**: added `enhancement/codeformer.py` and `scripts/phase14_enhance.py` /
+  `phase14_verify.py`. CodeFormer weights unavailable; deterministic pass-through fallback,
+  off by default and facial-only, with the miss recorded; 13/13 PASS.
+- **Deviations**: bounded-strength EDICT and 256 px (Phase 11), SD-VAE codec substitute
+  (Phase 13), CodeFormer fallback (Phase 14). See `docs/DEVIATIONS.md`.
+
+### [2026-10-27] - Phases 8-10 Complete (References, ControlNet, EDICT)
+
+- **Phase 8**: added `reference/` and `scripts/phase8_reference.py` / `phase8_verify.py`.
+  Generated 132 token-seeded references with SD v1.5 + ControlNet at 256 px, 20 DDIM steps;
+  exact rerun determinism, peak VRAM 2.84 GB, `phase8_verify.json` PASS.
+- **Phase 9**: added `reference/train_controlnet.py` and `scripts/phase9_train_controlnet.py` /
+  `phase9_verify.py`. 50 bf16 steps, 11.48M trainable / 349.8M frozen, probe MSE
+  0.1488 -> 0.1296, checkpoint hash recorded, verify PASS.
+- **Phase 10**: added `steganography/edict.py` and `scripts/phase10_edict.py` /
+  `phase10_verify.py`. 12-cell sweep + 20 random / 20 image latents at the operating point;
+  max relative error 3.58e-3, verify PASS with the fp16/256 px deviation recorded.
+- **Deviations**: PicX-Real/IPAdapter and 512 px (Phase 8), 50-step bf16 fine-tune (Phase 9),
+  fp16 EDICT at 256 px with a 3.58e-3 floor (Phase 10). See `docs/DEVIATIONS.md`.
+- **Audit**: `scripts/phase8_10_audit.py` re-checks all 132 references, the full Phase 9
+  checkpoint (26/26 zero-conv tensors changed vs the base, 11.48M params), Phase 10 algebra
+  and determinism. Result: 30/30 PASS in `experiments/results/phase8_10_audit.json`.
 
 ### [2026-10-27] - Phase 7 Complete (Public Conditions)
 
@@ -414,10 +458,11 @@ Active next steps (new numbering):
   enforcement; `docs/DEVIATIONS.md` created. Selftest 83/83 PASS.
 - [x] **Phase 7**: Complete. `Kpub` + `Xfeat` cached for both roles (132 records),
   `phase7_verify.json` PASS, grid inspected.
-- [ ] **Phase 8**: Reference generator (PicX-Real or SD + ControlNet + IPAdapter-plus) with
-  token-seeded noise; fit the 6 GB budget.
-- [ ] **Phase 9**: ControlNet zero-conv fine-tuning, or a documented deviation.
-- [ ] **Phase 10**: EDICT isolated, exact inversion to machine precision.
+- [x] **Phase 8**: Complete. SD v1.5 + ControlNet at 256 px, 132 deterministic references,
+  `phase8_verify.json` PASS. PicX-Real/IPAdapter deviations recorded.
+- [x] **Phase 9**: Complete. 50-step bf16 zero-conv fine-tune, probe improved, `phase9_verify.json` PASS.
+- [x] **Phase 10**: Complete. 12-cell EDICT sweep + 20/20 operating point, 3.58e-3 relative
+  error, `phase10_verify.json` PASS with the numerical-floor deviation recorded.
 - [ ] **Phase 11**: Local hide/recover with eta = 0.05 and a manual reference.
 - [ ] **Phase 12-14**: AWGN, semantic codec, optional CodeFormer enhancement.
 - [ ] **Phase 15 (GATE)**: Assemble AgentSemSteCom. 15A: approximate reproduction on the

@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "phase": 14,
+  "created_utc": "2026-10-27T17:39:39Z",
+  "pass": true,
+  "checks": [
+    {
+      "check": "enhancement is disabled in the default config",
+      "pass": true,
+      "detail": "enabled=False"
+    },
+    {
+      "check": "disabled switch never applies to any class",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "fidelity weight is 0.5 and recorded",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "enhancer manifest records the backend and fingerprint",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "deltas recorded at all four SNR cells",
+      "pass": true,
+      "detail": "{5.0: 20, 10.0: 20, 15.0: 20, 20.0: 20}"
+    },
+    {
+      "check": "fidelity weight present in the config",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "facial gain measured, or the miss is documented",
+      "pass": true,
+      "detail": "backend=passthrough delta_psnr=[0.0, 0.0, 0.0, 0.0]"
+    },
+    {
+      "check": "the documented miss is registered in the manifest",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "common path unaffected by the switch",
+      "pass": true,
+      "detail": "{'class': 'common', 'applied': False, 'identical': True}"
+    },
+    {
+      "check": "style class is out of scope by config",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "same input -> identical enhanced output",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "output is square RGB at the configured size",
+      "pass": true,
+      "detail": "size=256 (deviation: paper uses 512)"
+    },
+    {
+      "check": "phase14 json and grid exist",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "summary": {
+    "passed": 13,
+    "total": 13
+  },
+  "backend": "passthrough",
+  "delta_psnr_by_snr": {
+    "5": 0.0,
+    "10": 0.0,
+    "15": 0.0,
+    "20": 0.0
+  }
+}

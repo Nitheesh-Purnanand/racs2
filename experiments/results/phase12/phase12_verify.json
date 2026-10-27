@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "phase": 12,
+  "created_utc": "2026-10-27T17:38:43Z",
+  "pass": true,
+  "checks": [
+    {
+      "check": "analytic variance within 1 percent on every cell",
+      "pass": true,
+      "detail": "max rel=0.0046"
+    },
+    {
+      "check": "same seed -> identical received tensor",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "different seed -> different noise",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "every SNR cell has at least 20 images",
+      "pass": true,
+      "detail": "{5.0: 20, 10.0: 20, 15.0: 20, 20.0: 20}"
+    },
+    {
+      "check": "mean PSNR non-increasing as SNR falls",
+      "pass": true,
+      "detail": "[12.68, 14.96, 17.93, 21.08]"
+    },
+    {
+      "check": "no codec/retrieval/VLM import in awgn.py",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "phase12 manifest and curve exist",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "total": 7
+  },
+  "variance": [
+    {
+      "snr_db": 5.0,
+      "target": 0.08564835041761398,
+      "measured": 0.08584299683570862,
+      "rel_error": 0.002272623082003983
+    },
+    {
+      "snr_db": 10.0,
+      "target": 0.027084385976195335,
+      "measured": 0.0270328838378191,
+      "rel_error": 0.0019015435100320003
+    },
+    {
+      "snr_db": 15.0,
+      "target": 0.008564835414290428,
+      "measured": 0.00852502416819334,
+      "rel_error": 0.004648220797175249
+    },
+    {
+      "snr_db": 20.0,
+      "target": 0.002708438551053405,
+      "measured": 0.002701632911339402,
+      "rel_error": 0.0025127539671725846
+    }
+  ],
+  "psnr_mean_by_snr": {
+    "5": 12.678421795368195,
+    "10": 14.957684993743896,
+    "15": 17.926491022109985,
+    "20": 21.07520455121994
+  },
+  "monotone_psnr": true
+}

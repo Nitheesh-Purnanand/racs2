@@ -1,0 +1,2458 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-27T17:35:40Z",
+  "phase": 14,
+  "approximate": false,
+  "split_role": "evaluation",
+  "class": "facial",
+  "enabled_by_default": false,
+  "enhancer": {
+    "kind": "codeformer",
+    "model_id": "sczhou/CodeFormer",
+    "fidelity_weight": 0.5,
+    "frozen": true,
+    "backend": "passthrough",
+    "reason": "CodeFormer/facelib/basicsr stack not installed; pass-through fallback keeps the pipeline deterministic. Registered in docs/DEVIATIONS.md.",
+    "fingerprint": "891ba3e594493be4a548a0f4c93955e90b26712eccef153b3a831d03a93f176b"
+  },
+  "input_size": 256,
+  "output_size": 256,
+  "snr_db": [
+    5.0,
+    10.0,
+    15.0,
+    20.0
+  ],
+  "results": {
+    "5": {
+      "snr_db": 5.0,
+      "n": 20,
+      "recovered": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 12.678289294242859,
+          "median": 12.461386919021606,
+          "std": 0.8892681140535413,
+          "min": 11.640820503234863,
+          "max": 14.736964702606201,
+          "mean_finite": 12.678289294242859,
+          "p05": 11.73595517873764,
+          "p25": 12.02472984790802,
+          "p50": 12.461386919021606,
+          "p75": 12.977842688560486,
+          "p95": 14.468899071216583
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.13212777599692344,
+          "median": 0.1305866837501526,
+          "std": 0.021166219952199573,
+          "min": 0.09439545124769211,
+          "max": 0.18233071267604828,
+          "mean_finite": 0.13212777599692344,
+          "p05": 0.09994960539042949,
+          "p25": 0.11873608268797398,
+          "p50": 0.1305866837501526,
+          "p75": 0.1378648318350315,
+          "p95": 0.16705660298466685
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.8143534451723099,
+          "median": 0.8139559030532837,
+          "std": 0.05913961271716541,
+          "min": 0.7240555286407471,
+          "max": 0.9404436945915222,
+          "mean_finite": 0.8143534451723099,
+          "p05": 0.7318322122097015,
+          "p25": 0.7668908387422562,
+          "p50": 0.8139559030532837,
+          "p75": 0.860950767993927,
+          "p95": 0.9137884885072708
+        }
+      },
+      "enhanced": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 12.678289294242859,
+          "median": 12.461386919021606,
+          "std": 0.8892681140535413,
+          "min": 11.640820503234863,
+          "max": 14.736964702606201,
+          "mean_finite": 12.678289294242859,
+          "p05": 11.73595517873764,
+          "p25": 12.02472984790802,
+          "p50": 12.461386919021606,
+          "p75": 12.977842688560486,
+          "p95": 14.468899071216583
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.13212777599692344,
+          "median": 0.1305866837501526,
+          "std": 0.021166219952199573,
+          "min": 0.09439545124769211,
+          "max": 0.18233071267604828,
+          "mean_finite": 0.13212777599692344,
+          "p05": 0.09994960539042949,
+          "p25": 0.11873608268797398,
+          "p50": 0.1305866837501526,
+          "p75": 0.1378648318350315,
+          "p95": 0.16705660298466685
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.8143534451723099,
+          "median": 0.8139559030532837,
+          "std": 0.05913961271716541,
+          "min": 0.7240555286407471,
+          "max": 0.9404436945915222,
+          "mean_finite": 0.8143534451723099,
+          "p05": 0.7318322122097015,
+          "p25": 0.7668908387422562,
+          "p50": 0.8139559030532837,
+          "p75": 0.860950767993927,
+          "p95": 0.9137884885072708
+        }
+      },
+      "delta": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "recovered": {
+            "mse": 0.05425005778670311,
+            "psnr": 12.655998468399048,
+            "ssim": 0.13635192811489105,
+            "lpips": 0.7434733510017395
+          },
+          "enhanced": {
+            "mse": 0.05425005778670311,
+            "psnr": 12.655998468399048,
+            "ssim": 0.13635192811489105,
+            "lpips": 0.7434733510017395
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0000_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "recovered": {
+            "mse": 0.060123126953840256,
+            "psnr": 12.209584712982178,
+            "ssim": 0.11781707406044006,
+            "lpips": 0.8158422708511353
+          },
+          "enhanced": {
+            "mse": 0.060123126953840256,
+            "psnr": 12.209584712982178,
+            "ssim": 0.11781707406044006,
+            "lpips": 0.8158422708511353
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0001_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "recovered": {
+            "mse": 0.04729175940155983,
+            "psnr": 13.252145051956177,
+            "ssim": 0.18233071267604828,
+            "lpips": 0.8077198266983032
+          },
+          "enhanced": {
+            "mse": 0.04729175940155983,
+            "psnr": 13.252145051956177,
+            "ssim": 0.18233071267604828,
+            "lpips": 0.8077198266983032
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0002_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "recovered": {
+            "mse": 0.06853586435317993,
+            "psnr": 11.640820503234863,
+            "ssim": 0.09439545124769211,
+            "lpips": 0.8765286207199097
+          },
+          "enhanced": {
+            "mse": 0.06853586435317993,
+            "psnr": 11.640820503234863,
+            "ssim": 0.09439545124769211,
+            "lpips": 0.8765286207199097
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0003_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "recovered": {
+            "mse": 0.06689838320016861,
+            "psnr": 11.745843887329102,
+            "ssim": 0.11697705835103989,
+            "lpips": 0.8610893487930298
+          },
+          "enhanced": {
+            "mse": 0.06689838320016861,
+            "psnr": 11.745843887329102,
+            "ssim": 0.11697705835103989,
+            "lpips": 0.8610893487930298
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0004_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "recovered": {
+            "mse": 0.05991113558411598,
+            "psnr": 12.224924564361572,
+            "ssim": 0.1330939680337906,
+            "lpips": 0.8326668739318848
+          },
+          "enhanced": {
+            "mse": 0.05991113558411598,
+            "psnr": 12.224924564361572,
+            "ssim": 0.1330939680337906,
+            "lpips": 0.8326668739318848
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0005_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "recovered": {
+            "mse": 0.05810738727450371,
+            "psnr": 12.357686758041382,
+            "ssim": 0.12396872788667679,
+            "lpips": 0.9404436945915222
+          },
+          "enhanced": {
+            "mse": 0.05810738727450371,
+            "psnr": 12.357686758041382,
+            "ssim": 0.12396872788667679,
+            "lpips": 0.9404436945915222
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0006_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "recovered": {
+            "mse": 0.06448214501142502,
+            "psnr": 11.905605792999268,
+            "ssim": 0.10024192929267883,
+            "lpips": 0.9123855829238892
+          },
+          "enhanced": {
+            "mse": 0.06448214501142502,
+            "psnr": 11.905605792999268,
+            "ssim": 0.10024192929267883,
+            "lpips": 0.9123855829238892
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0007_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "recovered": {
+            "mse": 0.06697361916303635,
+            "psnr": 11.740962266921997,
+            "ssim": 0.13281278312206268,
+            "lpips": 0.7539896368980408
+          },
+          "enhanced": {
+            "mse": 0.06697361916303635,
+            "psnr": 11.740962266921997,
+            "ssim": 0.13281278312206268,
+            "lpips": 0.7539896368980408
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0008_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "recovered": {
+            "mse": 0.05233793333172798,
+            "psnr": 12.811834812164307,
+            "ssim": 0.11904241889715195,
+            "lpips": 0.7834084033966064
+          },
+          "enhanced": {
+            "mse": 0.05233793333172798,
+            "psnr": 12.811834812164307,
+            "ssim": 0.11904241889715195,
+            "lpips": 0.7834084033966064
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0009_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "recovered": {
+            "mse": 0.035852622240781784,
+            "psnr": 14.454790353775024,
+            "ssim": 0.15715180337429047,
+            "lpips": 0.8609045743942261
+          },
+          "enhanced": {
+            "mse": 0.035852622240781784,
+            "psnr": 14.454790353775024,
+            "ssim": 0.15715180337429047,
+            "lpips": 0.8609045743942261
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0010_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "recovered": {
+            "mse": 0.06231926381587982,
+            "psnr": 12.053776979446411,
+            "ssim": 0.11949076503515244,
+            "lpips": 0.7440212368965149
+          },
+          "enhanced": {
+            "mse": 0.06231926381587982,
+            "psnr": 12.053776979446411,
+            "ssim": 0.11949076503515244,
+            "lpips": 0.7440212368965149
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0011_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "recovered": {
+            "mse": 0.0553976409137249,
+            "psnr": 12.565087080001831,
+            "ssim": 0.14240354299545288,
+            "lpips": 0.7240555286407471
+          },
+          "enhanced": {
+            "mse": 0.0553976409137249,
+            "psnr": 12.565087080001831,
+            "ssim": 0.14240354299545288,
+            "lpips": 0.7240555286407471
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0012_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "recovered": {
+            "mse": 0.04581528902053833,
+            "psnr": 13.389896154403687,
+            "ssim": 0.11402430385351181,
+            "lpips": 0.8169464468955994
+          },
+          "enhanced": {
+            "mse": 0.04581528902053833,
+            "psnr": 13.389896154403687,
+            "ssim": 0.11402430385351181,
+            "lpips": 0.8169464468955994
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0013_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "recovered": {
+            "mse": 0.060544420033693314,
+            "psnr": 12.179259061813354,
+            "ssim": 0.13504114747047424,
+            "lpips": 0.7970074415206909
+          },
+          "enhanced": {
+            "mse": 0.060544420033693314,
+            "psnr": 12.179259061813354,
+            "ssim": 0.13504114747047424,
+            "lpips": 0.7970074415206909
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0014_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "recovered": {
+            "mse": 0.06400901079177856,
+            "psnr": 11.937588453292847,
+            "ssim": 0.13504472374916077,
+            "lpips": 0.8786411285400391
+          },
+          "enhanced": {
+            "mse": 0.06400901079177856,
+            "psnr": 11.937588453292847,
+            "ssim": 0.13504472374916077,
+            "lpips": 0.8786411285400391
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0015_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "recovered": {
+            "mse": 0.05496205762028694,
+            "psnr": 12.59937047958374,
+            "ssim": 0.1283605843782425,
+            "lpips": 0.8224426507949829
+          },
+          "enhanced": {
+            "mse": 0.05496205762028694,
+            "psnr": 12.59937047958374,
+            "ssim": 0.1283605843782425,
+            "lpips": 0.8224426507949829
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0016_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "recovered": {
+            "mse": 0.03786833956837654,
+            "psnr": 14.2172372341156,
+            "ssim": 0.16625270247459412,
+            "lpips": 0.7711912393569946
+          },
+          "enhanced": {
+            "mse": 0.03786833956837654,
+            "psnr": 14.2172372341156,
+            "ssim": 0.16625270247459412,
+            "lpips": 0.7711912393569946
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0017_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "recovered": {
+            "mse": 0.05144689604640007,
+            "psnr": 12.886408567428589,
+            "ssim": 0.12631255388259888,
+            "lpips": 0.8120695352554321
+          },
+          "enhanced": {
+            "mse": 0.05144689604640007,
+            "psnr": 12.886408567428589,
+            "ssim": 0.12631255388259888,
+            "lpips": 0.8120695352554321
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0018_snr5_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "recovered": {
+            "mse": 0.03359723091125488,
+            "psnr": 14.736964702606201,
+            "ssim": 0.16144134104251862,
+            "lpips": 0.7322415113449097
+          },
+          "enhanced": {
+            "mse": 0.03359723091125488,
+            "psnr": 14.736964702606201,
+            "ssim": 0.16144134104251862,
+            "lpips": 0.7322415113449097
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr5_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0019_snr5_enhanced.png"
+        }
+      ]
+    },
+    "10": {
+      "snr_db": 10.0,
+      "n": 20,
+      "recovered": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 14.957470893859863,
+          "median": 14.736469984054565,
+          "std": 1.3309215928041034,
+          "min": 13.04496169090271,
+          "max": 17.468801736831665,
+          "mean_finite": 14.957470893859863,
+          "p05": 13.209206461906433,
+          "p25": 13.95716905593872,
+          "p50": 14.736469984054565,
+          "p75": 15.678580701351166,
+          "p95": 17.34810906648636
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.19286730587482454,
+          "median": 0.18778689205646515,
+          "std": 0.03420381845900584,
+          "min": 0.13008728623390198,
+          "max": 0.27797454595565796,
+          "mean_finite": 0.19286730587482454,
+          "p05": 0.14233206063508988,
+          "p25": 0.17507986724376678,
+          "p50": 0.18778689205646515,
+          "p75": 0.19914041459560394,
+          "p95": 0.25168510526418686
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.7444361299276352,
+          "median": 0.7229160070419312,
+          "std": 0.07874871288557933,
+          "min": 0.6219647526741028,
+          "max": 0.9126155972480774,
+          "mean_finite": 0.7444361299276352,
+          "p05": 0.6257199138402939,
+          "p25": 0.6977473944425583,
+          "p50": 0.7229160070419312,
+          "p75": 0.7948510646820068,
+          "p95": 0.877582186460495
+        }
+      },
+      "enhanced": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 14.957470893859863,
+          "median": 14.736469984054565,
+          "std": 1.3309215928041034,
+          "min": 13.04496169090271,
+          "max": 17.468801736831665,
+          "mean_finite": 14.957470893859863,
+          "p05": 13.209206461906433,
+          "p25": 13.95716905593872,
+          "p50": 14.736469984054565,
+          "p75": 15.678580701351166,
+          "p95": 17.34810906648636
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.19286730587482454,
+          "median": 0.18778689205646515,
+          "std": 0.03420381845900584,
+          "min": 0.13008728623390198,
+          "max": 0.27797454595565796,
+          "mean_finite": 0.19286730587482454,
+          "p05": 0.14233206063508988,
+          "p25": 0.17507986724376678,
+          "p50": 0.18778689205646515,
+          "p75": 0.19914041459560394,
+          "p95": 0.25168510526418686
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.7444361299276352,
+          "median": 0.7229160070419312,
+          "std": 0.07874871288557933,
+          "min": 0.6219647526741028,
+          "max": 0.9126155972480774,
+          "mean_finite": 0.7444361299276352,
+          "p05": 0.6257199138402939,
+          "p25": 0.6977473944425583,
+          "p50": 0.7229160070419312,
+          "p75": 0.7948510646820068,
+          "p95": 0.877582186460495
+        }
+      },
+      "delta": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "recovered": {
+            "mse": 0.031684912741184235,
+            "psnr": 14.991475343704224,
+            "ssim": 0.19110995531082153,
+            "lpips": 0.6860053539276123
+          },
+          "enhanced": {
+            "mse": 0.031684912741184235,
+            "psnr": 14.991475343704224,
+            "ssim": 0.19110995531082153,
+            "lpips": 0.6860053539276123
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0000_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "recovered": {
+            "mse": 0.03076953999698162,
+            "psnr": 15.118789672851562,
+            "ssim": 0.18383358418941498,
+            "lpips": 0.7212637662887573
+          },
+          "enhanced": {
+            "mse": 0.03076953999698162,
+            "psnr": 15.118789672851562,
+            "ssim": 0.18383358418941498,
+            "lpips": 0.7212637662887573
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0001_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "recovered": {
+            "mse": 0.0278231892734766,
+            "psnr": 15.555931329727173,
+            "ssim": 0.25030145049095154,
+            "lpips": 0.7092963457107544
+          },
+          "enhanced": {
+            "mse": 0.0278231892734766,
+            "psnr": 15.555931329727173,
+            "ssim": 0.25030145049095154,
+            "lpips": 0.7092963457107544
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0002_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "recovered": {
+            "mse": 0.03905392810702324,
+            "psnr": 14.083353281021118,
+            "ssim": 0.1429765224456787,
+            "lpips": 0.8087382912635803
+          },
+          "enhanced": {
+            "mse": 0.03905392810702324,
+            "psnr": 14.083353281021118,
+            "ssim": 0.1429765224456787,
+            "lpips": 0.8087382912635803
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0003_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "recovered": {
+            "mse": 0.03380032256245613,
+            "psnr": 14.710791110992432,
+            "ssim": 0.18218640983104706,
+            "lpips": 0.8000298738479614
+          },
+          "enhanced": {
+            "mse": 0.03380032256245613,
+            "psnr": 14.710791110992432,
+            "ssim": 0.18218640983104706,
+            "lpips": 0.8000298738479614
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0004_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "recovered": {
+            "mse": 0.037501927465200424,
+            "psnr": 14.259464740753174,
+            "ssim": 0.19288772344589233,
+            "lpips": 0.7528208494186401
+          },
+          "enhanced": {
+            "mse": 0.037501927465200424,
+            "psnr": 14.259464740753174,
+            "ssim": 0.19288772344589233,
+            "lpips": 0.7528208494186401
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0005_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "recovered": {
+            "mse": 0.04386704042553902,
+            "psnr": 13.578616380691528,
+            "ssim": 0.16378994286060333,
+            "lpips": 0.8757383227348328
+          },
+          "enhanced": {
+            "mse": 0.04386704042553902,
+            "psnr": 13.578616380691528,
+            "ssim": 0.16378994286060333,
+            "lpips": 0.8757383227348328
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0006_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "recovered": {
+            "mse": 0.044281426817178726,
+            "psnr": 13.5377836227417,
+            "ssim": 0.13008728623390198,
+            "lpips": 0.9126155972480774
+          },
+          "enhanced": {
+            "mse": 0.044281426817178726,
+            "psnr": 13.5377836227417,
+            "ssim": 0.13008728623390198,
+            "lpips": 0.9126155972480774
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0007_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "recovered": {
+            "mse": 0.047666680067777634,
+            "psnr": 13.217850923538208,
+            "ssim": 0.17646266520023346,
+            "lpips": 0.7186894416809082
+          },
+          "enhanced": {
+            "mse": 0.047666680067777634,
+            "psnr": 13.217850923538208,
+            "ssim": 0.17646266520023346,
+            "lpips": 0.7186894416809082
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0008_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "recovered": {
+            "mse": 0.024851182475686073,
+            "psnr": 16.046528816223145,
+            "ssim": 0.2030554562807083,
+            "lpips": 0.7016614079475403
+          },
+          "enhanced": {
+            "mse": 0.024851182475686073,
+            "psnr": 16.046528816223145,
+            "ssim": 0.2030554562807083,
+            "lpips": 0.7016614079475403
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0009_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "recovered": {
+            "mse": 0.01844269223511219,
+            "psnr": 17.34175682067871,
+            "ssim": 0.23718665540218353,
+            "lpips": 0.793124794960022
+          },
+          "enhanced": {
+            "mse": 0.01844269223511219,
+            "psnr": 17.34175682067871,
+            "ssim": 0.23718665540218353,
+            "lpips": 0.793124794960022
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0010_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "recovered": {
+            "mse": 0.03392782062292099,
+            "psnr": 14.694440364837646,
+            "ssim": 0.19783540070056915,
+            "lpips": 0.6588276624679565
+          },
+          "enhanced": {
+            "mse": 0.03392782062292099,
+            "psnr": 14.694440364837646,
+            "ssim": 0.19783540070056915,
+            "lpips": 0.6588276624679565
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0011_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "recovered": {
+            "mse": 0.036164410412311554,
+            "psnr": 14.41718578338623,
+            "ssim": 0.18574988842010498,
+            "lpips": 0.724568247795105
+          },
+          "enhanced": {
+            "mse": 0.036164410412311554,
+            "psnr": 14.41718578338623,
+            "ssim": 0.18574988842010498,
+            "lpips": 0.724568247795105
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0012_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "recovered": {
+            "mse": 0.023124156519770622,
+            "psnr": 16.359341144561768,
+            "ssim": 0.18770457804203033,
+            "lpips": 0.671545147895813
+          },
+          "enhanced": {
+            "mse": 0.023124156519770622,
+            "psnr": 16.359341144561768,
+            "ssim": 0.18770457804203033,
+            "lpips": 0.671545147895813
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0013_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "recovered": {
+            "mse": 0.045669760555028915,
+            "psnr": 13.403712511062622,
+            "ssim": 0.16788214445114136,
+            "lpips": 0.7806046009063721
+          },
+          "enhanced": {
+            "mse": 0.045669760555028915,
+            "psnr": 13.403712511062622,
+            "ssim": 0.16788214445114136,
+            "lpips": 0.7806046009063721
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0014_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "recovered": {
+            "mse": 0.04960252717137337,
+            "psnr": 13.04496169090271,
+            "ssim": 0.17093147337436676,
+            "lpips": 0.8747735619544983
+          },
+          "enhanced": {
+            "mse": 0.04960252717137337,
+            "psnr": 13.04496169090271,
+            "ssim": 0.17093147337436676,
+            "lpips": 0.8747735619544983
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0015_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "recovered": {
+            "mse": 0.03340297192335129,
+            "psnr": 14.7621488571167,
+            "ssim": 0.18786920607089996,
+            "lpips": 0.7299833297729492
+          },
+          "enhanced": {
+            "mse": 0.03340297192335129,
+            "psnr": 14.7621488571167,
+            "ssim": 0.18786920607089996,
+            "lpips": 0.7299833297729492
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0016_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "recovered": {
+            "mse": 0.017911000177264214,
+            "psnr": 17.468801736831665,
+            "ssim": 0.27797454595565796,
+            "lpips": 0.6259175539016724
+          },
+          "enhanced": {
+            "mse": 0.017911000177264214,
+            "psnr": 17.468801736831665,
+            "ssim": 0.27797454595565796,
+            "lpips": 0.6259175539016724
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0017_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "recovered": {
+            "mse": 0.02910231612622738,
+            "psnr": 15.360724925994873,
+            "ssim": 0.19209475815296173,
+            "lpips": 0.7205536961555481
+          },
+          "enhanced": {
+            "mse": 0.02910231612622738,
+            "psnr": 15.360724925994873,
+            "ssim": 0.19209475815296173,
+            "lpips": 0.7205536961555481
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0018_snr10_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "recovered": {
+            "mse": 0.01907322369515896,
+            "psnr": 17.195758819580078,
+            "ssim": 0.23542647063732147,
+            "lpips": 0.6219647526741028
+          },
+          "enhanced": {
+            "mse": 0.01907322369515896,
+            "psnr": 17.195758819580078,
+            "ssim": 0.23542647063732147,
+            "lpips": 0.6219647526741028
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr10_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0019_snr10_enhanced.png"
+        }
+      ]
+    },
+    "15": {
+      "snr_db": 15.0,
+      "n": 20,
+      "recovered": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 17.92611688375473,
+          "median": 17.93533980846405,
+          "std": 1.6382739811724862,
+          "min": 15.577781200408936,
+          "max": 20.576469898223877,
+          "mean_finite": 17.92611688375473,
+          "p05": 15.709921061992645,
+          "p25": 16.422316133975983,
+          "p50": 17.93533980846405,
+          "p75": 18.97620290517807,
+          "p95": 20.553965091705322
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.2954099550843239,
+          "median": 0.29580414295196533,
+          "std": 0.0543367196869217,
+          "min": 0.1948426514863968,
+          "max": 0.42261841893196106,
+          "mean_finite": 0.2954099550843239,
+          "p05": 0.22460979372262954,
+          "p25": 0.2498454414308071,
+          "p50": 0.29580414295196533,
+          "p75": 0.3260659873485565,
+          "p95": 0.3645607009530068
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.6012643128633499,
+          "median": 0.5678313970565796,
+          "std": 0.10862782236143394,
+          "min": 0.4531978368759155,
+          "max": 0.812549352645874,
+          "mean_finite": 0.6012643128633499,
+          "p05": 0.46029485762119293,
+          "p25": 0.5168736577033997,
+          "p50": 0.5678313970565796,
+          "p75": 0.6671250909566879,
+          "p95": 0.8117610841989518
+        }
+      },
+      "enhanced": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 17.92611688375473,
+          "median": 17.93533980846405,
+          "std": 1.6382739811724862,
+          "min": 15.577781200408936,
+          "max": 20.576469898223877,
+          "mean_finite": 17.92611688375473,
+          "p05": 15.709921061992645,
+          "p25": 16.422316133975983,
+          "p50": 17.93533980846405,
+          "p75": 18.97620290517807,
+          "p95": 20.553965091705322
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.2954099550843239,
+          "median": 0.29580414295196533,
+          "std": 0.0543367196869217,
+          "min": 0.1948426514863968,
+          "max": 0.42261841893196106,
+          "mean_finite": 0.2954099550843239,
+          "p05": 0.22460979372262954,
+          "p25": 0.2498454414308071,
+          "p50": 0.29580414295196533,
+          "p75": 0.3260659873485565,
+          "p95": 0.3645607009530068
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.6012643128633499,
+          "median": 0.5678313970565796,
+          "std": 0.10862782236143394,
+          "min": 0.4531978368759155,
+          "max": 0.812549352645874,
+          "mean_finite": 0.6012643128633499,
+          "p05": 0.46029485762119293,
+          "p25": 0.5168736577033997,
+          "p50": 0.5678313970565796,
+          "p75": 0.6671250909566879,
+          "p95": 0.8117610841989518
+        }
+      },
+      "delta": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "recovered": {
+            "mse": 0.015292319469153881,
+            "psnr": 18.155266046524048,
+            "ssim": 0.29629167914390564,
+            "lpips": 0.507817804813385
+          },
+          "enhanced": {
+            "mse": 0.015292319469153881,
+            "psnr": 18.155266046524048,
+            "ssim": 0.29629167914390564,
+            "lpips": 0.507817804813385
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0000_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "recovered": {
+            "mse": 0.013274936936795712,
+            "psnr": 18.769675493240356,
+            "ssim": 0.30319029092788696,
+            "lpips": 0.5198922753334045
+          },
+          "enhanced": {
+            "mse": 0.013274936936795712,
+            "psnr": 18.769675493240356,
+            "ssim": 0.30319029092788696,
+            "lpips": 0.5198922753334045
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0001_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "recovered": {
+            "mse": 0.014770171605050564,
+            "psnr": 18.30614447593689,
+            "ssim": 0.36011138558387756,
+            "lpips": 0.5559356212615967
+          },
+          "enhanced": {
+            "mse": 0.014770171605050564,
+            "psnr": 18.30614447593689,
+            "ssim": 0.36011138558387756,
+            "lpips": 0.5559356212615967
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0002_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "recovered": {
+            "mse": 0.01681441254913807,
+            "psnr": 17.743183374404907,
+            "ssim": 0.24993115663528442,
+            "lpips": 0.7227804660797119
+          },
+          "enhanced": {
+            "mse": 0.01681441254913807,
+            "psnr": 17.743183374404907,
+            "ssim": 0.24993115663528442,
+            "lpips": 0.7227804660797119
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0003_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "recovered": {
+            "mse": 0.01539041567593813,
+            "psnr": 18.127496242523193,
+            "ssim": 0.298566073179245,
+            "lpips": 0.5944720506668091
+          },
+          "enhanced": {
+            "mse": 0.01539041567593813,
+            "psnr": 18.127496242523193,
+            "ssim": 0.298566073179245,
+            "lpips": 0.5944720506668091
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0004_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "recovered": {
+            "mse": 0.01819613389670849,
+            "psnr": 17.400208711624146,
+            "ssim": 0.295316606760025,
+            "lpips": 0.5656007528305054
+          },
+          "enhanced": {
+            "mse": 0.01819613389670849,
+            "psnr": 17.400208711624146,
+            "ssim": 0.295316606760025,
+            "lpips": 0.5656007528305054
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0005_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "recovered": {
+            "mse": 0.026004120707511902,
+            "psnr": 15.849578380584717,
+            "ssim": 0.22617648541927338,
+            "lpips": 0.8117195963859558
+          },
+          "enhanced": {
+            "mse": 0.026004120707511902,
+            "psnr": 15.849578380584717,
+            "ssim": 0.22617648541927338,
+            "lpips": 0.8117195963859558
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0006_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "recovered": {
+            "mse": 0.02498926781117916,
+            "psnr": 16.02246403694153,
+            "ssim": 0.1948426514863968,
+            "lpips": 0.812549352645874
+          },
+          "enhanced": {
+            "mse": 0.02498926781117916,
+            "psnr": 16.02246403694153,
+            "ssim": 0.1948426514863968,
+            "lpips": 0.812549352645874
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0007_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "recovered": {
+            "mse": 0.026810966432094574,
+            "psnr": 15.716875791549683,
+            "ssim": 0.24927902221679688,
+            "lpips": 0.6618102192878723
+          },
+          "enhanced": {
+            "mse": 0.026810966432094574,
+            "psnr": 15.716875791549683,
+            "ssim": 0.24927902221679688,
+            "lpips": 0.6618102192878723
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0008_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "recovered": {
+            "mse": 0.010975428856909275,
+            "psnr": 19.59578514099121,
+            "ssim": 0.3377920687198639,
+            "lpips": 0.5520944595336914
+          },
+          "enhanced": {
+            "mse": 0.010975428856909275,
+            "psnr": 19.59578514099121,
+            "ssim": 0.3377920687198639,
+            "lpips": 0.5520944595336914
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0009_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "recovered": {
+            "mse": 0.008756953291594982,
+            "psnr": 20.576469898223877,
+            "ssim": 0.36090585589408875,
+            "lpips": 0.6670798659324646
+          },
+          "enhanced": {
+            "mse": 0.008756953291594982,
+            "psnr": 20.576469898223877,
+            "ssim": 0.36090585589408875,
+            "lpips": 0.6670798659324646
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0010_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "recovered": {
+            "mse": 0.02210243046283722,
+            "psnr": 16.5556001663208,
+            "ssim": 0.29019901156425476,
+            "lpips": 0.49883103370666504
+          },
+          "enhanced": {
+            "mse": 0.02210243046283722,
+            "psnr": 16.5556001663208,
+            "ssim": 0.29019901156425476,
+            "lpips": 0.49883103370666504
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0011_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "recovered": {
+            "mse": 0.020410722121596336,
+            "psnr": 16.901416778564453,
+            "ssim": 0.2553504407405853,
+            "lpips": 0.598297655582428
+          },
+          "enhanced": {
+            "mse": 0.020410722121596336,
+            "psnr": 16.901416778564453,
+            "ssim": 0.2553504407405853,
+            "lpips": 0.598297655582428
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0012_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "recovered": {
+            "mse": 0.010166866704821587,
+            "psnr": 19.928128719329834,
+            "ssim": 0.3221572935581207,
+            "lpips": 0.4531978368759155
+          },
+          "enhanced": {
+            "mse": 0.010166866704821587,
+            "psnr": 19.928128719329834,
+            "ssim": 0.3221572935581207,
+            "lpips": 0.4531978368759155
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0013_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "recovered": {
+            "mse": 0.027683554217219353,
+            "psnr": 15.577781200408936,
+            "ssim": 0.22955749928951263,
+            "lpips": 0.6672607660293579
+          },
+          "enhanced": {
+            "mse": 0.027683554217219353,
+            "psnr": 15.577781200408936,
+            "ssim": 0.22955749928951263,
+            "lpips": 0.6672607660293579
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0014_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "recovered": {
+            "mse": 0.02556314878165722,
+            "psnr": 15.923856496810913,
+            "ssim": 0.24958829581737518,
+            "lpips": 0.7704551219940186
+          },
+          "enhanced": {
+            "mse": 0.02556314878165722,
+            "psnr": 15.923856496810913,
+            "ssim": 0.24958829581737518,
+            "lpips": 0.7704551219940186
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0015_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "recovered": {
+            "mse": 0.016822660341858864,
+            "psnr": 17.741053104400635,
+            "ssim": 0.29317495226860046,
+            "lpips": 0.5557187795639038
+          },
+          "enhanced": {
+            "mse": 0.016822660341858864,
+            "psnr": 17.741053104400635,
+            "ssim": 0.29317495226860046,
+            "lpips": 0.5557187795639038
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0016_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "recovered": {
+            "mse": 0.008804847486317158,
+            "psnr": 20.552780628204346,
+            "ssim": 0.42261841893196106,
+            "lpips": 0.4606683850288391
+          },
+          "enhanced": {
+            "mse": 0.008804847486317158,
+            "psnr": 20.552780628204346,
+            "ssim": 0.42261841893196106,
+            "lpips": 0.4606683850288391
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0017_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "recovered": {
+            "mse": 0.013282817788422108,
+            "psnr": 18.76709818840027,
+            "ssim": 0.31164488196372986,
+            "lpips": 0.5700620412826538
+          },
+          "enhanced": {
+            "mse": 0.013282817788422108,
+            "psnr": 18.76709818840027,
+            "ssim": 0.31164488196372986,
+            "lpips": 0.5700620412826538
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0018_snr15_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "recovered": {
+            "mse": 0.009307918138802052,
+            "psnr": 20.311474800109863,
+            "ssim": 0.36150503158569336,
+            "lpips": 0.4790421724319458
+          },
+          "enhanced": {
+            "mse": 0.009307918138802052,
+            "psnr": 20.311474800109863,
+            "ssim": 0.36150503158569336,
+            "lpips": 0.4790421724319458
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr15_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0019_snr15_enhanced.png"
+        }
+      ]
+    },
+    "20": {
+      "snr_db": 20.0,
+      "n": 20,
+      "recovered": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 21.07432323694229,
+          "median": 21.566460132598877,
+          "std": 1.5896283092484345,
+          "min": 18.28762650489807,
+          "max": 23.396499156951904,
+          "mean_finite": 21.07432323694229,
+          "p05": 18.567312598228455,
+          "p25": 19.549112617969513,
+          "p50": 21.566460132598877,
+          "p75": 22.13368833065033,
+          "p95": 23.32759177684784
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.43143785297870635,
+          "median": 0.4402185082435608,
+          "std": 0.0646050191073615,
+          "min": 0.30667757987976074,
+          "max": 0.5713099837303162,
+          "mean_finite": 0.43143785297870635,
+          "p05": 0.3383455753326416,
+          "p25": 0.3977603614330292,
+          "p50": 0.4402185082435608,
+          "p75": 0.46482624113559723,
+          "p95": 0.5271162152290344
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.4379740580916405,
+          "median": 0.4005424529314041,
+          "std": 0.12457817726154079,
+          "min": 0.27066150307655334,
+          "max": 0.6916555762290955,
+          "mean_finite": 0.4379740580916405,
+          "p05": 0.3092831179499626,
+          "p25": 0.3473847433924675,
+          "p50": 0.4005424529314041,
+          "p75": 0.5281227976083755,
+          "p95": 0.6685969263315201
+        }
+      },
+      "enhanced": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 21.07432323694229,
+          "median": 21.566460132598877,
+          "std": 1.5896283092484345,
+          "min": 18.28762650489807,
+          "max": 23.396499156951904,
+          "mean_finite": 21.07432323694229,
+          "p05": 18.567312598228455,
+          "p25": 19.549112617969513,
+          "p50": 21.566460132598877,
+          "p75": 22.13368833065033,
+          "p95": 23.32759177684784
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.43143785297870635,
+          "median": 0.4402185082435608,
+          "std": 0.0646050191073615,
+          "min": 0.30667757987976074,
+          "max": 0.5713099837303162,
+          "mean_finite": 0.43143785297870635,
+          "p05": 0.3383455753326416,
+          "p25": 0.3977603614330292,
+          "p50": 0.4402185082435608,
+          "p75": 0.46482624113559723,
+          "p95": 0.5271162152290344
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.4379740580916405,
+          "median": 0.4005424529314041,
+          "std": 0.12457817726154079,
+          "min": 0.27066150307655334,
+          "max": 0.6916555762290955,
+          "mean_finite": 0.4379740580916405,
+          "p05": 0.3092831179499626,
+          "p25": 0.3473847433924675,
+          "p50": 0.4005424529314041,
+          "p75": 0.5281227976083755,
+          "p95": 0.6685969263315201
+        }
+      },
+      "delta": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean_finite": 0.0,
+          "p05": 0.0,
+          "p25": 0.0,
+          "p50": 0.0,
+          "p75": 0.0,
+          "p95": 0.0
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "recovered": {
+            "mse": 0.006769824307411909,
+            "psnr": 21.694226264953613,
+            "ssim": 0.44612014293670654,
+            "lpips": 0.3113158345222473
+          },
+          "enhanced": {
+            "mse": 0.006769824307411909,
+            "psnr": 21.694226264953613,
+            "ssim": 0.44612014293670654,
+            "lpips": 0.3113158345222473
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0000_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0000_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "recovered": {
+            "mse": 0.006029995158314705,
+            "psnr": 22.196829319000244,
+            "ssim": 0.45398688316345215,
+            "lpips": 0.3298058807849884
+          },
+          "enhanced": {
+            "mse": 0.006029995158314705,
+            "psnr": 22.196829319000244,
+            "ssim": 0.45398688316345215,
+            "lpips": 0.3298058807849884
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0001_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0001_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "recovered": {
+            "mse": 0.00879355613142252,
+            "psnr": 20.55835485458374,
+            "ssim": 0.47565463185310364,
+            "lpips": 0.3941541016101837
+          },
+          "enhanced": {
+            "mse": 0.00879355613142252,
+            "psnr": 20.55835485458374,
+            "ssim": 0.47565463185310364,
+            "lpips": 0.3941541016101837
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0002_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0002_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "recovered": {
+            "mse": 0.006999016273766756,
+            "psnr": 21.549630165100098,
+            "ssim": 0.40671488642692566,
+            "lpips": 0.5513761043548584
+          },
+          "enhanced": {
+            "mse": 0.006999016273766756,
+            "psnr": 21.549630165100098,
+            "ssim": 0.40671488642692566,
+            "lpips": 0.5513761043548584
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0003_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0003_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "recovered": {
+            "mse": 0.006406318861991167,
+            "psnr": 21.933915615081787,
+            "ssim": 0.45108476281166077,
+            "lpips": 0.4187578558921814
+          },
+          "enhanced": {
+            "mse": 0.006406318861991167,
+            "psnr": 21.933915615081787,
+            "ssim": 0.45108476281166077,
+            "lpips": 0.4187578558921814
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0004_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0004_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "recovered": {
+            "mse": 0.010174340568482876,
+            "psnr": 19.92493748664856,
+            "ssim": 0.4253784716129303,
+            "lpips": 0.4069308042526245
+          },
+          "enhanced": {
+            "mse": 0.010174340568482876,
+            "psnr": 19.92493748664856,
+            "ssim": 0.4253784716129303,
+            "lpips": 0.4069308042526245
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0005_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0005_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "recovered": {
+            "mse": 0.012276497669517994,
+            "psnr": 19.109255075454712,
+            "ssim": 0.34174370765686035,
+            "lpips": 0.6673833131790161
+          },
+          "enhanced": {
+            "mse": 0.012276497669517994,
+            "psnr": 19.109255075454712,
+            "ssim": 0.34174370765686035,
+            "lpips": 0.6673833131790161
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0006_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0006_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "recovered": {
+            "mse": 0.011599190533161163,
+            "psnr": 19.355722665786743,
+            "ssim": 0.30667757987976074,
+            "lpips": 0.6916555762290955
+          },
+          "enhanced": {
+            "mse": 0.011599190533161163,
+            "psnr": 19.355722665786743,
+            "ssim": 0.30667757987976074,
+            "lpips": 0.6916555762290955
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0007_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0007_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "recovered": {
+            "mse": 0.014833283610641956,
+            "psnr": 18.28762650489807,
+            "ssim": 0.3580181300640106,
+            "lpips": 0.48927927017211914
+          },
+          "enhanced": {
+            "mse": 0.014833283610641956,
+            "psnr": 18.28762650489807,
+            "ssim": 0.3580181300640106,
+            "lpips": 0.48927927017211914
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0008_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0008_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "recovered": {
+            "mse": 0.005153663456439972,
+            "psnr": 22.87883996963501,
+            "ssim": 0.5061150193214417,
+            "lpips": 0.37996581196784973
+          },
+          "enhanced": {
+            "mse": 0.005153663456439972,
+            "psnr": 22.87883996963501,
+            "ssim": 0.5061150193214417,
+            "lpips": 0.37996581196784973
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0009_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0009_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "recovered": {
+            "mse": 0.004574567545205355,
+            "psnr": 23.396499156951904,
+            "ssim": 0.48623034358024597,
+            "lpips": 0.5279611349105835
+          },
+          "enhanced": {
+            "mse": 0.004574567545205355,
+            "psnr": 23.396499156951904,
+            "ssim": 0.48623034358024597,
+            "lpips": 0.5279611349105835
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0010_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0010_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "recovered": {
+            "mse": 0.013861068524420261,
+            "psnr": 18.582032918930054,
+            "ssim": 0.41080132126808167,
+            "lpips": 0.35947364568710327
+          },
+          "enhanced": {
+            "mse": 0.013861068524420261,
+            "psnr": 18.582032918930054,
+            "ssim": 0.41080132126808167,
+            "lpips": 0.35947364568710327
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0011_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0011_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "recovered": {
+            "mse": 0.006944980006664991,
+            "psnr": 21.583290100097656,
+            "ssim": 0.4115680754184723,
+            "lpips": 0.3532443642616272
+          },
+          "enhanced": {
+            "mse": 0.006944980006664991,
+            "psnr": 21.583290100097656,
+            "ssim": 0.4115680754184723,
+            "lpips": 0.3532443642616272
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0012_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0012_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "recovered": {
+            "mse": 0.006148027256131172,
+            "psnr": 22.11264133453369,
+            "ssim": 0.43712249398231506,
+            "lpips": 0.27066150307655334
+          },
+          "enhanced": {
+            "mse": 0.006148027256131172,
+            "psnr": 22.11264133453369,
+            "ssim": 0.43712249398231506,
+            "lpips": 0.27066150307655334
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0013_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0013_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "recovered": {
+            "mse": 0.012220791541039944,
+            "psnr": 19.12900686264038,
+            "ssim": 0.3400123119354248,
+            "lpips": 0.5286077857017517
+          },
+          "enhanced": {
+            "mse": 0.012220791541039944,
+            "psnr": 19.12900686264038,
+            "ssim": 0.3400123119354248,
+            "lpips": 0.5286077857017517
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0014_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0014_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "recovered": {
+            "mse": 0.01093055959790945,
+            "psnr": 19.61357593536377,
+            "ssim": 0.3708967864513397,
+            "lpips": 0.6633671522140503
+          },
+          "enhanced": {
+            "mse": 0.01093055959790945,
+            "psnr": 19.61357593536377,
+            "ssim": 0.3708967864513397,
+            "lpips": 0.6633671522140503
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0015_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0015_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "recovered": {
+            "mse": 0.007409531623125076,
+            "psnr": 21.3020920753479,
+            "ssim": 0.4433145225048065,
+            "lpips": 0.3792227506637573
+          },
+          "enhanced": {
+            "mse": 0.007409531623125076,
+            "psnr": 21.3020920753479,
+            "ssim": 0.4433145225048065,
+            "lpips": 0.3792227506637573
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0016_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0016_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "recovered": {
+            "mse": 0.004984533879905939,
+            "psnr": 23.02375555038452,
+            "ssim": 0.5713099837303162,
+            "lpips": 0.31557124853134155
+          },
+          "enhanced": {
+            "mse": 0.004984533879905939,
+            "psnr": 23.02375555038452,
+            "ssim": 0.5713099837303162,
+            "lpips": 0.31557124853134155
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0017_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0017_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "recovered": {
+            "mse": 0.006411700043827295,
+            "psnr": 21.930267810821533,
+            "ssim": 0.4612167775630951,
+            "lpips": 0.40849602222442627
+          },
+          "enhanced": {
+            "mse": 0.006411700043827295,
+            "psnr": 21.930267810821533,
+            "ssim": 0.4612167775630951,
+            "lpips": 0.40849602222442627
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0018_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0018_snr20_enhanced.png"
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "recovered": {
+            "mse": 0.0046516116708517075,
+            "psnr": 23.323965072631836,
+            "ssim": 0.5247902274131775,
+            "lpips": 0.3122510015964508
+          },
+          "enhanced": {
+            "mse": 0.0046516116708517075,
+            "psnr": 23.323965072631836,
+            "ssim": 0.5247902274131775,
+            "lpips": 0.3122510015964508
+          },
+          "delta": {
+            "psnr": 0.0,
+            "ssim": 0.0,
+            "lpips": 0.0
+          },
+          "recovered_path": "D:\\racs2\\experiments\\results\\phase12\\eva_facial_0019_snr20_recovered.png",
+          "enhanced_path": "D:\\racs2\\experiments\\results\\phase14\\eva_facial_0019_snr20_enhanced.png"
+        }
+      ]
+    }
+  },
+  "control": {
+    "class": "common",
+    "applied": false,
+    "identical": true
+  },
+  "deterministic": true,
+  "decisions": {
+    "codeformer_weights": "pretrained original CodeFormer weights are not installed in this environment; fallback recorded in docs/DEVIATIONS.md and module kept off by default"
+  },
+  "elapsed_s": 12.700531721115112
+}

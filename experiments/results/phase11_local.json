@@ -1,0 +1,1657 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-27T17:06:09Z",
+  "phase": 11,
+  "approximate": false,
+  "split_role": "evaluation",
+  "class": "facial",
+  "n_images": 20,
+  "config": {
+    "eta": 0.05,
+    "mask_fraction": 0.05,
+    "mask_domain": "racs2-mask-v1",
+    "edict_steps": 20,
+    "edict_mixing": 0.93,
+    "image_size": 256,
+    "guidance_scale": 3.0
+  },
+  "mask_example": {
+    "token": "29862149",
+    "mask_domain": "racs2-mask-v1",
+    "mask_seed": 107689779,
+    "shape": [
+      1,
+      4,
+      32,
+      32
+    ],
+    "nonzero": 205,
+    "sha256": "3cd5ed94f0b0efb5d3d329df09e59c105fdbf54dcdb4113ffc4b28cb5caae1f1"
+  },
+  "determinism": {
+    "checked": true,
+    "image_id": "eva_facial_0000",
+    "mask_deterministic": true,
+    "stego_match": true,
+    "recovered_match": true
+  },
+  "conditions": {
+    "matched": {
+      "n": 20,
+      "distribution": {
+        "mse": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0024728558055358008,
+          "median": 0.001989716198295355,
+          "std": 0.001729849489484119,
+          "min": 0.000959442462772131,
+          "max": 0.00885254517197609,
+          "mean_finite": 0.0024728558055358008,
+          "p05": 0.0009625004575354978,
+          "p25": 0.0014696322323288769,
+          "p50": 0.001989716198295355,
+          "p75": 0.0026191493961960077,
+          "p95": 0.0044743916019797355
+        },
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 26.771623611450195,
+          "median": 27.012109756469727,
+          "std": 2.3031940959597716,
+          "min": 20.52931785583496,
+          "max": 30.179810523986816,
+          "mean_finite": 26.771623611450195,
+          "p05": 23.56263554096222,
+          "p25": 25.819661021232605,
+          "p50": 27.012109756469727,
+          "p75": 28.328009843826294,
+          "p95": 30.16599190235138
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.7963538050651551,
+          "median": 0.8194891512393951,
+          "std": 0.07499745247236111,
+          "min": 0.6355043053627014,
+          "max": 0.898474395275116,
+          "mean_finite": 0.7963538050651551,
+          "p05": 0.6649442434310913,
+          "p25": 0.7539770156145096,
+          "p50": 0.8194891512393951,
+          "p75": 0.8470894545316696,
+          "p95": 0.8970806419849395
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.08280076049268245,
+          "median": 0.08646272867918015,
+          "std": 0.01790005054027314,
+          "min": 0.04857673496007919,
+          "max": 0.12558402121067047,
+          "mean_finite": 0.08280076049268245,
+          "p05": 0.05784714221954346,
+          "p25": 0.07188819721341133,
+          "p50": 0.08646272867918015,
+          "p75": 0.09455172531306744,
+          "p95": 0.10109536424279215
+        }
+      },
+      "stego_distribution": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 23.2843074798584,
+          "median": 23.353793621063232,
+          "std": 1.66424514321306,
+          "min": 19.70228672027588,
+          "max": 25.790090560913086,
+          "mean_finite": 23.2843074798584,
+          "p05": 20.485424995422363,
+          "p25": 22.20381259918213,
+          "p50": 23.353793621063232,
+          "p75": 24.485262036323547,
+          "p95": 25.605852842330933
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.7135534405708313,
+          "median": 0.7284899950027466,
+          "std": 0.07598053853983508,
+          "min": 0.5625543594360352,
+          "max": 0.8219354748725891,
+          "mean_finite": 0.7135534405708313,
+          "p05": 0.588382962346077,
+          "p25": 0.6453574001789093,
+          "p50": 0.7284899950027466,
+          "p75": 0.7796280980110168,
+          "p95": 0.8080626636743545
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.13543840497732162,
+          "median": 0.13675390928983688,
+          "std": 0.028843214770891856,
+          "min": 0.0906725749373436,
+          "max": 0.2086108773946762,
+          "mean_finite": 0.13543840497732162,
+          "p05": 0.09301226027309895,
+          "p25": 0.11160652339458466,
+          "p50": 0.13675390928983688,
+          "p75": 0.15187637880444527,
+          "p95": 0.17341836616396908
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0000",
+          "token": "29862149",
+          "mask": {
+            "token": "29862149",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 107689779,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "3cd5ed94f0b0efb5d3d329df09e59c105fdbf54dcdb4113ffc4b28cb5caae1f1"
+          },
+          "metrics": {
+            "mse": 0.002729584462940693,
+            "psnr": 25.63903570175171,
+            "ssim": 0.6778354644775391,
+            "lpips": 0.09980648756027222
+          },
+          "stego_metrics": {
+            "mse": 0.006092933472245932,
+            "psnr": 22.151734828948975,
+            "ssim": 0.5897423624992371,
+            "lpips": 0.16053883731365204
+          },
+          "stego_sha256": "e1f4f2e5d8716a48bd87af2b1b1663cd67676627bedbc0490865d7c953a0f247",
+          "recovered_sha256": "21a19e51e1de5915251096a70ec79994a9cfcd00c4bf6c5b1b01a78927c278d7",
+          "latency_s": 18.87969136238098
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0001",
+          "token": "10134425",
+          "mask": {
+            "token": "10134425",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1110725847,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "09a6efbe39a8ad1f6b73b5d805e4aa3f5e6f31467e178d6629581644a9ed9c67"
+          },
+          "metrics": {
+            "mse": 0.002001081360504031,
+            "psnr": 26.98735237121582,
+            "ssim": 0.7591492533683777,
+            "lpips": 0.07189128547906876
+          },
+          "stego_metrics": {
+            "mse": 0.004049577750265598,
+            "psnr": 23.925902843475342,
+            "ssim": 0.6822919845581055,
+            "lpips": 0.120270274579525
+          },
+          "stego_sha256": "232a4709c2321290b24d0dab1b3bde103cc56aaaffa890873d3835a4a47e2414",
+          "recovered_sha256": "6cdb338e6af7cb12cf508f4d73265e372899906a033940ccc226f4a3fa5d3963",
+          "latency_s": 17.432352542877197
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0002",
+          "token": "02230128",
+          "mask": {
+            "token": "02230128",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 468968418,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "ff2fd23ba23b762b0eb79d4ab5baa34d023697c4a0886f62a6cf7cb6637bc33d"
+          },
+          "metrics": {
+            "mse": 0.004243962466716766,
+            "psnr": 23.722283840179443,
+            "ssim": 0.7592716217041016,
+            "lpips": 0.09566524624824524
+          },
+          "stego_metrics": {
+            "mse": 0.010709553956985474,
+            "psnr": 19.70228672027588,
+            "ssim": 0.6221475601196289,
+            "lpips": 0.16858837008476257
+          },
+          "stego_sha256": "8a990803d8135d7b3a6b0f136d2a8827913a073460657a27106d48c7d7f2fd63",
+          "recovered_sha256": "17fa21f3eb4ef49a7fa325835589c4eaad9f35a5c94f93da1698494e3bf362e4",
+          "latency_s": 17.63063097000122
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0003",
+          "token": "31824086",
+          "mask": {
+            "token": "31824086",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1116342820,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "3ce317c4453fccbeb6b1b45a31293b9999c03f1d97b3e83c06ac548151f3ddaf"
+          },
+          "metrics": {
+            "mse": 0.000959442462772131,
+            "psnr": 30.179810523986816,
+            "ssim": 0.8734131455421448,
+            "lpips": 0.08413206040859222
+          },
+          "stego_metrics": {
+            "mse": 0.0029785099904984236,
+            "psnr": 25.260009765625,
+            "ssim": 0.778706967830658,
+            "lpips": 0.17156612873077393
+          },
+          "stego_sha256": "a17147d13ccd5dc2e0f8cffb8eafcc8698985674ade8da18fcd964d96665e286",
+          "recovered_sha256": "71659c1b05dec124edf8a76d134785f03c721119b24828ad396a1fdbe6fcfb74",
+          "latency_s": 17.482882499694824
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0004",
+          "token": "35647030",
+          "mask": {
+            "token": "35647030",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1201793935,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "c877fe8a33e1668076499c6b30bbb1780fbf1ce4a32ceacb152ac56d91a51d94"
+          },
+          "metrics": {
+            "mse": 0.0017808637348935008,
+            "psnr": 27.493693828582764,
+            "ssim": 0.7677121162414551,
+            "lpips": 0.09423700720071793
+          },
+          "stego_metrics": {
+            "mse": 0.005293386057019234,
+            "psnr": 22.7626633644104,
+            "ssim": 0.664693295955658,
+            "lpips": 0.2086108773946762
+          },
+          "stego_sha256": "d0d1feff6aa38d491f9be5d285674da3a3bd9e083aa8be2cc957f9b39e770117",
+          "recovered_sha256": "2c01e5e15d66b267e35a3a1e6ab13692fcbce94f60df4fed3f086e88bbcb2519",
+          "latency_s": 17.20305895805359
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0005",
+          "token": "05268632",
+          "mask": {
+            "token": "05268632",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 2042010553,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "5ee715327cd18cb3a48a84e0b676236b455f96b61041abdef44d9b76ad3fd328"
+          },
+          "metrics": {
+            "mse": 0.004186343401670456,
+            "psnr": 23.781652450561523,
+            "ssim": 0.7384603023529053,
+            "lpips": 0.0975867211818695
+          },
+          "stego_metrics": {
+            "mse": 0.008258622139692307,
+            "psnr": 20.83092451095581,
+            "ssim": 0.6456565260887146,
+            "lpips": 0.1542685627937317
+          },
+          "stego_sha256": "1c0905289925a3bc32e125d71f5bc5a6b022b38b3ef94f6f4c4217830b656199",
+          "recovered_sha256": "544868d24cef8ad0458ef13001a320e7dfd8239ef71908fa350715fee6e53620",
+          "latency_s": 17.86964464187622
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0006",
+          "token": "09678496",
+          "mask": {
+            "token": "09678496",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1678561102,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "5ee3b17b2a2055e522f3fa61e5f012c96c80350fd272b159d0c2dc2e10fc394b"
+          },
+          "metrics": {
+            "mse": 0.0014752839924767613,
+            "psnr": 28.311243057250977,
+            "ssim": 0.854238748550415,
+            "lpips": 0.09312538802623749
+          },
+          "stego_metrics": {
+            "mse": 0.002756668021902442,
+            "psnr": 25.596156120300293,
+            "ssim": 0.8073325157165527,
+            "lpips": 0.10635365545749664
+          },
+          "stego_sha256": "0c06f6d8955034a0e1fc6acdc10f53d95e8d3cb2ed3a6d85a9e30d7fb795d445",
+          "recovered_sha256": "ad61bb7216570549f7d2cb8334eb1c1cbe7d5444d4aca75dcfc597f623c9cc03",
+          "latency_s": 17.489458560943604
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0007",
+          "token": "03000389",
+          "mask": {
+            "token": "03000389",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1909977630,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "03bcbd25e5371e3c40c4576d5ac7cdbb4b3772c51293d380791fe907b0627409"
+          },
+          "metrics": {
+            "mse": 0.001239329227246344,
+            "psnr": 29.06813383102417,
+            "ssim": 0.8970072865486145,
+            "lpips": 0.05833505839109421
+          },
+          "stego_metrics": {
+            "mse": 0.003150282194837928,
+            "psnr": 25.0165057182312,
+            "ssim": 0.8219354748725891,
+            "lpips": 0.13794396817684174
+          },
+          "stego_sha256": "9ecd3b9b53930ecc33b16af649193ea62e687a6870785065ddfc300020fa4f60",
+          "recovered_sha256": "a7eac772bba00d5d936810fbaa7d9327dbec654c1de0acd063756cfc2fae4218",
+          "latency_s": 18.006045818328857
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0008",
+          "token": "79837121",
+          "mask": {
+            "token": "79837121",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 459482415,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "5d0ebc7e348789ca79e94ce802e915ee9200845fa7995f4bc768eaa240db9198"
+          },
+          "metrics": {
+            "mse": 0.0025823377072811127,
+            "psnr": 25.87986946105957,
+            "ssim": 0.8067428469657898,
+            "lpips": 0.07370758056640625
+          },
+          "stego_metrics": {
+            "mse": 0.004317754879593849,
+            "psnr": 23.647420406341553,
+            "ssim": 0.7638756632804871,
+            "lpips": 0.0906725749373436
+          },
+          "stego_sha256": "d7bfb98dac640ed575cb5647edf3c045dcb17d9cdd1142a2ecf9fff86c6e4c9d",
+          "recovered_sha256": "2e323eaa047b3a8763028d47a3a591cb111a1dd8783797a4354f52d16bd2eafd",
+          "latency_s": 17.750194549560547
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0009",
+          "token": "60682480",
+          "mask": {
+            "token": "60682480",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1484306107,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "c82a40e010219a092a9dba7c3b5f96a672c49b478eddfe97a5be940ed0b88a7f"
+          },
+          "metrics": {
+            "mse": 0.0017752941930666566,
+            "psnr": 27.507295608520508,
+            "ssim": 0.8199210166931152,
+            "lpips": 0.09061896800994873
+          },
+          "stego_metrics": {
+            "mse": 0.004396294709295034,
+            "psnr": 23.569130897521973,
+            "ssim": 0.7380455136299133,
+            "lpips": 0.14404992759227753
+          },
+          "stego_sha256": "0afb2d994a07457acee69c3fbce3ed04027d85046d044e2ab74021cc736a07a8",
+          "recovered_sha256": "333c6b5319f0f1b7699c25f08df0fe554b8ef5b766c838033aed2b8677d31083",
+          "latency_s": 17.521507024765015
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0010",
+          "token": "81688382",
+          "mask": {
+            "token": "81688382",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 826487091,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "aee1429a89212b592903ee2c93ac616c473c023bc375700248a1345f5eb9b89c"
+          },
+          "metrics": {
+            "mse": 0.0011723319767042994,
+            "psnr": 29.309494495391846,
+            "ssim": 0.8322898745536804,
+            "lpips": 0.08879339694976807
+          },
+          "stego_metrics": {
+            "mse": 0.0026362764183431864,
+            "psnr": 25.790090560913086,
+            "ssim": 0.7823914885520935,
+            "lpips": 0.10344526916742325
+          },
+          "stego_sha256": "e814b2059381b75624a70c828d02830bba0ff643e1916c45d20939db07c39703",
+          "recovered_sha256": "c7ba1f47923e61169d16ecda78f1216bdb874c02846575363b6b2de64f2c3467",
+          "latency_s": 17.67602229118347
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0011",
+          "token": "16531878",
+          "mask": {
+            "token": "16531878",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1618848789,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "c4889fbbab3e0e162fffdef5bf9ec0e84679ab1a17e3b78c09e536ab6b0ac4f4"
+          },
+          "metrics": {
+            "mse": 0.00885254517197609,
+            "psnr": 20.52931785583496,
+            "ssim": 0.6664937138557434,
+            "lpips": 0.12558402121067047
+          },
+          "stego_metrics": {
+            "mse": 0.008857999928295612,
+            "psnr": 20.52664279937744,
+            "ssim": 0.643160343170166,
+            "lpips": 0.11013548821210861
+          },
+          "stego_sha256": "893382dfe779c25ed7e66795909ca0bee6003a11942d8d0f0e4a41b0a648854b",
+          "recovered_sha256": "2419537a8702257cbf01036f31090c4365fb2c55d6b94352021f6a23749f04db",
+          "latency_s": 16.543240308761597
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0012",
+          "token": "18391329",
+          "mask": {
+            "token": "18391329",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1220302921,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "c87bb116b474ea6297443319d059a4a3de056fd4a5a59e4ffe24c06903e3bc9c"
+          },
+          "metrics": {
+            "mse": 0.0019834714476019144,
+            "psnr": 27.025740146636963,
+            "ssim": 0.7302868962287903,
+            "lpips": 0.0805637538433075
+          },
+          "stego_metrics": {
+            "mse": 0.005015311297029257,
+            "psnr": 22.997021675109863,
+            "ssim": 0.6444600224494934,
+            "lpips": 0.12843835353851318
+          },
+          "stego_sha256": "7909a76709922d0c20497f81d1e40c4cdf657de0bce3a8f2b0b4f7d605239afe",
+          "recovered_sha256": "5d4bd77177d7b6bd0630386ba4f1b989cb22b93a77110fedaddf372e8dfe7e94",
+          "latency_s": 8.689462900161743
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0013",
+          "token": "86295810",
+          "mask": {
+            "token": "86295810",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 693616004,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "3078a82c8456d470076dd1fe5baa9133bf2382514469dcfebe54dfea37f3f52d"
+          },
+          "metrics": {
+            "mse": 0.0035070443991571665,
+            "psnr": 24.550588130950928,
+            "ssim": 0.6355043053627014,
+            "lpips": 0.09549587965011597
+          },
+          "stego_metrics": {
+            "mse": 0.00599895603954792,
+            "psnr": 22.219243049621582,
+            "ssim": 0.5625543594360352,
+            "lpips": 0.14594975113868713
+          },
+          "stego_sha256": "24ae99d22cdd1b6fdef913fd194a29c635a5e25a3370050d0ca2c6e93e4a7585",
+          "recovered_sha256": "159c1cca6845360f59f2e19af4a9a8ab717a00d64bdc7f1643f4045697762a64",
+          "latency_s": 8.596175909042358
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0014",
+          "token": "47993769",
+          "mask": {
+            "token": "47993769",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 290943860,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "6f2effa5296a03028cc2fb9412600437eee125a0f7f42d8623f9e3b91aafb495"
+          },
+          "metrics": {
+            "mse": 0.0014526769518852234,
+            "psnr": 28.378310203552246,
+            "ssim": 0.880242109298706,
+            "lpips": 0.06018978729844093
+          },
+          "stego_metrics": {
+            "mse": 0.003708360018208623,
+            "psnr": 24.308180809020996,
+            "ssim": 0.8050797581672668,
+            "lpips": 0.11209686845541
+          },
+          "stego_sha256": "e1e8b49931340dd5a35d2ef4bbfd1b31fdd1b4379c305aa14135008531c76555",
+          "recovered_sha256": "55ed8722753cb4dd7b40f06e8bb80ee3e83e1791bbb027a40f1b60afa6aad2a8",
+          "latency_s": 8.46614146232605
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0015",
+          "token": "29983663",
+          "mask": {
+            "token": "29983663",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 2094490279,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "0f9fb73f423b08fd0d1d6db8b441755680f1b759d1f2cdba9a6cded98a89b4e3"
+          },
+          "metrics": {
+            "mse": 0.0009626614046283066,
+            "psnr": 30.16526460647583,
+            "ssim": 0.898474395275116,
+            "lpips": 0.07284274697303772
+          },
+          "stego_metrics": {
+            "mse": 0.0028666655998677015,
+            "psnr": 25.426230430603027,
+            "ssim": 0.8059279918670654,
+            "lpips": 0.14570647478103638
+          },
+          "stego_sha256": "49e5ef88b2be4483342f709dc83e609f04e124122d77059f2fffb717fb750c5d",
+          "recovered_sha256": "f912dd79bdf98dc52a4ebfebd8f6a6f9fdbbe691f6c662fce0dbea9878d498d1",
+          "latency_s": 8.67267656326294
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0016",
+          "token": "00750235",
+          "mask": {
+            "token": "00750235",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1677813013,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "408ec0bddd7413674c4c13a8d1822ef11b74d30b9f50f59e1fe1f17c1ccc4ed3"
+          },
+          "metrics": {
+            "mse": 0.0018878871342167258,
+            "psnr": 27.240240573883057,
+            "ssim": 0.8305056095123291,
+            "lpips": 0.0588669590651989
+          },
+          "stego_metrics": {
+            "mse": 0.004812242928892374,
+            "psnr": 23.17652463912964,
+            "ssim": 0.7326644062995911,
+            "lpips": 0.12035448104143143
+          },
+          "stego_sha256": "defe154f56bbd45578c87261ed110389338ffe9b05ae59c658e0e0784a65ad32",
+          "recovered_sha256": "7b06c7dd6800852a324a87867c15b49e2a38683e2bf03448ebabb8872909ebe7",
+          "latency_s": 8.449403047561646
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0017",
+          "token": "70459856",
+          "mask": {
+            "token": "70459856",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1376141307,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "eff8bf7c4095b93ed8aca2d56b9374f35aa6155074f85581485f26b86a8b4bd7"
+          },
+          "metrics": {
+            "mse": 0.00252353772521019,
+            "psnr": 25.979902744293213,
+            "ssim": 0.819057285785675,
+            "lpips": 0.0941171944141388
+          },
+          "stego_metrics": {
+            "mse": 0.006084822583943605,
+            "psnr": 22.15752124786377,
+            "ssim": 0.7079922556877136,
+            "lpips": 0.1510789841413498
+          },
+          "stego_sha256": "82e0dab68138ce85482c1d17082bbd3b061cd4da86cec11693758b77303dd478",
+          "recovered_sha256": "0091a5510ebd067436545e9491255c0698f5184ee966eb0b58fb35373be357dd",
+          "latency_s": 8.542807579040527
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0018",
+          "token": "05078832",
+          "mask": {
+            "token": "05078832",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 154890345,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "22466341fce1ed57adf571da511970980a76f87e9d3d6a9596aeecb5d9721420"
+          },
+          "metrics": {
+            "mse": 0.0019959609489887953,
+            "psnr": 26.99847936630249,
+            "ssim": 0.8357637524604797,
+            "lpips": 0.07187893241643906
+          },
+          "stego_metrics": {
+            "mse": 0.004908065777271986,
+            "psnr": 23.090896606445312,
+            "ssim": 0.7243155837059021,
+            "lpips": 0.13556385040283203
+          },
+          "stego_sha256": "08460db422598e0302f6a011b3e690b717973e43a46b2204991fa05adb2c0b5f",
+          "recovered_sha256": "f12521bb7d274eb1232ddf1bcd419e5cb0b736a470765921e0753e687d0335d1",
+          "latency_s": 8.72726821899414
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "condition": "matched",
+          "reference_image_id": "eva_facial_0019",
+          "token": "56107026",
+          "mask": {
+            "token": "56107026",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 537090537,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "de8e907ad71d6937d970ffc5373816300b39acfd3a7150e8225bddf9e19afe0c"
+          },
+          "metrics": {
+            "mse": 0.0021454759407788515,
+            "psnr": 26.684763431549072,
+            "ssim": 0.8447063565254211,
+            "lpips": 0.04857673496007919
+          },
+          "stego_metrics": {
+            "mse": 0.004435000475496054,
+            "psnr": 23.531062602996826,
+            "ssim": 0.7480947375297546,
+            "lpips": 0.09313540160655975
+          },
+          "stego_sha256": "7b19eb72dd5eba7f8c8f58af5cae546393236e8e1e618d52ee050c86421dce06",
+          "recovered_sha256": "37157e144125d61ee24da00639c639cbc69aad567c399a875937351ed09145d1",
+          "latency_s": 8.416503190994263
+        }
+      ]
+    },
+    "mismatched": {
+      "n": 20,
+      "distribution": {
+        "mse": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0025471410248428584,
+          "median": 0.002089771442115307,
+          "std": 0.0017318412128371678,
+          "min": 0.0009909839136525989,
+          "max": 0.008871315978467464,
+          "mean_finite": 0.0025471410248428584,
+          "p05": 0.0010197612806223332,
+          "p25": 0.0015301445382647216,
+          "p50": 0.002089771442115307,
+          "p75": 0.002677374752238393,
+          "p95": 0.004667722643353048
+        },
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 26.618038773536682,
+          "median": 26.799038648605347,
+          "std": 2.2719697309659708,
+          "min": 20.520119667053223,
+          "max": 30.039334297180176,
+          "mean_finite": 26.618038773536682,
+          "p05": 23.369849681854248,
+          "p25": 25.723735094070435,
+          "p50": 26.799038648605347,
+          "p75": 28.154091835021973,
+          "p95": 29.915107131004333
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.7934350907802582,
+          "median": 0.8180578351020813,
+          "std": 0.07510411757818182,
+          "min": 0.6364496350288391,
+          "max": 0.8976901173591614,
+          "mean_finite": 0.7934350907802582,
+          "p05": 0.6634168982505798,
+          "p25": 0.7479849457740784,
+          "p50": 0.8180578351020813,
+          "p75": 0.8442377746105194,
+          "p95": 0.8957200407981872
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.0843389794230461,
+          "median": 0.08762726932764053,
+          "std": 0.018947085297463282,
+          "min": 0.04985962063074112,
+          "max": 0.1305459439754486,
+          "mean_finite": 0.0843389794230461,
+          "p05": 0.05887293890118599,
+          "p25": 0.06962927803397179,
+          "p50": 0.08762726932764053,
+          "p75": 0.0977946650236845,
+          "p95": 0.10371176935732367
+        }
+      },
+      "stego_distribution": {
+        "psnr": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 23.230567395687103,
+          "median": 23.308570384979248,
+          "std": 1.6623566033234118,
+          "min": 19.646271467208862,
+          "max": 25.664587020874023,
+          "mean_finite": 23.230567395687103,
+          "p05": 20.162619292736053,
+          "p25": 22.259382605552673,
+          "p50": 23.308570384979248,
+          "p75": 24.432085156440735,
+          "p95": 25.424891352653503
+        },
+        "ssim": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.7111255973577499,
+          "median": 0.7176459431648254,
+          "std": 0.07592706039288388,
+          "min": 0.5597745776176453,
+          "max": 0.819899320602417,
+          "mean_finite": 0.7111255973577499,
+          "p05": 0.5919505506753922,
+          "p25": 0.647746354341507,
+          "p50": 0.7176459431648254,
+          "p75": 0.7793106734752655,
+          "p95": 0.8055694371461868
+        },
+        "lpips": {
+          "n": 20,
+          "n_inf": 0,
+          "n_missing": 0,
+          "n_finite": 20,
+          "mean": 0.14009071178734303,
+          "median": 0.13962408900260925,
+          "std": 0.030515515253352315,
+          "min": 0.09213177859783173,
+          "max": 0.2271302342414856,
+          "mean_finite": 0.14009071178734303,
+          "p05": 0.09715665727853776,
+          "p25": 0.11939331702888012,
+          "p50": 0.13962408900260925,
+          "p75": 0.15488696098327637,
+          "p95": 0.17854248210787776
+        }
+      },
+      "cells": [
+        {
+          "image_id": "eva_facial_0000",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0000",
+          "token": "29862149",
+          "mask": {
+            "token": "29862149",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 107689779,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "3cd5ed94f0b0efb5d3d329df09e59c105fdbf54dcdb4113ffc4b28cb5caae1f1"
+          },
+          "metrics": {
+            "mse": 0.00276850420050323,
+            "psnr": 25.577547550201416,
+            "ssim": 0.6764407157897949,
+            "lpips": 0.09858299791812897
+          },
+          "stego_metrics": {
+            "mse": 0.005894369911402464,
+            "psnr": 22.29562520980835,
+            "ssim": 0.5936440229415894,
+            "lpips": 0.15954497456550598
+          },
+          "stego_sha256": "63f256d1010872994d6f66ad61a569712ffb05e5684cd96bd1a7a0ea7b5483cc",
+          "recovered_sha256": "b480042c549266d09ed526f732b6cc42074fa0cccf82f9f5eb7f2f779809c374",
+          "latency_s": 8.675579071044922
+        },
+        {
+          "image_id": "eva_facial_0001",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0001",
+          "token": "10134425",
+          "mask": {
+            "token": "10134425",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1110725847,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "09a6efbe39a8ad1f6b73b5d805e4aa3f5e6f31467e178d6629581644a9ed9c67"
+          },
+          "metrics": {
+            "mse": 0.0020971752237528563,
+            "psnr": 26.783652305603027,
+            "ssim": 0.7550318837165833,
+            "lpips": 0.07154931128025055
+          },
+          "stego_metrics": {
+            "mse": 0.004083430860191584,
+            "psnr": 23.88974666595459,
+            "ssim": 0.6810556054115295,
+            "lpips": 0.12128950655460358
+          },
+          "stego_sha256": "32f841797dd5f5353814565071fd2e3cbfc352b2f312a79cafc0d13cb98e752f",
+          "recovered_sha256": "f86b6d699556142e61a3cb84afc928e799f767825ca2a577b76404459ffbae6b",
+          "latency_s": 8.458406209945679
+        },
+        {
+          "image_id": "eva_facial_0002",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0002",
+          "token": "02230128",
+          "mask": {
+            "token": "02230128",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 468968418,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "ff2fd23ba23b762b0eb79d4ab5baa34d023697c4a0886f62a6cf7cb6637bc33d"
+          },
+          "metrics": {
+            "mse": 0.004446480888873339,
+            "psnr": 23.519835472106934,
+            "ssim": 0.7532393932342529,
+            "lpips": 0.09825532138347626
+          },
+          "stego_metrics": {
+            "mse": 0.010848578996956348,
+            "psnr": 19.646271467208862,
+            "ssim": 0.6194941401481628,
+            "lpips": 0.17598523199558258
+          },
+          "stego_sha256": "b217c9e78d957e4b86da104c90065321e0f6e7d501cc0526b1b7e0028d698691",
+          "recovered_sha256": "2baa1bb73dbfc82a0b3468905cc9fa16bf692d62420f69838df7c995320b67b7",
+          "latency_s": 8.61181926727295
+        },
+        {
+          "image_id": "eva_facial_0003",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0003",
+          "token": "31824086",
+          "mask": {
+            "token": "31824086",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1116342820,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "3ce317c4453fccbeb6b1b45a31293b9999c03f1d97b3e83c06ac548151f3ddaf"
+          },
+          "metrics": {
+            "mse": 0.0010212758788838983,
+            "psnr": 29.908568859100342,
+            "ssim": 0.8711495399475098,
+            "lpips": 0.08725482225418091
+          },
+          "stego_metrics": {
+            "mse": 0.002906898967921734,
+            "psnr": 25.365700721740723,
+            "ssim": 0.7819522023200989,
+            "lpips": 0.17013897001743317
+          },
+          "stego_sha256": "2235d65088ad86aa2315e2d4ab18427dce271775465bc42c100cf61b4884dc25",
+          "recovered_sha256": "2dbdda1297e90c647e2961c24bc10252822ca4d863a14bb930fd9ad8542313f0",
+          "latency_s": 8.472171545028687
+        },
+        {
+          "image_id": "eva_facial_0004",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0004",
+          "token": "35647030",
+          "mask": {
+            "token": "35647030",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1201793935,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "c877fe8a33e1668076499c6b30bbb1780fbf1ce4a32ceacb152ac56d91a51d94"
+          },
+          "metrics": {
+            "mse": 0.001950074452906847,
+            "psnr": 27.099487781524658,
+            "ssim": 0.7599925994873047,
+            "lpips": 0.10229944437742233
+          },
+          "stego_metrics": {
+            "mse": 0.005239830818027258,
+            "psnr": 22.806828022003174,
+            "ssim": 0.662863552570343,
+            "lpips": 0.2271302342414856
+          },
+          "stego_sha256": "5fb0bea998033fb1341179060f22cda11cde259b5900179b3eb23513c829af12",
+          "recovered_sha256": "ce922d2cf97648b20f188532ee3ae8804f87f6c7f9bede7c0f77214a7d497a94",
+          "latency_s": 8.702422142028809
+        },
+        {
+          "image_id": "eva_facial_0005",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0005",
+          "token": "05268632",
+          "mask": {
+            "token": "05268632",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 2042010553,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "5ee715327cd18cb3a48a84e0b676236b455f96b61041abdef44d9b76ad3fd328"
+          },
+          "metrics": {
+            "mse": 0.00432012090459466,
+            "psnr": 23.64504098892212,
+            "ssim": 0.7322216033935547,
+            "lpips": 0.09701676666736603
+          },
+          "stego_metrics": {
+            "mse": 0.008168934844434261,
+            "psnr": 20.87834596633911,
+            "ssim": 0.6465011835098267,
+            "lpips": 0.15333428978919983
+          },
+          "stego_sha256": "8a1dc4ada9e9bccb250f835ba6797a8582c4391edc8a0c26996037bb6eebb3c3",
+          "recovered_sha256": "e432617dd4d26d71b6212a226c3209ab5464e1b8b30e4a1cd81c8e34b5a3d48c",
+          "latency_s": 8.390708684921265
+        },
+        {
+          "image_id": "eva_facial_0006",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0006",
+          "token": "09678496",
+          "mask": {
+            "token": "09678496",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1678561102,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "5ee3b17b2a2055e522f3fa61e5f012c96c80350fd272b159d0c2dc2e10fc394b"
+          },
+          "metrics": {
+            "mse": 0.0015524750342592597,
+            "psnr": 28.089754581451416,
+            "ssim": 0.8524511456489563,
+            "lpips": 0.09582778811454773
+          },
+          "stego_metrics": {
+            "mse": 0.0028758917469531298,
+            "psnr": 25.412275791168213,
+            "ssim": 0.804714024066925,
+            "lpips": 0.11353403329849243
+          },
+          "stego_sha256": "d9cdb0b9f78647f7c8dcda36d2524a696d1ded481694ddb8fd9dbeedabff7990",
+          "recovered_sha256": "a4aebb307d92eaf6cd0127d05c106c413dda5a4f9e923bc37dc3b13554b93210",
+          "latency_s": 8.423352479934692
+        },
+        {
+          "image_id": "eva_facial_0007",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0007",
+          "token": "03000389",
+          "mask": {
+            "token": "03000389",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1909977630,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "03bcbd25e5371e3c40c4576d5ac7cdbb4b3772c51293d380791fe907b0627409"
+          },
+          "metrics": {
+            "mse": 0.001289145089685917,
+            "psnr": 28.896982669830322,
+            "ssim": 0.895616352558136,
+            "lpips": 0.05934732407331467
+          },
+          "stego_metrics": {
+            "mse": 0.003246558830142021,
+            "psnr": 24.88576650619507,
+            "ssim": 0.819899320602417,
+            "lpips": 0.14011314511299133
+          },
+          "stego_sha256": "f10451a740b584e1386a8e6c91bdb81a2817d4b0e9a3f862fa185da83ad99e02",
+          "recovered_sha256": "9fdd9d5dacb3c1037a760d6a1d016c983fdfca6e48a1c39c58952cfdcdac10dd",
+          "latency_s": 8.640378952026367
+        },
+        {
+          "image_id": "eva_facial_0008",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0008",
+          "token": "79837121",
+          "mask": {
+            "token": "79837121",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 459482415,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "5d0ebc7e348789ca79e94ce802e915ee9200845fa7995f4bc768eaa240db9198"
+          },
+          "metrics": {
+            "mse": 0.00257469923235476,
+            "psnr": 25.89273452758789,
+            "ssim": 0.8072463870048523,
+            "lpips": 0.0705287829041481
+          },
+          "stego_metrics": {
+            "mse": 0.004264601040631533,
+            "psnr": 23.70121479034424,
+            "ssim": 0.7610776424407959,
+            "lpips": 0.09213177859783173
+          },
+          "stego_sha256": "cb28a0d979c8e5ffe6facc9b2dd69c7138b708ad2394842f93b26dddc6c073b7",
+          "recovered_sha256": "b7e3d6704ad33767ce7b8b8c69f93b1a30f099e3290f74cc6d8e18e3ebf45356",
+          "latency_s": 8.605644464492798
+        },
+        {
+          "image_id": "eva_facial_0009",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0009",
+          "token": "60682480",
+          "mask": {
+            "token": "60682480",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1484306107,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "c82a40e010219a092a9dba7c3b5f96a672c49b478eddfe97a5be940ed0b88a7f"
+          },
+          "metrics": {
+            "mse": 0.001747624366544187,
+            "psnr": 27.57551908493042,
+            "ssim": 0.8205421566963196,
+            "lpips": 0.08799971640110016
+          },
+          "stego_metrics": {
+            "mse": 0.004123412072658539,
+            "psnr": 23.847432136535645,
+            "ssim": 0.7460834980010986,
+            "lpips": 0.13913503289222717
+          },
+          "stego_sha256": "272b6f99a25bcdcae0539b48f0d0a1dd9bcddcbb1d83060bb989732c43e205bd",
+          "recovered_sha256": "625235cdf7ab36fe9b86b6fec5e8ad0d4da08f76a6809cf0373f42757aeb5c9f",
+          "latency_s": 8.67294979095459
+        },
+        {
+          "image_id": "eva_facial_0010",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0010",
+          "token": "81688382",
+          "mask": {
+            "token": "81688382",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 826487091,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "aee1429a89212b592903ee2c93ac616c473c023bc375700248a1345f5eb9b89c"
+          },
+          "metrics": {
+            "mse": 0.0011934976791962981,
+            "psnr": 29.231784343719482,
+            "ssim": 0.8298864364624023,
+            "lpips": 0.09334345906972885
+          },
+          "stego_metrics": {
+            "mse": 0.0027135713025927544,
+            "psnr": 25.664587020874023,
+            "ssim": 0.778430163860321,
+            "lpips": 0.11139824986457825
+          },
+          "stego_sha256": "184846d2f825a6ea746b762746d87b53dadfef433d948acc941904807289e267",
+          "recovered_sha256": "4bacbb5c03ac4c7bf72b32923fb7ab0aed3e8b2d1b7795fb739978abf322f06e",
+          "latency_s": 8.44188141822815
+        },
+        {
+          "image_id": "eva_facial_0011",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0011",
+          "token": "16531878",
+          "mask": {
+            "token": "16531878",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1618848789,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "c4889fbbab3e0e162fffdef5bf9ec0e84679ab1a17e3b78c09e536ab6b0ac4f4"
+          },
+          "metrics": {
+            "mse": 0.008871315978467464,
+            "psnr": 20.520119667053223,
+            "ssim": 0.6648362278938293,
+            "lpips": 0.1305459439754486
+          },
+          "stego_metrics": {
+            "mse": 0.009572391398251057,
+            "psnr": 20.18979549407959,
+            "ssim": 0.6268945932388306,
+            "lpips": 0.12105581164360046
+          },
+          "stego_sha256": "e3ac979b266dd4befbef825dc7bf92108749654def791133a19419fa6a65ce49",
+          "recovered_sha256": "e2451025b9a9c48a6535ba6c3053e67b1c8a45541f3a570f2dabf12b46b237af",
+          "latency_s": 8.513228416442871
+        },
+        {
+          "image_id": "eva_facial_0012",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0012",
+          "token": "18391329",
+          "mask": {
+            "token": "18391329",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1220302921,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "c87bb116b474ea6297443319d059a4a3de056fd4a5a59e4ffe24c06903e3bc9c"
+          },
+          "metrics": {
+            "mse": 0.002039390616118908,
+            "psnr": 26.904995441436768,
+            "ssim": 0.7264381051063538,
+            "lpips": 0.0842197984457016
+          },
+          "stego_metrics": {
+            "mse": 0.004915220662951469,
+            "psnr": 23.084568977355957,
+            "ssim": 0.6481614112854004,
+            "lpips": 0.12517592310905457
+          },
+          "stego_sha256": "7fb0305a86a75e9463dd1be660623a6fd055821bbf946cc3d4d83312869a09d3",
+          "recovered_sha256": "b98d67077bf6aa1da4729512feb7000aa4ea68dfe8c7a76c8e4d4323a0ea8d14",
+          "latency_s": 8.338054180145264
+        },
+        {
+          "image_id": "eva_facial_0013",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0013",
+          "token": "86295810",
+          "mask": {
+            "token": "86295810",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 693616004,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "3078a82c8456d470076dd1fe5baa9133bf2382514469dcfebe54dfea37f3f52d"
+          },
+          "metrics": {
+            "mse": 0.0035077640786767006,
+            "psnr": 24.549696445465088,
+            "ssim": 0.6364496350288391,
+            "lpips": 0.09817524254322052
+          },
+          "stego_metrics": {
+            "mse": 0.00609445059671998,
+            "psnr": 22.150654792785645,
+            "ssim": 0.5597745776176453,
+            "lpips": 0.1473165899515152
+          },
+          "stego_sha256": "a31e733af932db2ef00b730eb8177e53c4188653fc8bc221074d4415a408b262",
+          "recovered_sha256": "6ea8d3057d61c561cf67c8ee9e914d01544062b0f00eb305e9b41b84ba986b34",
+          "latency_s": 8.707467555999756
+        },
+        {
+          "image_id": "eva_facial_0014",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0014",
+          "token": "47993769",
+          "mask": {
+            "token": "47993769",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 290943860,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "6f2effa5296a03028cc2fb9412600437eee125a0f7f42d8623f9e3b91aafb495"
+          },
+          "metrics": {
+            "mse": 0.0014631530502811074,
+            "psnr": 28.347103595733643,
+            "ssim": 0.8790726661682129,
+            "lpips": 0.05986271798610687
+          },
+          "stego_metrics": {
+            "mse": 0.00373176415450871,
+            "psnr": 24.280858039855957,
+            "ssim": 0.8048152327537537,
+            "lpips": 0.11440583318471909
+          },
+          "stego_sha256": "5f92a37841d0e465d655d2bea8f07ad25189ca0705339fff533cda1247f0486e",
+          "recovered_sha256": "12bc6f0bb04cfd67d7e82355420d87e11fa1b838ef474f870284d2e19a43f139",
+          "latency_s": 8.45584487915039
+        },
+        {
+          "image_id": "eva_facial_0015",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0015",
+          "token": "29983663",
+          "mask": {
+            "token": "29983663",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 2094490279,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "0f9fb73f423b08fd0d1d6db8b441755680f1b759d1f2cdba9a6cded98a89b4e3"
+          },
+          "metrics": {
+            "mse": 0.0009909839136525989,
+            "psnr": 30.039334297180176,
+            "ssim": 0.8976901173591614,
+            "lpips": 0.06772346794605255
+          },
+          "stego_metrics": {
+            "mse": 0.00306448875926435,
+            "psnr": 25.136420726776123,
+            "ssim": 0.7983503341674805,
+            "lpips": 0.16352739930152893
+          },
+          "stego_sha256": "43f6f0b07e507ae9d0cfa913dc4baba29ac42fd89f361648a8b3fd5912c0a9de",
+          "recovered_sha256": "4841200520a732eac22db292572fbb9ed2ec3cdcae154094a5896c6cc7a663dd",
+          "latency_s": 8.453824996948242
+        },
+        {
+          "image_id": "eva_facial_0016",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0016",
+          "token": "00750235",
+          "mask": {
+            "token": "00750235",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1677813013,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "408ec0bddd7413674c4c13a8d1822ef11b74d30b9f50f59e1fe1f17c1ccc4ed3"
+          },
+          "metrics": {
+            "mse": 0.0021765080746263266,
+            "psnr": 26.622397899627686,
+            "ssim": 0.8207773566246033,
+            "lpips": 0.06645470857620239
+          },
+          "stego_metrics": {
+            "mse": 0.005052480380982161,
+            "psnr": 22.964954376220703,
+            "ssim": 0.7229354977607727,
+            "lpips": 0.12631312012672424
+          },
+          "stego_sha256": "3e3d62a3744c0a1c81dca9f215275314b667737a464f4456ba5e4cc0c5c28cb9",
+          "recovered_sha256": "443a0218b48f4f9f923775693f797ff75f5229b1edea20eb60a1cdc3c6034828",
+          "latency_s": 8.406046390533447
+        },
+        {
+          "image_id": "eva_facial_0017",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0017",
+          "token": "70459856",
+          "mask": {
+            "token": "70459856",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 1376141307,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "eff8bf7c4095b93ed8aca2d56b9374f35aa6155074f85581485f26b86a8b4bd7"
+          },
+          "metrics": {
+            "mse": 0.002646998269483447,
+            "psnr": 25.772464275360107,
+            "ssim": 0.815573513507843,
+            "lpips": 0.09766780585050583
+          },
+          "stego_metrics": {
+            "mse": 0.006167264189571142,
+            "psnr": 22.099075317382812,
+            "ssim": 0.7060853838920593,
+            "lpips": 0.153189554810524
+          },
+          "stego_sha256": "d9b57b780736b75993de41894aec318d8a57ad939fc375e5a956f5fbc1214695",
+          "recovered_sha256": "f3a85c1b5ad4c5196a24a350eeb1c1b9acfc88863ea3b3c7bd35c5454fb60a0e",
+          "latency_s": 8.647279739379883
+        },
+        {
+          "image_id": "eva_facial_0018",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0018",
+          "token": "05078832",
+          "mask": {
+            "token": "05078832",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 154890345,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "22466341fce1ed57adf571da511970980a76f87e9d3d6a9596aeecb5d9721420"
+          },
+          "metrics": {
+            "mse": 0.0020823676604777575,
+            "psnr": 26.814424991607666,
+            "ssim": 0.8325459957122803,
+            "lpips": 0.0702645480632782
+          },
+          "stego_metrics": {
+            "mse": 0.005273933056741953,
+            "psnr": 22.778654098510742,
+            "ssim": 0.7123563885688782,
+            "lpips": 0.1496734321117401
+          },
+          "stego_sha256": "d7f6e3743887609fd986ba9208f5a9ae95564dabc3182fec9cebe8c36ead58f6",
+          "recovered_sha256": "b6e0095e8d6ee3ba9f7b1d5e1defc9086d5eb6bfcf79497192017570aae547e4",
+          "latency_s": 8.470578908920288
+        },
+        {
+          "image_id": "eva_facial_0019",
+          "condition": "mismatched",
+          "reference_image_id": "eva_common_0019",
+          "token": "56107026",
+          "mask": {
+            "token": "56107026",
+            "mask_domain": "racs2-mask-v1",
+            "mask_seed": 537090537,
+            "shape": [
+              1,
+              4,
+              32,
+              32
+            ],
+            "nonzero": 205,
+            "sha256": "de8e907ad71d6937d970ffc5373816300b39acfd3a7150e8225bddf9e19afe0c"
+          },
+          "metrics": {
+            "mse": 0.002203265903517604,
+            "psnr": 26.56933069229126,
+            "ssim": 0.8414999842643738,
+            "lpips": 0.04985962063074112
+          },
+          "stego_metrics": {
+            "mse": 0.004433459602296352,
+            "psnr": 23.53257179260254,
+            "ssim": 0.7474231719970703,
+            "lpips": 0.09742112457752228
+          },
+          "stego_sha256": "fab86111329d778f92d04b60d8ca60b5d71c712bcea29ad954fc0ea8cf580bb8",
+          "recovered_sha256": "f76f7b7e3a8a94d48cdaed629df7a04bfe452f9850bbaf77a62bc744fee77701",
+          "latency_s": 8.472796440124512
+        }
+      ]
+    }
+  },
+  "elapsed_s": 468.53808975219727
+}
