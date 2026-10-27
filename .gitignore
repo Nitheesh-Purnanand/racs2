@@ -13,3 +13,7 @@ __pycache__/
 *.pyc
 *.log
 models/clip-vit-base-patch32/
+
+# Phase 7 public conditions cache (keep manifest only)
+experiments/results/public_conditions/*
+!experiments/results/public_conditions/manifest.json

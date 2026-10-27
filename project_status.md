@@ -1,8 +1,8 @@
 # RACS2 — Project Status & Change Log
 
 > **Location**: `d:\racs2\project_status.md`  
-> **Last Updated**: 2026-10-23  
-> **Current Phase**: Phase 6 complete (evaluation harness + role-tagged splits). Phase 7 (public conditions: `Kpub` + `Xfeat`) is next.
+> **Last Updated**: 2026-10-27  
+> **Current Phase**: Phase 7 complete (public conditions cached and verified). Phase 8 (reference generator) is next.
 
 ---
 
@@ -26,6 +26,7 @@
 | **Phase 4 — Retrieval Image Database** | ✅ Completed | `retrieval/schema.py`, `retrieval/corpus.py`, `scripts/phase4_build_corpus.py`, `scripts/phase4_verify.py`. 1,000-image COCO val2017 corpus (512×512 RGB), versioned `image_index.json`, loader + integrity/determinism checks pass. |
 | **Phase 5 — CLIP Embeddings** | ✅ Completed | `models/clip_encoder.py`, `scripts/phase5_clip.py`, `scripts/phase5_verify.py`, `scripts/phase5_fetch_model.py`. CLIP ViT-B/32, 1,000 × 512-d float32 L2-normalised vectors aligned with the corpus. Verify PASS: re-encode max|diff| 2.5e-07, caption→image top-1 0.476, within-topic 0.779 vs across 0.542. |
 | **Phase 6 — Evaluation Harness & Splits** | ✅ Completed | `evaluation/splits.py` (role enforcement, tokens), `evaluation/report.py` (frozen report schema), extended `evaluation/metrics.py` (LPIPS + `distribution()`), `scripts/phase6_build_testset.py`, `scripts/phase6_eval_selftest.py`, `scripts/eval_report.py`, `scripts/dummy_runner.py`, `docs/DEVIATIONS.md`. Two frozen splits: **calibration** (UniStega, 22/class) and **evaluation** (COCO val2017 / Commons human portraits / Commons cats, 22/class). `split_version a57d9c8c...`, `tokens_version 20166234...`. Selftest **83/83 PASS**; dummy evaluation 264 cases across 12 cells. |
+| **Phase 7 — Public Conditions (`Kpub` + `Xfeat`)** | ✅ Completed | `semantic/keygen.py` (BLIP + template), `semantic/features.py` (SegFormer-B0 segmentation, MediaPipe FaceLandmarker skeleton, style `none`), `semantic/cache.py`, `scripts/phase7_build_conditions.py`, `scripts/phase7_verify.py`. 132 records (22 per class per role), `config_hash 6e5eec49...`, `split_version e52d2ddf...` (live split; earlier notes used a57d9c8c before the split manifest was regenerated). Determinism exact for Kpub and features; `phase7_verify.json` PASS; grid inspected. |
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -211,6 +212,22 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
 
 ## 5. Change Log
 
+### [2026-10-27] - Phase 7 Complete (Public Conditions)
+
+- **Added** `semantic/keygen.py` (BLIP caption + fixed template, greedy/fp16),
+  `semantic/features.py` (SegFormer-B0 150-class segmentation, MediaPipe FaceLandmarker
+  skeleton with a deterministic equalized fallback for low-light faces, explicit `none` for
+  style), and `semantic/cache.py` (atomic `.npz`, previews, manifest).
+- **Added** `scripts/phase7_build_conditions.py` and `scripts/phase7_verify.py`.
+- **Built** 132 records (calibration and evaluation, 22 per class), `config_hash
+  6e5eec492b7af67cee8b35c18ff4d970f89f2397dd69a73e07fecb17004a4f64`, live `split_version
+  e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a`.
+- **Verified** exact Kpub/feature determinism on the 24-image sample, 0 failures, all 13
+  checks pass. Grid: `experiments/results/phase7_conditions_grid.png`.
+- **Fixed** during the run: atomic `.npz` temp naming, missing `SegFormerExtractor.method`,
+  MediaPipe 1.1 tasks API migration and the low-light detection fallback.
+- **Added** instruction files `phase8_instructions.md` through `phase16_instructions.md`.
+
 ### [2026-10-23] - Phase 6 Complete (Evaluation Harness & Role-Tagged Splits)
 
 - **Added** `evaluation/splits.py`: `Split.load(role=...)` with enforced roles. Loading the
@@ -395,7 +412,8 @@ Active next steps (new numbering):
   `scikit-image` installed; metrics extended; two role-tagged splits built (22/class each);
   `evaluation/splits.py`, `evaluation/report.py`, `scripts/eval_report.py` with loader role
   enforcement; `docs/DEVIATIONS.md` created. Selftest 83/83 PASS.
-- [ ] **Phase 7**: Public conditions (`Kpub` + `Xfeat`), cached and deterministic.
+- [x] **Phase 7**: Complete. `Kpub` + `Xfeat` cached for both roles (132 records),
+  `phase7_verify.json` PASS, grid inspected.
 - [ ] **Phase 8**: Reference generator (PicX-Real or SD + ControlNet + IPAdapter-plus) with
   token-seeded noise; fit the 6 GB budget.
 - [ ] **Phase 9**: ControlNet zero-conv fine-tuning, or a documented deviation.

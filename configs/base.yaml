@@ -53,6 +53,35 @@ embedding:
     - "a stop sign"
     - "people playing a sport"
 
+semantic:
+  cache_dir: "experiments/results/public_conditions"
+  manifest_path: "experiments/results/public_conditions/manifest.json"
+  keygen:
+    method: "blip_template"          # blip_template | clip_vocab | local_llm
+    model_id: "Salesforce/blip-image-captioning-base"
+    model_path: null
+    device: "cuda"
+    dtype: "float16"
+    max_new_tokens: 40
+    num_beams: 1                     # greedy only, no sampling
+    template: "a photorealistic photograph of {caption}, natural composition, detailed textures, realistic lighting"
+    max_chars: 300
+  features:
+    common:
+      method: "segformer"            # segformer | oneformer
+      model_id: "nvidia/segformer-b0-finetuned-ade-512-512"
+      model_path: null
+      device: "cuda"
+      dtype: "float16"
+      output_size: 512
+      num_classes: 150
+    facial:
+      method: "mediapipe"            # openpose | mediapipe (mediapipe is 6GB safe)
+      output_size: 512
+      min_keypoints: 5
+    style:
+      method: "none"                 # paper: style is Kpub-only
+
 evaluation:
   splits_path: "data/metadata/test_split.json"
   tokens_path: "data/metadata/tokens.json"

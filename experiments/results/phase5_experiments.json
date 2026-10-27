@@ -2,7 +2,7 @@
   "model_id": "openai/clip-vit-base-patch32",
   "corpus_version": "cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff",
   "count": 1000,
-  "created_utc": "2026-10-20T09:18:54Z",
+  "created_utc": "2026-10-26T10:41:55Z",
   "experiment1_text_similarity": {
     "prompts": [
       "a dog playing fetch in a park",

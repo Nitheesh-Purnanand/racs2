@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "split_version": "a57d9c8c500e712fe6e8a15dbfb0eaa7cd2080ba1c5fd772610b90e9ecd5b9d3",
-  "created_utc": "2026-10-23T09:50:08Z",
+  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
+  "created_utc": "2026-10-26T10:44:16Z",
   "canonical": "shortest_side_512_bicubic -> center_crop_512",
   "classes": [
     "common",
@@ -1273,20 +1273,6 @@
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0001.png",
-      "sha256": "ca1093a0df9faf4e6b4706c787791848defcf3bfdf8bb16e813f4a9190d83277",
-      "width": 512,
-      "height": 512,
-      "mode": "RGB",
-      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
-      "license": "CC0",
-      "source_ref": "File:Boy Face from Venezuela.jpg",
-      "original_id": "faces_eval_b14afc18_0002"
-    },
-    {
-      "image_id": "eva_facial_0002",
-      "role": "evaluation",
-      "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0002.png",
       "sha256": "6b6109793cd78a0cc64ed6ac4506474dc6f5a7a0fdb8d26cd309113bd75292f3",
       "width": 512,
       "height": 512,
@@ -1297,10 +1283,10 @@
       "original_id": "faces_eval_b14afc18_0003"
     },
     {
-      "image_id": "eva_facial_0003",
+      "image_id": "eva_facial_0002",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0003.png",
+      "path": "data/test_set/facial/eva_facial_0002.png",
       "sha256": "fa9776547e41d5fe71198c954228aefe4e52d880ede8edda93ca7e1a4c7a453d",
       "width": 512,
       "height": 512,
@@ -1311,10 +1297,10 @@
       "original_id": "faces_eval_b14afc18_0004"
     },
     {
-      "image_id": "eva_facial_0004",
+      "image_id": "eva_facial_0003",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0004.png",
+      "path": "data/test_set/facial/eva_facial_0003.png",
       "sha256": "53fa3a5a16e933c1f04a1e60e499776920eb39283e5929082c6eef8a933d371e",
       "width": 512,
       "height": 512,
@@ -1325,10 +1311,10 @@
       "original_id": "faces_eval_b14afc18_0008"
     },
     {
-      "image_id": "eva_facial_0005",
+      "image_id": "eva_facial_0004",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0005.png",
+      "path": "data/test_set/facial/eva_facial_0004.png",
       "sha256": "ea7a3343142bb32c7d042738c0de979acdbb8e2303ead2abd98bd100b9f77e64",
       "width": 512,
       "height": 512,
@@ -1339,10 +1325,10 @@
       "original_id": "faces_eval_b14afc18_0009"
     },
     {
-      "image_id": "eva_facial_0006",
+      "image_id": "eva_facial_0005",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0006.png",
+      "path": "data/test_set/facial/eva_facial_0005.png",
       "sha256": "c919da65b4a5e8335d33e4b56a15cb6e4c77ebab2b7f5c258591804134e8746f",
       "width": 512,
       "height": 512,
@@ -1353,10 +1339,10 @@
       "original_id": "faces_eval_b14afc18_0010"
     },
     {
-      "image_id": "eva_facial_0007",
+      "image_id": "eva_facial_0006",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0007.png",
+      "path": "data/test_set/facial/eva_facial_0006.png",
       "sha256": "e4f69299f8341fe9b1853477772807c6d0fbd1164c5d0ec2af7ff5145613cf19",
       "width": 512,
       "height": 512,
@@ -1367,10 +1353,10 @@
       "original_id": "faces_eval_b14afc18_0013"
     },
     {
-      "image_id": "eva_facial_0008",
+      "image_id": "eva_facial_0007",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0008.png",
+      "path": "data/test_set/facial/eva_facial_0007.png",
       "sha256": "0bddf886958dd8521f8b64797a5aea9a6c19c34b6410c9a5f176f1b40929cccc",
       "width": 512,
       "height": 512,
@@ -1381,10 +1367,10 @@
       "original_id": "faces_eval_b14afc18_0016"
     },
     {
-      "image_id": "eva_facial_0009",
+      "image_id": "eva_facial_0008",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0009.png",
+      "path": "data/test_set/facial/eva_facial_0008.png",
       "sha256": "62282fb9a8355ab6a999335e9c3dd8547c3ceb45e39cdd6ca42736895292f042",
       "width": 512,
       "height": 512,
@@ -1395,10 +1381,10 @@
       "original_id": "faces_eval_b14afc18_0017"
     },
     {
-      "image_id": "eva_facial_0010",
+      "image_id": "eva_facial_0009",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0010.png",
+      "path": "data/test_set/facial/eva_facial_0009.png",
       "sha256": "49d92da3de9e2622b8c2977c2683bcbe4cb9dfdc950be2bbff63741bc2dfc983",
       "width": 512,
       "height": 512,
@@ -1409,10 +1395,10 @@
       "original_id": "faces_eval_b14afc18_0018"
     },
     {
-      "image_id": "eva_facial_0011",
+      "image_id": "eva_facial_0010",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0011.png",
+      "path": "data/test_set/facial/eva_facial_0010.png",
       "sha256": "86cc989492fe67719565db1a348f4fe3fcc9d0e4fb7bec45ec2aae6ed9c141b1",
       "width": 512,
       "height": 512,
@@ -1423,52 +1409,52 @@
       "original_id": "faces_eval_b14afc18_0022"
     },
     {
-      "image_id": "eva_facial_0012",
+      "image_id": "eva_facial_0011",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0012.png",
+      "path": "data/test_set/facial/eva_facial_0011.png",
       "sha256": "6a910386c4607002a6aa22f781ec7b9478493711c0853ed55a4ec5a6908d4ee3",
-      "width": 512,
-      "height": 512,
-      "mode": "RGB",
-      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
-      "license": "CC BY-SA 3.0",
-      "source_ref": "File:Baby portrait 1-year-old.jpg",
-      "original_id": "faces_eval_b14afc18_0023"
-    },
-    {
-      "image_id": "eva_facial_0013",
-      "role": "evaluation",
-      "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0013.png",
-      "sha256": "2748c404a79135a3c5814d0991eac1098750cc2036d927fd3004c9cfc6df356e",
       "width": 512,
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
       "license": "CC BY 4.0",
       "source_ref": "File:EPFL 2020 Michael Herzog Portrait 2.jpg",
-      "original_id": "faces_eval_b14afc18_0024"
+      "original_id": "faces_eval_b14afc18_0023"
     },
     {
-      "image_id": "eva_facial_0014",
+      "image_id": "eva_facial_0012",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0014.png",
-      "sha256": "0f058cd6d9caa9f3006f283709c182f4984f8ec2932e29330825e36c64bfcefe",
+      "path": "data/test_set/facial/eva_facial_0012.png",
+      "sha256": "2748c404a79135a3c5814d0991eac1098750cc2036d927fd3004c9cfc6df356e",
       "width": 512,
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
       "license": "Public domain",
       "source_ref": "File:2004 Beverly Johnson (cropped to face).jpg",
+      "original_id": "faces_eval_b14afc18_0024"
+    },
+    {
+      "image_id": "eva_facial_0013",
+      "role": "evaluation",
+      "class": "facial",
+      "path": "data/test_set/facial/eva_facial_0013.png",
+      "sha256": "0f058cd6d9caa9f3006f283709c182f4984f8ec2932e29330825e36c64bfcefe",
+      "width": 512,
+      "height": 512,
+      "mode": "RGB",
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 3.0",
+      "source_ref": "File:Baby portrait 1-year-old.jpg",
       "original_id": "faces_eval_b14afc18_0025"
     },
     {
-      "image_id": "eva_facial_0015",
+      "image_id": "eva_facial_0014",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0015.png",
+      "path": "data/test_set/facial/eva_facial_0014.png",
       "sha256": "72f8ac1d1db132104404bb36e523ef9d762f353ebf9e771522a72c3d61c92680",
       "width": 512,
       "height": 512,
@@ -1479,10 +1465,10 @@
       "original_id": "faces_eval_b14afc18_0027"
     },
     {
-      "image_id": "eva_facial_0016",
+      "image_id": "eva_facial_0015",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0016.png",
+      "path": "data/test_set/facial/eva_facial_0015.png",
       "sha256": "176a62faa3925cbac23275e20d4190fc44e471c3b6d3d604b1aa6cf80f49cb1a",
       "width": 512,
       "height": 512,
@@ -1493,24 +1479,10 @@
       "original_id": "faces_eval_b14afc18_0029"
     },
     {
-      "image_id": "eva_facial_0017",
+      "image_id": "eva_facial_0016",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0017.png",
-      "sha256": "f160dae05ac77447b1889f7b108923775a7a21cbd976841139e3609462698c18",
-      "width": 512,
-      "height": 512,
-      "mode": "RGB",
-      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
-      "license": "CC BY-SA 3.0",
-      "source_ref": "File:Portrait of Angélique Bègue 2.jpg",
-      "original_id": "faces_eval_b14afc18_0031"
-    },
-    {
-      "image_id": "eva_facial_0018",
-      "role": "evaluation",
-      "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0018.png",
+      "path": "data/test_set/facial/eva_facial_0016.png",
       "sha256": "12329bb403f0f0e485ee9621a7eacaae879b22d26167e8940a206b9a9875aa94",
       "width": 512,
       "height": 512,
@@ -1521,10 +1493,10 @@
       "original_id": "faces_eval_b14afc18_0032"
     },
     {
-      "image_id": "eva_facial_0019",
+      "image_id": "eva_facial_0017",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0019.png",
+      "path": "data/test_set/facial/eva_facial_0017.png",
       "sha256": "7df61dbabd317b86817debc8993dd38ed57f1a90b35b99fe78b22cf067130191",
       "width": 512,
       "height": 512,
@@ -1535,24 +1507,10 @@
       "original_id": "faces_eval_b14afc18_0033"
     },
     {
-      "image_id": "eva_facial_0020",
+      "image_id": "eva_facial_0018",
       "role": "evaluation",
       "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0020.png",
-      "sha256": "61150b8839708f2ddc6ffbd41a0d968b194dded5c22589e547ce6024ad62425a",
-      "width": 512,
-      "height": 512,
-      "mode": "RGB",
-      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
-      "license": "CC BY 2.0",
-      "source_ref": "File:Profile Photographic Portrait of Blonde Young Woman.jpg",
-      "original_id": "faces_eval_b14afc18_0035"
-    },
-    {
-      "image_id": "eva_facial_0021",
-      "role": "evaluation",
-      "class": "facial",
-      "path": "data/test_set/facial/eva_facial_0021.png",
+      "path": "data/test_set/facial/eva_facial_0018.png",
       "sha256": "099470fbcf4545a0ba75764dc9cab7a0e362add26e5c4491e9df642f07190892",
       "width": 512,
       "height": 512,
@@ -1561,6 +1519,48 @@
       "license": "CC BY-SA 2.0",
       "source_ref": "File:Face (51853261471).jpg",
       "original_id": "faces_eval_b14afc18_0039"
+    },
+    {
+      "image_id": "eva_facial_0019",
+      "role": "evaluation",
+      "class": "facial",
+      "path": "data/test_set/facial/eva_facial_0019.png",
+      "sha256": "232d7ebc01e29fefcede60b61c75a7094da20b04e2c84194be40cd27c4c5a3b1",
+      "width": 512,
+      "height": 512,
+      "mode": "RGB",
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 4.0",
+      "source_ref": "File:K6ka self-portrait 2022-08-09 serious face.jpg",
+      "original_id": "faces_eval_b14afc18_0041"
+    },
+    {
+      "image_id": "eva_facial_0020",
+      "role": "evaluation",
+      "class": "facial",
+      "path": "data/test_set/facial/eva_facial_0020.png",
+      "sha256": "8be11cc79370b94b5c26d1eaea8b89d8471ea26944c7dea69604a00e986390fb",
+      "width": 512,
+      "height": 512,
+      "mode": "RGB",
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "CC BY-SA 4.0",
+      "source_ref": "File:Laughing boy at golden hour.jpg",
+      "original_id": "faces_eval_b14afc18_0042"
+    },
+    {
+      "image_id": "eva_facial_0021",
+      "role": "evaluation",
+      "class": "facial",
+      "path": "data/test_set/facial/eva_facial_0021.png",
+      "sha256": "1fdd776f216064a783a5c17225fb51b27576269b77aff64e9c978f63745becce",
+      "width": 512,
+      "height": 512,
+      "mode": "RGB",
+      "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
+      "license": "GFDL 1.2",
+      "source_ref": "File:Highkey-portrait-by-RalfR.jpg",
+      "original_id": "faces_eval_b14afc18_0044"
     },
     {
       "image_id": "eva_style_0000",
