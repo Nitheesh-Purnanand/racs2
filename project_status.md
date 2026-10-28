@@ -505,7 +505,8 @@ Active next steps (new numbering):
 - [x] **Phase 16**: Complete. Baseline security and steganalysis frozen; `phase16_verify.json`
   17/17 PASS. Report: `docs/phase16_report.md`.
 - [ ] **Phase 17-20**: FAISS, token selection, structural reranking (consumes the banked
-  Phase 4-5 artifacts).
+  Phase 4-5 artifacts). Instructions written: `phase17_instructions.md` through
+  `phase20_instructions.md`, plus `PHASE_RUNBOOK_17_TO_20.md`.
 - [ ] **Phase 21 (GATE)**: RACS-Base, `Xref_tx == Xref_rx` on 100 percent of images.
 - [ ] **Phase 22**: Controlled AgentSemSteCom vs RACS-Base comparison (primary result).
 
