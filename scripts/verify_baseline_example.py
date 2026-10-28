@@ -22,6 +22,8 @@ Examples
     python scripts/verify_baseline_example.py
     python scripts/verify_baseline_example.py --snr 5
     python scripts/verify_baseline_example.py --secret data/secret_images/test_001.png
+    python scripts/verify_baseline_example.py --secret my_secret.png --reference my_ref.png \
+        --prompt "a photo of a person" --token deadbeef --wrong-token cafebabe --snr 20
     python scripts/verify_baseline_example.py --mode paper --image-id eva_facial_0000 \
         --class facial --snr 10
 """
@@ -78,6 +80,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--secret", default="", help="your image; default = frozen split image")
+    parser.add_argument("--reference", default="",
+                        help="your reference image; default = frozen reference for --image-id")
+    parser.add_argument("--prompt", default="",
+                        help="Kpub text; default = frozen Kpub for --image-id")
+    parser.add_argument("--token", default="", help="8-hex token; default = frozen token")
+    parser.add_argument("--wrong-token", default="",
+                        help="wrong token for the wrong-token control; default = frozen one")
     parser.add_argument("--image-id", default="eva_common_0000",
                         help="frozen case supplying reference, Kpub and token")
     parser.add_argument("--class", dest="class_name", default="common",
@@ -112,18 +121,25 @@ def main() -> int:
     baseline = Baseline(cfg)
     size = int(baseline.stego_cfg["image_size"])
     secret_px = pipeline.load_pixels(secret_path, size)
-    reference_path = baseline.reference_path(args.split, args.class_name, args.image_id)
-    reference_px = pipeline.load_pixels(reference_path, size)
     cond = baseline.conditions(args.image_id)
     tok = baseline.tokens(args.image_id)
+    reference_path = args.reference or baseline.reference_path(args.split, args.class_name,
+                                                              args.image_id)
+    if not Path(reference_path).exists():
+        print(f"[example] reference image not found: {reference_path}")
+        return 2
+    reference_px = pipeline.load_pixels(reference_path, size)
+    prompt = args.prompt or cond["kpub"]
+    token = args.token or tok["token"]
+    wrong_token = args.wrong_token or tok["wrong_token"]
 
     print(f"[example] secret={secret_path}")
     print(f"[example] reference={reference_path}")
-    print(f"[example] Kpub={cond['kpub']!r}")
-    print(f"[example] token={tok['token']} wrong_token={tok['wrong_token']} snr={args.snr:g} dB")
+    print(f"[example] Kpub={prompt!r}")
+    print(f"[example] token={token} wrong_token={wrong_token} snr={args.snr:g} dB")
 
     t0 = time.time()
-    hidden = baseline.hide(secret_px, reference_px, cond["kpub"], tok["token"])
+    hidden = baseline.hide(secret_px, reference_px, prompt, token)
     print(f"[example] hide: {time.time() - t0:.1f}s "
           f"(steps={hidden['steps']}, strength={hidden['strength']:g}, eta={hidden['eta']:g})")
 
@@ -145,8 +161,8 @@ def main() -> int:
     rows, summary = [], {}
     for mode in [m.strip() for m in args.token_modes.split(",") if m.strip()]:
         t1 = time.time()
-        recovered = baseline.receive(received, token_mode=mode, token=tok["token"],
-                                     wrong_token=tok["wrong_token"], prompt=cond["kpub"],
+        recovered = baseline.receive(received, token_mode=mode, token=token,
+                                     wrong_token=wrong_token, prompt=prompt,
                                      blob=blob, image_embeds=hidden.get("image_embeds"))
         enhanced = False
         if mode == "correct":
@@ -177,8 +193,8 @@ def main() -> int:
         "image_id": args.image_id, "class": args.class_name, "split": args.split,
         "snr_db": args.snr, "secret_path": secret_path,
         "secret_is_frozen_split_image": not args.secret,
-        "reference_path": reference_path, "kpub": cond["kpub"],
-        "token": tok["token"], "wrong_token": tok["wrong_token"],
+        "reference_path": reference_path, "kpub": prompt,
+        "token": token, "wrong_token": wrong_token,
         "steps": hidden["steps"], "strength": hidden["strength"], "eta": hidden["eta"],
         "stego_sha256": pipeline.tensor_sha256(hidden["stego_pixels"]),
         "received_sha256": pipeline.tensor_sha256(received),
@@ -186,7 +202,9 @@ def main() -> int:
         "grid_path": str(grid_path), "elapsed_s": round(time.time() - started, 1),
     }
 
-    if not args.secret and args.mode == "frozen":
+    custom = bool(args.secret or args.reference or args.prompt or args.token)
+    packet["custom_inputs"] = custom
+    if not custom and args.mode == "frozen":
         expected = _frozen_case(args.image_id, args.snr, args.split)
         if expected:
             correct = summary["correct"]["metrics"]
