@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "phase": 16,
-  "created_utc": "2026-10-28T03:33:15Z",
+  "created_utc": "2026-10-28T03:38:58Z",
   "pass": true,
   "checks": [
     {
@@ -28,6 +28,11 @@
       "check": "correct-minus-wrong gap >= 4 dB in aggregate",
       "pass": true,
       "detail": "gap=4.34 dB"
+    },
+    {
+      "check": "frozen security and steganalysis hashes match the phase16 manifest",
+      "pass": true,
+      "detail": "security=8ab321a55d92 steganalysis=78db750b26c7"
     },
     {
       "check": "phase16 manifest records every receiver condition",
@@ -86,8 +91,8 @@
     }
   ],
   "summary": {
-    "passed": 16,
-    "total": 16
+    "passed": 17,
+    "total": 17
   },
   "aggregate_psnr": {
     "correct": 17.386905018127326,

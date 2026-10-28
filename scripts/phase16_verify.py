@@ -68,6 +68,11 @@ def main() -> int:
         (correct - wrong) >= 4.0, f"gap={correct - wrong:.2f} dB")
 
     man = pipeline.read_json(man_path) if man_path.exists() else {}
+    add("frozen security and steganalysis hashes match the phase16 manifest",
+        man.get("security_sha256") == hashlib.sha256(sec_path.read_bytes()).hexdigest()
+        and man.get("steganalysis_sha256") == hashlib.sha256(steg_path.read_bytes()).hexdigest(),
+        f"security={str(man.get('security_sha256'))[:12]} "
+        f"steganalysis={str(man.get('steganalysis_sha256'))[:12]}")
     records = man.get("cases", [])
     conditions_ok = (
         len(records) == 264

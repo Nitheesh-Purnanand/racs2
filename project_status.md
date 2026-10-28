@@ -36,7 +36,7 @@
 | **Phase 13 — Semantic Codec** | ✅ Completed | `communication/semantic_codec.py`, `scripts/phase13_codec.py`, `scripts/phase13_verify.py`. Frozen SD-VAE analog JSCC substitute (paper checkpoints unavailable), explicit invertible power normalisation, pinned state-dict hash. Isolated PSNR 17.88 / 22.88 / 26.70 / 28.51 dB. Codec+recovery beats raw AWGN by +1.40 to +2.33 dB PSNR. Verify 9/9 PASS. |
 | **Phase 14 — Optional CodeFormer Enhancement** | ✅ Completed | `enhancement/codeformer.py`, `scripts/phase14_enhance.py`, `scripts/phase14_verify.py`. CodeFormer/facelib stack unavailable in this environment, so the module is a documented deterministic pass-through kept **off by default** and restricted to the facial class; deltas are exactly 0 at all four SNR cells. Non-facial control unchanged. Verify 13/13 PASS. |
 | **Phase 15 — Baseline Gate** | ✅ Completed | `pipelines/agentsemstecom.py`, `scripts/phase15_baseline.py`, `scripts/phase15_verify.py`. 15A calibration on UniStega (approximate, deviations recorded) and 15B authoritative evaluation baseline: 264 cases, 12 cells, `baseline_table.json` frozen, `phase15_verify.json` PASS. |
-| **Phase 16 — Baseline Security & Steganalysis** | ✅ Completed | `security/token_conditions.py`, `security/steganalysis.py`, `scripts/phase16_security.py`, `phase16_steganalysis.py`, `phase16_manifest.py`, `phase16_verify.py`. Three receiver conditions (correct / wrong / no_token) on 264 frozen cases, N=22 per cell; aggregate PSNR 17.39 / 13.05 / 13.07 dB, correct-minus-wrong gap **4.34 dB** (threshold 4 dB), 6 low-SNR per-cell exceptions documented. XuNet (SRM front end, 5 blocks) trained on 2x2 128 px patches from 66 images, image-disjoint 46/10/10 split (368/80/80 samples); test accuracy **0.4875** (n=80) vs chance 0.5 and paper anchor 0.5091. Verify **16/16 PASS**. |
+| **Phase 16 — Baseline Security & Steganalysis** | ✅ Completed | `security/token_conditions.py`, `security/steganalysis.py`, `scripts/phase16_security.py`, `phase16_steganalysis.py`, `phase16_manifest.py`, `phase16_verify.py`. Three receiver conditions (correct / wrong / no_token) on 264 frozen cases, N=22 per cell; aggregate PSNR 17.39 / 13.05 / 13.07 dB, correct-minus-wrong gap **4.34 dB** (threshold 4 dB), 6 low-SNR per-cell exceptions documented. XuNet (SRM front end, 5 blocks) trained on 2x2 128 px patches from 66 images, image-disjoint 46/10/10 split (368/80/80 samples); test accuracy **0.4875** (n=80) vs chance 0.5 and paper anchor 0.5091. Verify **17/17 PASS**. Report: `docs/phase16_report.md`. |
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -244,9 +244,11 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
 - **Artifacts**: `baseline_security.json`, `baseline_steganalysis.json`,
   `phase16_manifest.json`, `phase16_verify.json`, `phase16_security_grid.png`, and
   `experiments/steganalysis/xunet_baseline_0000002a.pt`
-  (sha256 `78f396590cdc2d39e261b3e0e7e9d12178afa6ba9ec84c330878cc472341525c`).
-- **Verified**: `phase16_verify.py` 16/16 PASS. Every record is `role: evaluation` and
-  `approximate: false`; no calibration image appears.
+  (sha256 `243c21653e04e16402386ccbfe411ae23dbad2dcde363e2f0afabd187b9e6747`).
+- **Verified**: `phase16_verify.py` 17/17 PASS. Every record is `role: evaluation` and
+  `approximate: false`; no calibration image appears. The gate also re-checks the frozen
+  `baseline_security.json` and `baseline_steganalysis.json` hashes against
+  `phase16_manifest.json`, so artifact drift fails the freeze.
 - **Deviations**: patch-based XuNet dataset at 128 px and the explicit no-token fallback are
   recorded in `docs/DEVIATIONS.md`.
 
@@ -493,12 +495,15 @@ Active next steps (new numbering):
 - [x] **Phase 9**: Complete. 50-step bf16 zero-conv fine-tune, probe improved, `phase9_verify.json` PASS.
 - [x] **Phase 10**: Complete. 12-cell EDICT sweep + 20/20 operating point, 3.58e-3 relative
   error, `phase10_verify.json` PASS with the numerical-floor deviation recorded.
-- [ ] **Phase 11**: Local hide/recover with eta = 0.05 and a manual reference.
-- [ ] **Phase 12-14**: AWGN, semantic codec, optional CodeFormer enhancement.
-- [ ] **Phase 15 (GATE)**: Assemble AgentSemSteCom. 15A: approximate reproduction on the
+- [x] **Phase 11**: Complete. Local hide/recover with eta = 0.05 and a manual reference;
+  `phase11_verify.json` 12/12 PASS.
+- [x] **Phase 12-14**: Complete. AWGN (`7/7`), semantic codec (`9/9`), and the documented
+  CodeFormer pass-through fallback (`13/13`).
+- [x] **Phase 15 (GATE)**: Complete. Assemble AgentSemSteCom. 15A: approximate reproduction on the
   UniStega calibration split (wide tolerance). 15B: authoritative baseline on our evaluation
-  split. Calibration numbers never appear in any claim table.
-- [ ] **Phase 16**: Baseline security and steganalysis, then freeze the baseline.
+  split. Calibration numbers never appear in any claim table. `phase15_verify.json` PASS.
+- [x] **Phase 16**: Complete. Baseline security and steganalysis frozen; `phase16_verify.json`
+  17/17 PASS. Report: `docs/phase16_report.md`.
 - [ ] **Phase 17-20**: FAISS, token selection, structural reranking (consumes the banked
   Phase 4-5 artifacts).
 - [ ] **Phase 21 (GATE)**: RACS-Base, `Xref_tx == Xref_rx` on 100 percent of images.

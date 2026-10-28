@@ -32,7 +32,7 @@ diffusion (tens of seconds per reference).
 | 6 | Evaluation harness + 3-class test set | ✅ Complete (75/75 selftest) |
 | 7 | Public conditions (`Kpub` + `Xfeat`) | ✅ Complete |
 | 8-15 | **AgentSemSteCom reproduction** (baseline gate at 15) | ✅ Complete |
-| 16 | Baseline security + XuNet steganalysis | ✅ Complete (16/16 verify) |
+| 16 | Baseline security + XuNet steganalysis | ✅ Complete (17/17 verify) |
 | 17-22 | RACS retrieval, RACS-Base, comparison | ⏳ **Next** |
 | 23-33 | Variants, evaluation, write-up | ⏳ Not started |
 
@@ -60,6 +60,9 @@ Full checklists and gate answers live in `project_status.md` §2 and the phase b
   per-cell exceptions are documented in `phase16_manifest.json`.
 - Phase 16 XuNet: **0.4875 test accuracy** on n=80 patches (chance 0.5), image-disjoint
   46/10/10 split over 66 images; paper anchor 0.5091 is approximate only.
+- Phase 16 freeze: `phase16_manifest.json` records 264 cases x 3 conditions plus the
+  sha256 of both result files; `phase16_verify.py` fails if either frozen artifact drifts.
+  Full report-back and gate answer: `docs/phase16_report.md`.
 
 ---
 
