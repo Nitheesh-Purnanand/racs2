@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "approximate": false,
+  "config_hash": "88159c5807ceee116e0507decc780cec2c3f4560bb7dbb941451903824992d35",
+  "split_role": "calibration",
+  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
+  "model_id": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+  "controlnet_id": "lllyasviel/control_v11p_sd15_seg",
+  "controlnet_fingerprint": "24b9815a2ce09148025ae68d0adf3e4b0aae36522ed6c3ff817254423127437a",
+  "image_size": 256,
+  "trainable_parameters": 11479680,
+  "frozen_parameters": 349799440,
+  "steps": 50,
+  "batch_size": 1,
+  "grad_accum_steps": 1,
+  "learning_rate": 1e-05,
+  "loss_first": 0.3099847435951233,
+  "loss_last": 0.0030436436645686626,
+  "loss_min": 0.002895662095397711,
+  "probe": {
+    "stage": "reference_only",
+    "zero_shot_mse": 0.148828125,
+    "fine_tuned_mse": 0.12958984375,
+    "improved": true,
+    "n": 10
+  },
+  "peak_vram_gb": 2.889592170715332,
+  "elapsed_s": 11.95,
+  "checkpoint_path": "experiments\\checkpoints\\controlnet_zero_conv_50_88159c58.safetensors",
+  "checkpoint_sha256": "65ce82a73638137525958dc2db952944f203e8427c62594930e19b4f3695dc16",
+  "decision": "adopt",
+  "initial_state_fingerprint": "db7517842ddb7be804b6925fedeedaeedad6dccd405f884946b63beefc874564"
+}

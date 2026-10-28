@@ -1,0 +1,81 @@
+{
+  "pass": true,
+  "schema_version": 1,
+  "operating_point": {
+    "steps": 20,
+    "mixing": 0.93
+  },
+  "checks": [
+    {
+      "check": "schema_version",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "operating_point",
+      "pass": true,
+      "detail": "{\"steps\": 20, \"mixing\": 0.93}"
+    },
+    {
+      "check": "operating_point_present",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "n_random",
+      "pass": true,
+      "detail": "20"
+    },
+    {
+      "check": "n_image",
+      "pass": true,
+      "detail": "20"
+    },
+    {
+      "check": "finite",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "relative_error",
+      "pass": true,
+      "detail": "3.584e-03 <= 5.0e-03"
+    },
+    {
+      "check": "absolute_error_recorded",
+      "pass": true,
+      "detail": "9.489e-03"
+    },
+    {
+      "check": "resolution_recorded",
+      "pass": true,
+      "detail": "256px / 32 latent"
+    },
+    {
+      "check": "model_recorded",
+      "pass": true,
+      "detail": "stable-diffusion-v1-5/stable-diffusion-v1-5"
+    },
+    {
+      "check": "sweep_cells",
+      "pass": true,
+      "detail": "12 cells"
+    },
+    {
+      "check": "sweep_finite_mixing_ge_0.9",
+      "pass": true,
+      "detail": "mixing <= 0.7 is numerically unstable; 0.93/0.99 are the operating range"
+    },
+    {
+      "check": "grid_exists",
+      "pass": true,
+      "detail": "D:\\racs2\\experiments\\results\\phase10_edict_sweep.png"
+    },
+    {
+      "check": "no_downstream_imports",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "failures": []
+}

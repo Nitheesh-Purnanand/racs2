@@ -219,3 +219,43 @@ enhancement:
   results_dir: "experiments/results/phase14"
   manifest_path: "experiments/results/phase14_codeformer.json"
   grid_path: "experiments/results/phase14/phase14_enhance_grid.png"
+
+baseline:
+  reference_config: "reference"
+  edict_config: "edict"
+  stego_config: "steganography"
+  channel_config: "channel"
+  codec_config: "codec"
+  enhancement_config: "enhancement"
+  snr_db: [5, 10, 15, 20]
+  classes: ["common", "facial", "style"]
+  calibration_output: "experiments/results/phase15A_calibration_table.json"
+  evaluation_output: "experiments/results/baseline_table.json"
+  calibration_manifest: "experiments/results/phase15A_manifest.json"
+  evaluation_manifest: "experiments/results/baseline_manifest.json"
+  calibration_grid: "experiments/results/calibration_baseline_grid.png"
+  evaluation_grid: "experiments/results/baseline_grid.png"
+  cases_dir: "experiments/results/baseline_cases"
+
+security:
+  split_role: "evaluation"
+  conditions: ["correct", "wrong", "no_token"]
+  snr_db: [5, 10, 15, 20]
+  classes: ["common", "facial", "style"]
+  output_security: "experiments/results/baseline_security.json"
+  output_steganalysis: "experiments/results/baseline_steganalysis.json"
+  manifest_path: "experiments/results/phase16_manifest.json"
+  steganalysis:
+    model: "xunet"
+    input_size: 128
+    train_fraction: 0.7
+    val_fraction: 0.15
+    test_fraction: 0.15
+    epochs: 50
+    batch_size: 8
+    learning_rate: 0.001
+    seed: 42
+    cover_source: "evaluation_secret_images"
+    snr_db: 10
+    patch_grid: 2
+    split_strategy: "2x2 non-overlapping patches per image, split grouped by image_id"

@@ -1,7 +1,7 @@
 # RACS2 — Session Handoff
 
-> **Last updated**: 2026-10-23
-> **Repo**: `D:\racs2` · branch `main` · HEAD `4af625a`
+> **Last updated**: 2026-10-28
+> **Repo**: `D:\racs2` · branch `main` · Phases 1-16 complete
 > **Plan**: `racs2_implementation_plan.md` **v2 (baseline-first)**. Phases after 5 were
 > renumbered on 2026-10-23. Read the plan's Section 5 for the old-to-new map.
 > **Purpose**: one-page state transfer so a fresh agent/session can continue without re-reading the whole repo.
@@ -30,9 +30,10 @@ diffusion (tens of seconds per reference).
 | 4 | Build the retrieval image database | ✅ Complete, **banked** |
 | 5 | CLIP embeddings | ✅ Complete, **banked** |
 | 6 | Evaluation harness + 3-class test set | ✅ Complete (75/75 selftest) |
-| 7 | Public conditions (`Kpub` + `Xfeat`) | ⏳ **Next** |
-| 8-16 | **AgentSemSteCom reproduction** (baseline gate at 15) | ⏳ Not started |
-| 17-22 | RACS retrieval, RACS-Base, comparison | ⏳ Not started |
+| 7 | Public conditions (`Kpub` + `Xfeat`) | ✅ Complete |
+| 8-15 | **AgentSemSteCom reproduction** (baseline gate at 15) | ✅ Complete |
+| 16 | Baseline security + XuNet steganalysis | ✅ Complete (16/16 verify) |
+| 17-22 | RACS retrieval, RACS-Base, comparison | ⏳ **Next** |
 | 23-33 | Variants, evaluation, write-up | ⏳ Not started |
 
 **Ordering rule**: the baseline is reproduced and frozen before any RACS component is wired
@@ -52,6 +53,13 @@ Full checklists and gate answers live in `project_status.md` §2 and the phase b
   **429.3 MB**; `corpus_version = cc20af21...89aff`. Build+verify PASS.
 - CLIP ViT-B/32: **1,000 × 512** float32 vectors, 18.2 s (~55 img/s), caption→image
   top-1 **0.476**, within-topic **0.779** vs across **0.542**, verify PASS.
+- Phase 15 baseline: **264 cases**, 12 cells, `baseline_table.json` frozen,
+  `phase15_verify.json` PASS. Calibration (15A) is approximate and never enters a claim.
+- Phase 16 security: aggregate recovery PSNR **17.39 dB correct / 13.05 wrong /
+  13.07 no_token**; correct-minus-wrong gap **4.34 dB** (threshold 4 dB). Six low-SNR
+  per-cell exceptions are documented in `phase16_manifest.json`.
+- Phase 16 XuNet: **0.4875 test accuracy** on n=80 patches (chance 0.5), image-disjoint
+  46/10/10 split over 66 images; paper anchor 0.5091 is approximate only.
 
 ---
 
@@ -128,10 +136,10 @@ cache/ temp/ pip_cache/   (gitignored)
 
 ## 7. Where we are and what is next (plan v2)
 
-> Phases 1-6 are **complete and verified**. Phase 4 (corpus) and Phase 5 (CLIP) are
-> **banked**: built and verified, but consumed later at Phase 17 (FAISS). Phase 6 produced the
-> evaluation harness and the frozen role-tagged splits. The critical path now runs through the
-> AgentSemSteCom baseline (Phases 7-16).
+> Phases 1-16 are **complete and verified**. Phase 4 (corpus) and Phase 5 (CLIP) are
+> **banked**: built and verified, consumed at Phase 17 (FAISS). Phases 7-14 reproduced the
+> AgentSemSteCom baseline; Phase 15 froze the baseline table and Phase 16 froze its security
+> profile. No RACS artifact may retroactively change a Phase 15 or 16 number.
 
 Phase 6 gate results:
 
@@ -170,28 +178,14 @@ would make Tx/Rx vectors non-identical. Do not switch back to fp16.
 (`huggingface_hub`'s single-stream download resets). It resumes from
 `pytorch_model.bin.parts.json` and verifies the SHA-256.
 
-**Next: Phase 7: public conditions (`Kpub` + `Xfeat`)**
-1. `semantic/keygen.py`: deterministic `Kpub` per image (local LLM/VLM or a frozen template
-   plus CLIP content words). Record the method in the manifest.
-2. `semantic/features.py`: segmentation for common, pose skeleton for facial, `None` for
-   style.
-3. Cache to `experiments/results/public_conditions/<image_id>.npz` plus a manifest.
-4. Gate: all three classes produce deterministic, visually inspected conditions.
+**Next: Phase 17: RACS retrieval stack**
+1. FAISS `IndexFlatIP` over the banked Phase 5 `.npz`; row order must stay identical to
+   `image_index.json`.
+2. Token selection and structural reranking; keep Tx and Rx deterministic.
+3. RACS-Base with `Xref_tx == Xref_rx`, then the controlled comparison against the frozen
+   Phase 15/16 baseline.
 
-**Then Phases 8-16: reproduce AgentSemSteCom**
-1. Phase 8: reference generator (PicX-Real or SD v1.5 + ControlNet + IPAdapter-plus) with
-   token-seeded noise; fp16 + sequential offload on the 6 GB card.
-2. Phase 9: ControlNet zero-conv fine-tune, or a documented deviation.
-3. Phase 10: EDICT in isolation; inversion to machine precision.
-4. Phase 11: local hide/recover with eta = 0.05 and a manual reference.
-5. Phases 12-14: AWGN, semantic codec (SwinJSCC-style C=48 / MDJCM mod 64), CodeFormer.
-6. **Phase 15 gate**: 15A approximate reproduction on the UniStega calibration split
-   (facial 5 dB PSNR 22.73, facial 20 dB LPIPS 0.2127, style 5 dB LPIPS 0.3850, common
-   5 dB PSNR 19.71, wide tolerance). 15B authoritative baseline on our evaluation split.
-   Calibration numbers never enter any claim table.
-7. Phase 16: baseline security and steganalysis, then freeze the baseline.
-
-**Only then Phases 17-22**: FAISS (loads the banked `.npz`), token selection, structural
+**Then Phases 18-22**: FAISS (loads the banked `.npz`), token selection, structural
 reranking, RACS-Base with `Xref_tx == Xref_rx`, and the controlled comparison.
 
 Invariant to preserve: identical database, preprocessing, embedding model, and index on

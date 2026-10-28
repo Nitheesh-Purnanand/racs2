@@ -18,7 +18,7 @@ from steganography import pipeline  # noqa: E402
 
 def recover(edict, stego_pixels: torch.Tensor, token: str, prompt: str, cfg: dict,
             *, delta=None, eta=None, steps=None, mixing=None,
-            guidance=None) -> torch.Tensor:
+            guidance=None, noise=None) -> torch.Tensor:
     eta = float(cfg["eta"] if eta is None else eta)
     steps = int(cfg["edict_steps"] if steps is None else steps)
     mixing = float(cfg["edict_mixing"] if mixing is None else mixing)
@@ -29,7 +29,8 @@ def recover(edict, stego_pixels: torch.Tensor, token: str, prompt: str, cfg: dic
         delta = token_delta(token, shape=tuple(z_stego.shape),
                             fraction=float(cfg["mask_fraction"]))
     z_hidden = subtract_delta(z_stego, delta, eta)
-    noise = token_noise(token, shape=tuple(z_hidden.shape))
+    if noise is None:
+        noise = token_noise(token, shape=tuple(z_hidden.shape))
     back = edict.inverse_img2img(
         [z_hidden, z_hidden.clone()], prompt=prompt, steps=steps, mixing=mixing,
         guidance_scale=guidance, strength=float(cfg.get("edict_strength", 0.3)),

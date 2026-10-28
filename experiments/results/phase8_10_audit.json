@@ -1,0 +1,187 @@
+{
+  "pass": true,
+  "schema_version": 1,
+  "checks": [
+    {
+      "requirement": "packaging",
+      "check": "all new modules compile",
+      "pass": true,
+      "detail": "13 files"
+    },
+    {
+      "requirement": "phase8",
+      "check": "manifest schema",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase8",
+      "check": "record count",
+      "pass": true,
+      "detail": "132"
+    },
+    {
+      "requirement": "phase8",
+      "check": "22/class/role",
+      "pass": true,
+      "detail": "{\"calibration/common\": 22, \"calibration/facial\": 22, \"calibration/style\": 22, \"evaluation/common\": 22, \"evaluation/facial\": 22, \"evaluation/style\": 22}"
+    },
+    {
+      "requirement": "phase8",
+      "check": "all 132 reference files + unique paths",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase8",
+      "check": "all 132 seeds recompute",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase8",
+      "check": "all 132 latents hashes recompute",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase8",
+      "check": "all 132 kpub/feature hashes link to Phase 7",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase8",
+      "check": "class feature kinds correct",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase8",
+      "check": "all peak VRAM <= 5.5 GB",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase8",
+      "check": "verify json pass",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase9",
+      "check": "calibration-only training",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase9",
+      "check": "zero-conv parameter split",
+      "pass": true,
+      "detail": "11479680 / 349799440"
+    },
+    {
+      "requirement": "phase9",
+      "check": "loss finite and decreased",
+      "pass": true,
+      "detail": "0.3099847435951233 -> 0.0030436436645686626"
+    },
+    {
+      "requirement": "phase9",
+      "check": "probe improved",
+      "pass": true,
+      "detail": "0.148828125 -> 0.12958984375"
+    },
+    {
+      "requirement": "phase9",
+      "check": "checkpoint hash",
+      "pass": true,
+      "detail": "D:\\racs2\\experiments\\checkpoints\\controlnet_zero_conv_50_88159c58.safetensors"
+    },
+    {
+      "requirement": "phase9",
+      "check": "checkpoint contains only zero-conv tensors",
+      "pass": true,
+      "detail": "26 tensors, 11479680 params"
+    },
+    {
+      "requirement": "phase9",
+      "check": "checkpoint param count matches json",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase9",
+      "check": "delta applies to base ControlNet",
+      "pass": true,
+      "detail": "{\"checkpoint_tensors\": 26, \"trainable_tensors\": 26, \"changed_tensors\": 26, \"missing_keys\": 0, \"unexpected_keys\": 0, \"frozen_missing_keys\": 314}"
+    },
+    {
+      "requirement": "phase9",
+      "check": "verify json pass",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase10",
+      "check": "20 random + 20 image latents",
+      "pass": true,
+      "detail": "20 / 20"
+    },
+    {
+      "requirement": "phase10",
+      "check": "operating point matches config",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase10",
+      "check": "relative error below measured fp16 gate",
+      "pass": true,
+      "detail": "3.584e-03 <= 0.005"
+    },
+    {
+      "requirement": "phase10",
+      "check": "sweep has 12 cells",
+      "pass": true,
+      "detail": "12"
+    },
+    {
+      "requirement": "phase10",
+      "check": "verify json pass",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase10",
+      "check": "affine mixing exact inverse",
+      "pass": true,
+      "detail": "max_abs=4.44e-16"
+    },
+    {
+      "requirement": "phase10",
+      "check": "DDIM forward/reverse exact inverse",
+      "pass": true,
+      "detail": "max_abs=3.58e-07"
+    },
+    {
+      "requirement": "phase10",
+      "check": "mixing=0.5 rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase10",
+      "check": "steps=0 rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "requirement": "phase10",
+      "check": "EDICT rerun deterministic",
+      "pass": true,
+      "detail": "max_abs_diff=0.00e+00"
+    }
+  ],
+  "failures": []
+}

@@ -17,3 +17,7 @@ models/clip-vit-base-patch32/
 # Phase 7 public conditions cache (keep manifest only)
 experiments/results/public_conditions/*
 !experiments/results/public_conditions/manifest.json
+
+# Phase 15/16 per-case tensors and receiver PNGs (large, regenerable)
+experiments/results/baseline_cases/
+experiments/results/baseline_security_*.png

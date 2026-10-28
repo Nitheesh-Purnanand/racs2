@@ -1,9 +1,9 @@
 # RACS2 — Project Status & Change Log
 
 > **Location**: `d:\racs2\project_status.md`  
-> **Last Updated**: 2026-10-27  
-> **Current Phase**: Phases 11-14 complete (local hide/recover, AWGN channel, semantic codec,
-> optional enhancement). Phase 15 (baseline gate) is next.
+> **Last Updated**: 2026-10-28  
+> **Current Phase**: Phases 11-16 complete. Phase 15 froze the baseline; Phase 16 froze the
+> baseline security table and XuNet steganalysis. Phase 17 (RACS retrieval stack) is next.
 
 ---
 
@@ -35,6 +35,8 @@
 | **Phase 12 — AWGN Channel** | ✅ Completed | `communication/awgn.py`, `scripts/phase12_awgn.py`, `scripts/phase12_verify.py`. sigma^2 = P_signal / 10^(SNR/10) from the measured power, fixed seed per cell. Mean recovery PSNR 12.68 / 14.96 / 17.93 / 21.08 dB at 5/10/15/20 dB. Analytic variance max relative error 0.46 percent; seed replay exact; verify 7/7 PASS. |
 | **Phase 13 — Semantic Codec** | ✅ Completed | `communication/semantic_codec.py`, `scripts/phase13_codec.py`, `scripts/phase13_verify.py`. Frozen SD-VAE analog JSCC substitute (paper checkpoints unavailable), explicit invertible power normalisation, pinned state-dict hash. Isolated PSNR 17.88 / 22.88 / 26.70 / 28.51 dB. Codec+recovery beats raw AWGN by +1.40 to +2.33 dB PSNR. Verify 9/9 PASS. |
 | **Phase 14 — Optional CodeFormer Enhancement** | ✅ Completed | `enhancement/codeformer.py`, `scripts/phase14_enhance.py`, `scripts/phase14_verify.py`. CodeFormer/facelib stack unavailable in this environment, so the module is a documented deterministic pass-through kept **off by default** and restricted to the facial class; deltas are exactly 0 at all four SNR cells. Non-facial control unchanged. Verify 13/13 PASS. |
+| **Phase 15 — Baseline Gate** | ✅ Completed | `pipelines/agentsemstecom.py`, `scripts/phase15_baseline.py`, `scripts/phase15_verify.py`. 15A calibration on UniStega (approximate, deviations recorded) and 15B authoritative evaluation baseline: 264 cases, 12 cells, `baseline_table.json` frozen, `phase15_verify.json` PASS. |
+| **Phase 16 — Baseline Security & Steganalysis** | ✅ Completed | `security/token_conditions.py`, `security/steganalysis.py`, `scripts/phase16_security.py`, `phase16_steganalysis.py`, `phase16_manifest.py`, `phase16_verify.py`. Three receiver conditions (correct / wrong / no_token) on 264 frozen cases, N=22 per cell; aggregate PSNR 17.39 / 13.05 / 13.07 dB, correct-minus-wrong gap **4.34 dB** (threshold 4 dB), 6 low-SNR per-cell exceptions documented. XuNet (SRM front end, 5 blocks) trained on 2x2 128 px patches from 66 images, image-disjoint 46/10/10 split (368/80/80 samples); test accuracy **0.4875** (n=80) vs chance 0.5 and paper anchor 0.5091. Verify **16/16 PASS**. |
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -219,6 +221,34 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
 ---
 
 ## 5. Change Log
+
+### [2026-10-28] - Phase 16 Complete (Baseline Security & Steganalysis)
+
+- **Security**: `security/token_conditions.py` implements the receiver half for three
+  conditions on the frozen Phase 15 stego: `correct` (true token), `wrong` (a valid wrong
+  token), and `no_token` (fixed public fallback token `00000000`, reference seed
+  1102030775, all-zero mask). The transmitter is identical in all three.
+- **Run**: `scripts/phase16_security.py` measured 264 cases (66 evaluation images x 4 SNRs),
+  N=22 per class per cell. Aggregate recovery PSNR is **17.39 dB correct**, **13.05 dB
+  wrong**, **13.07 dB no_token**; the correct-minus-wrong gap is **4.34 dB** (threshold
+  4 dB). Six low-SNR cells fall below 4 dB because channel noise dominates and are
+  itemised with a reason in `phase16_manifest.json`.
+- **XuNet**: `security/steganalysis.py` implements the standard XuNet (5x5 SRM high-pass
+  init, five conv blocks with BN/Tanh/pooling, global average pool, FC 128->2). Covers are
+  the secret images; positives are the frozen stego. The 66 images are split 70/15/15 by
+  `image_id` (46/10/10) and each image contributes 2x2 non-overlapping 128 px patches
+  (368/80/80 samples). Seed 42, batch 8, early stopping on validation accuracy.
+- **Detectability**: test accuracy **0.4875** on n=80 (chance 0.5), so the baseline is
+  near-chance against this detector. Paper anchor 0.5091 is stored as approximate and is
+  not treated as a target.
+- **Artifacts**: `baseline_security.json`, `baseline_steganalysis.json`,
+  `phase16_manifest.json`, `phase16_verify.json`, `phase16_security_grid.png`, and
+  `experiments/steganalysis/xunet_baseline_0000002a.pt`
+  (sha256 `78f396590cdc2d39e261b3e0e7e9d12178afa6ba9ec84c330878cc472341525c`).
+- **Verified**: `phase16_verify.py` 16/16 PASS. Every record is `role: evaluation` and
+  `approximate: false`; no calibration image appears.
+- **Deviations**: patch-based XuNet dataset at 128 px and the explicit no-token fallback are
+  recorded in `docs/DEVIATIONS.md`.
 
 ### [2026-10-27] - Phases 11-14 Complete (stego core, channel, codec, enhancement)
 

@@ -1,0 +1,59 @@
+{
+  "pass": true,
+  "schema_version": 1,
+  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
+  "config_hash": "88159c5807ceee116e0507decc780cec2c3f4560bb7dbb941451903824992d35",
+  "checks": [
+    {
+      "check": "schema_version",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "train_role_calibration",
+      "pass": true,
+      "detail": "calibration"
+    },
+    {
+      "check": "trainable_params",
+      "pass": true,
+      "detail": "11479680"
+    },
+    {
+      "check": "frozen_params",
+      "pass": true,
+      "detail": "349799440"
+    },
+    {
+      "check": "loss_decreased",
+      "pass": true,
+      "detail": "0.3099847435951233 -> 0.0030436436645686626"
+    },
+    {
+      "check": "loss_finite",
+      "pass": true,
+      "detail": "min=0.002895662095397711"
+    },
+    {
+      "check": "checkpoint_exists",
+      "pass": true,
+      "detail": "D:\\racs2\\experiments\\checkpoints\\controlnet_zero_conv_50_88159c58.safetensors"
+    },
+    {
+      "check": "checkpoint_sha",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "probe_present",
+      "pass": true,
+      "detail": "10 images"
+    },
+    {
+      "check": "probe_improved",
+      "pass": true,
+      "detail": "0.148828125 -> 0.12958984375"
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,82 @@
+{
+  "pass": true,
+  "schema_version": 1,
+  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
+  "config_hash": "75359372bebded8da9e411e5e9b516264a4845b14caa6f3aa9858625794bbfdc",
+  "checks": [
+    {
+      "check": "schema_version",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "split_version",
+      "pass": true,
+      "detail": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a"
+    },
+    {
+      "check": "tokens_version",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "config_hash",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "counts_22",
+      "pass": true,
+      "detail": "{\"calibration\": {\"common\": 22, \"facial\": 22, \"style\": 22}, \"evaluation\": {\"common\": 22, \"facial\": 22, \"style\": 22}}"
+    },
+    {
+      "check": "unique_ids",
+      "pass": true,
+      "detail": "132"
+    },
+    {
+      "check": "reference_files",
+      "pass": true,
+      "detail": "132 records"
+    },
+    {
+      "check": "seed_recompute",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "condition_linkage",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "determinism",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "grid_exists",
+      "pass": true,
+      "detail": "D:\\racs2\\experiments\\results\\phase8_reference_grid.png"
+    },
+    {
+      "check": "vram_budget",
+      "pass": true,
+      "detail": "max=2.841923713684082 <= 5.5"
+    }
+  ],
+  "counts": {
+    "calibration": {
+      "common": 22,
+      "facial": 22,
+      "style": 22
+    },
+    "evaluation": {
+      "common": 22,
+      "facial": 22,
+      "style": 22
+    }
+  },
+  "failures": [],
+  "elapsed_s": null
+}
