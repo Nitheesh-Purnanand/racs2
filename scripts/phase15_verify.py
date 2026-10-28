@@ -137,7 +137,8 @@ def main() -> int:
         sample = ev_man["cases"][0]
         try:
             raw = subprocess.check_output(
-                [sys.executable, str(paths.PROJECT_ROOT / "scripts" / "phase15_baseline.py"),
+                [sys.executable, "-X", "faulthandler",
+                 str(paths.PROJECT_ROOT / "scripts" / "phase15_baseline.py"),
                  "--split", "evaluation", "--probe", sample["image_id"],
                  "--probe-snr", str(sample["snr_db"])],
                 cwd=paths.PROJECT_ROOT, text=True, timeout=900)

@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "phase": 15,
+  "created_utc": "2026-10-28T03:33:05Z",
+  "pass": true,
+  "gate_a_pass": false,
+  "gate_b_pass": true,
+  "checks": [
+    {
+      "check": "15A approximate=true, 15B approximate=false",
+      "pass": true,
+      "detail": "",
+      "gate": "B"
+    },
+    {
+      "check": "15A uses calibration only, 15B evaluation only",
+      "pass": true,
+      "detail": "",
+      "gate": "B"
+    },
+    {
+      "check": "split_version and tokens_version match live manifests",
+      "pass": true,
+      "detail": "",
+      "gate": "B"
+    },
+    {
+      "check": "12 cells per split (3 classes x 4 SNR), N=22, finite metrics",
+      "pass": true,
+      "detail": "cal=12 ev=12",
+      "gate": "B"
+    },
+    {
+      "check": "Gate A monotone improvement 5 -> 20 dB in every class",
+      "pass": true,
+      "detail": "{'common': True, 'facial': True, 'style': True}",
+      "gate": "A"
+    },
+    {
+      "check": "Gate A class ordering facial >= common at 5 and 20 dB",
+      "pass": true,
+      "detail": "facial5=13.992929079315878 common5=13.308661634271795",
+      "gate": "A"
+    },
+    {
+      "check": "in-process determinism (reference, stego, recovered)",
+      "pass": true,
+      "detail": "sample=6",
+      "gate": "B"
+    },
+    {
+      "check": "fresh-process determinism",
+      "pass": true,
+      "detail": "eva_common_0000 snr=5 equal=True",
+      "gate": "B"
+    },
+    {
+      "check": "component choices match frozen manifests",
+      "pass": true,
+      "detail": "",
+      "gate": "B"
+    },
+    {
+      "check": "no retrieval/FAISS/VLM import in the pipeline",
+      "pass": true,
+      "detail": "",
+      "gate": "B"
+    },
+    {
+      "check": "both grids exist",
+      "pass": true,
+      "detail": "['calibration_baseline_grid.png', 'baseline_grid.png']",
+      "gate": "B"
+    },
+    {
+      "check": "every Gate A miss is diagnosed in docs/DEVIATIONS.md",
+      "pass": true,
+      "detail": "8 misses; documented=True",
+      "gate": "A"
+    }
+  ],
+  "gate_a": [
+    {
+      "class": "facial",
+      "snr_db": 5,
+      "metric": "psnr",
+      "paper": 22.73,
+      "measured": 13.992929079315878,
+      "tolerance": 2.5,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=22.73 measured=13.9929 diff=8.7371"
+    },
+    {
+      "class": "facial",
+      "snr_db": 5,
+      "metric": "ssim",
+      "paper": 0.6989,
+      "measured": 0.2821016799319874,
+      "tolerance": 0.07,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=0.6989 measured=0.2821 diff=0.4168"
+    },
+    {
+      "class": "facial",
+      "snr_db": 20,
+      "metric": "psnr",
+      "paper": 26.29,
+      "measured": 22.294470180164684,
+      "tolerance": 2.5,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=26.29 measured=22.2945 diff=3.9955"
+    },
+    {
+      "class": "facial",
+      "snr_db": 20,
+      "metric": "lpips",
+      "paper": 0.2127,
+      "measured": 0.2529793984510682,
+      "tolerance": 0.05,
+      "kind": "abs",
+      "pass": true,
+      "detail": "paper=0.2127 measured=0.2530 diff=0.0403"
+    },
+    {
+      "class": "style",
+      "snr_db": 5,
+      "metric": "mse",
+      "paper": 0.00721,
+      "measured": 0.03833086856386878,
+      "tolerance": 0.4,
+      "kind": "rel",
+      "pass": false,
+      "detail": "paper=0.00721 measured=0.03833 rel=431.63%"
+    },
+    {
+      "class": "style",
+      "snr_db": 5,
+      "metric": "lpips",
+      "paper": 0.385,
+      "measured": 0.646729360927235,
+      "tolerance": 0.05,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=0.385 measured=0.6467 diff=0.2617"
+    },
+    {
+      "class": "common",
+      "snr_db": 5,
+      "metric": "psnr",
+      "paper": 19.71,
+      "measured": 13.308661634271795,
+      "tolerance": 2.5,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=19.71 measured=13.3087 diff=6.4013"
+    },
+    {
+      "class": "common",
+      "snr_db": 5,
+      "metric": "mse",
+      "paper": 0.01207,
+      "measured": 0.047306947579438034,
+      "tolerance": 0.4,
+      "kind": "rel",
+      "pass": false,
+      "detail": "paper=0.01207 measured=0.04731 rel=291.94%"
+    },
+    {
+      "class": "common",
+      "snr_db": 10,
+      "metric": "ssim",
+      "paper": 0.5643,
+      "measured": 0.3439381420612335,
+      "tolerance": 0.07,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=0.5643 measured=0.3439 diff=0.2204"
+    }
+  ],
+  "warnings": [
+    "Gate A tolerance misses: 8 (accepted in docs/DEVIATIONS.md)"
+  ],
+  "summary": {
+    "passed": 12,
+    "total": 12,
+    "gate_a_misses": 8
+  }
+}
