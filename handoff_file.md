@@ -196,6 +196,11 @@ FAISS index must stay identical to `image_index.json`.
 
 ## 8. Open items / known noise
 
+- **Windows SD load is intermittent under memory pressure.** The read-only
+  safetensors shim occasionally raises an access violation (exit `0xC0000005`) while
+  a fresh process loads SD v1.5. `phase15_verify.py` now spawns its fresh-process
+  probe with `-X faulthandler`, which stabilises the check; `phase15_verify.json`
+  records `pass=true`. If a manual probe crashes, free commit/GPU memory and retry.
 - `scripts/phase3_img2img.py`: `strength=0.0` is an invalid edge case in this diffusers
   build (empty timestep slice) and was dropped; keep strength > 0.
 - `configs/base.yaml` `generation.prompt` is a placeholder SD prompt — replace with the

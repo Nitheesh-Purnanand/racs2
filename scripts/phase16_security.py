@@ -137,7 +137,7 @@ def main() -> int:
         "baseline_table_sha256": hashlib.sha256(table_path.read_bytes()).hexdigest(),
         "conditions": {m: ("true token" if m == "correct" else
                            "valid wrong token" if m == "wrong" else
-                           "no token, fixed fallback seed 00000000") for m in MODES},
+                           "no token, fixed fallback token 00000000") for m in MODES},
         "cells": out_cells,
         "aggregate_psnr": {
             **aggregate,
