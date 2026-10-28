@@ -4,6 +4,7 @@
 > **Last Updated**: 2026-10-28  
 > **Current Phase**: Phases 11-16 complete. Phase 15 froze the baseline; Phase 16 froze the
 > baseline security table and XuNet steganalysis. Phase 17 (RACS retrieval stack) is next.
+> **Runbooks**: `PHASE_RUNBOOK_1_TO_6.md`, `PHASE_RUNBOOK_7_TO_16.md`, `PHASE_RUNBOOK_17_TO_20.md`.
 
 ---
 
