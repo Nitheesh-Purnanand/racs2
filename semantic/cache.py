@@ -66,6 +66,7 @@ def write_cache_npz(
     feature_kind: str,
     feature: Optional[np.ndarray],
     config_hash: str,
+    feature_method: str = "",
 ) -> None:
     """Atomically write a per-image .npz cache file."""
     path = Path(path)
@@ -81,6 +82,7 @@ def write_cache_npz(
         "kpub_method": np.array(kpub_method),
         "kpub_model_id": np.array(kpub_model_id),
         "feature_kind": np.array(feature_kind),
+        "feature_method": np.array(feature_method),
         "config_hash": np.array(config_hash),
     }
     if feature is not None:
@@ -104,22 +106,27 @@ def write_cache_npz(
 
 def read_cache_npz(path: Path) -> Dict[str, Any]:
     """Read a per-image .npz cache file and return its contents as a dict."""
-    data = np.load(str(path), allow_pickle=False)
-    result: Dict[str, Any] = {
-        "image_id": str(data["image_id"]),
-        "role": str(data["role"]),
-        "class_name": str(data["class_name"]),
-        "source_sha256": str(data["source_sha256"]),
-        "kpub": str(data["kpub"]),
-        "kpub_method": str(data["kpub_method"]),
-        "kpub_model_id": str(data["kpub_model_id"]),
-        "feature_kind": str(data["feature_kind"]),
-        "config_hash": str(data["config_hash"]),
-    }
-    if "feature" in data:
-        result["feature"] = data["feature"]
-    else:
-        result["feature"] = None
+    # Close the NpzFile explicitly: on Windows an open handle prevents the
+    # atomic os.replace used when this entry is rebuilt.
+    with np.load(str(path), allow_pickle=False) as data:
+        result: Dict[str, Any] = {
+            "image_id": str(data["image_id"]),
+            "role": str(data["role"]),
+            "class_name": str(data["class_name"]),
+            "source_sha256": str(data["source_sha256"]),
+            "kpub": str(data["kpub"]),
+            "kpub_method": str(data["kpub_method"]),
+            "kpub_model_id": str(data["kpub_model_id"]),
+            "feature_kind": str(data["feature_kind"]),
+            # written since 2026-10-29; older caches simply do not have it
+            "feature_method": (str(data["feature_method"])
+                               if "feature_method" in data else ""),
+            "config_hash": str(data["config_hash"]),
+        }
+        if "feature" in data:
+            result["feature"] = data["feature"]
+        else:
+            result["feature"] = None
     return result
 
 

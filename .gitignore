@@ -21,3 +21,23 @@ experiments/results/public_conditions/*
 # Phase 15/16 per-case tensors and receiver PNGs (large, regenerable)
 experiments/results/baseline_cases/
 experiments/results/baseline_security_*.png
+experiments/results/ipadapter_embeds/
+
+# Paper-asset weights: fetched by scripts/fetch_paper_assets.py, hashes pinned
+# in models/PAPER_ASSETS.json
+models/picx-real/
+models/ip-adapter/
+models/oneformer-ade20k-swin-large/
+models/qwen2.5-0.5b-instruct/
+models/codeformer/
+models/swinjscc/
+models/mediapipe/
+
+# Vendored upstream repos (CodeFormer, SwinJSCC); see docs/DEVIATIONS.md for the
+# exact clone commands
+third_party/
+
+# Single-image inspection output (regenerable)
+experiments/results/manual_test/
+experiments/results/baseline_example/
+experiments/checkpoints/*.safetensors

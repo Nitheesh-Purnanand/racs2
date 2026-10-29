@@ -56,6 +56,111 @@ def _ade20k_palette() -> np.ndarray:
 ADE20K_PALETTE = _ade20k_palette()
 
 
+# ── OneFormer Feature Extractor (common class, paper model) ─────────────────
+
+class OneFormerExtractor:
+    """Semantic segmentation via OneFormer on ADE20K (the paper's model)."""
+
+    def __init__(
+        self,
+        model_id: str = "shi-labs/oneformer_ade20k_swin_large",
+        device: Union[str, torch.device, None] = None,
+        dtype: str = "float16",
+        output_size: int = 512,
+        num_classes: int = 150,
+        model_path: Optional[str] = None,
+    ) -> None:
+        from transformers import (
+            OneFormerForUniversalSegmentation,
+            OneFormerProcessor,
+        )
+
+        self.method = "oneformer"
+        self.model_id = model_id
+        self.output_size = output_size
+        self.num_classes = num_classes
+
+        if device is None:
+            self.device = get_device()
+        else:
+            self.device = torch.device(device)
+        dtype_map = {
+            "float16": torch.float16, "fp16": torch.float16,
+            "float32": torch.float32, "fp32": torch.float32,
+        }
+        self.dtype = dtype_map.get(str(dtype).lower(), torch.float16)
+
+        source = model_id
+        if model_path:
+            candidate = Path(model_path)
+            if not candidate.is_absolute():
+                candidate = _ROOT / candidate
+            if candidate.exists():
+                source = str(candidate)
+
+        self.processor = OneFormerProcessor.from_pretrained(source)
+        try:
+            self.model = OneFormerForUniversalSegmentation.from_pretrained(
+                source, torch_dtype=self.dtype,
+            )
+        except TypeError:
+            self.model = OneFormerForUniversalSegmentation.from_pretrained(source)
+        self.model = self.model.to(self.device).eval()
+        for param in self.model.parameters():
+            param.requires_grad_(False)
+        self._weight_sha256 = self._compute_weight_hash()
+
+    def _compute_weight_hash(self) -> str:
+        h = hashlib.sha256()
+        for name, param in sorted(self.model.named_parameters()):
+            h.update(f"{name}:{list(param.shape)}\n".encode())
+        return h.hexdigest()
+
+    @property
+    def weight_sha256(self) -> str:
+        return self._weight_sha256
+
+    def extract(self, image: Image.Image) -> Dict[str, Any]:
+        image_rgb = image.convert("RGB").resize(
+            (self.output_size, self.output_size), Image.BICUBIC
+        )
+        with torch.inference_mode():
+            inputs = self.processor(
+                images=image_rgb, task_inputs=["semantic"], return_tensors="pt"
+            )
+            inputs = {
+                k: (v.to(self.device, dtype=self.dtype)
+                    if torch.is_floating_point(v) else v.to(self.device))
+                for k, v in inputs.items()
+            }
+            outputs = self.model(**inputs)
+            seg = self.processor.post_process_semantic_segmentation(
+                outputs, target_sizes=[(self.output_size, self.output_size)]
+            )[0]
+        seg_map = seg.cpu().numpy().astype(np.uint8)
+        if seg_map.shape != (self.output_size, self.output_size):
+            raise RuntimeError(f"OneFormer returned {seg_map.shape}")
+        if int(seg_map.max()) >= self.num_classes:
+            raise RuntimeError(
+                f"OneFormer class {int(seg_map.max())} >= {self.num_classes}"
+            )
+        preview = Image.fromarray(ADE20K_PALETTE[seg_map], mode="RGB")
+        return {
+            "feature_kind": "segmentation",
+            "feature": seg_map,
+            "preview": preview,
+            "model_id": self.model_id,
+            "weight_sha256": self._weight_sha256,
+            "num_classes": self.num_classes,
+        }
+
+    def unload(self):
+        if hasattr(self, "model"):
+            del self.model
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+
 # ── SegFormer Feature Extractor (common class) ──────────────────────────────
 
 class SegFormerExtractor:
@@ -390,57 +495,125 @@ class MediaPipeFaceExtractor:
 # ── OpenPose-style Extractor via controlnet_aux (preferred) ──────────────────
 
 class OpenPoseExtractor:
-    """OpenPose-style body/face keypoints via controlnet_aux."""
+    """OpenPose body + face keypoints via ``controlnet_aux`` (the paper's annotator).
+
+    Returns the rendered skeleton as the ControlNet conditioning preview and the
+    real keypoints as an ``(N, 3)`` float32 array of ``(x, y, confidence)`` in
+    pixels of ``output_size``. The detector is a frozen CNN run in float32 on a
+    fixed-size input, so repeated extraction is bit-identical.
+    """
+
+    #: ``controlnet_aux`` imports mediapipe's pre-1.0 ``solutions`` API at
+    #: package level. This project pins the new tasks-API mediapipe, so the
+    #: unused submodule is stubbed before the package is imported.
+    _MEDIAPIPE_STUB = "controlnet_aux.mediapipe_face"
 
     def __init__(
         self,
         output_size: int = 512,
         min_keypoints: int = 5,
         model_path: Optional[str] = None,
+        repo_id: str = "lllyasviel/Annotators",
+        include_face: bool = True,
+        include_hand: bool = False,
     ) -> None:
-        from controlnet_aux import OpenposeDetector
+        import types
 
-        self.output_size = output_size
-        self.min_keypoints = min_keypoints
+        if self._MEDIAPIPE_STUB not in sys.modules:
+            stub = types.ModuleType(self._MEDIAPIPE_STUB)
+            stub.MediapipeFaceDetector = object
+            sys.modules[self._MEDIAPIPE_STUB] = stub
+
+        from controlnet_aux.open_pose import OpenposeDetector, draw_poses
+
+        self.output_size = int(output_size)
+        self.min_keypoints = int(min_keypoints)
+        self.include_face = bool(include_face)
+        self.include_hand = bool(include_hand)
         self.method = "openpose"
-        self.model_id = "controlnet_aux_openpose"
-        self._weight_sha256 = "controlnet_aux_openpose_default"
+        self.model_id = repo_id
+        self._draw_poses = draw_poses
 
-        self.detector = OpenposeDetector.from_pretrained("lllyasviel/ControlNet")
+        source = model_path or repo_id
+        if model_path:
+            candidate = Path(model_path)
+            if not candidate.is_absolute():
+                candidate = _ROOT / model_path
+            if candidate.exists():
+                source = str(candidate)
+        self.detector = OpenposeDetector.from_pretrained(source)
+        self._weight_sha256 = self._fingerprint()
+
+    def _fingerprint(self) -> str:
+        """Hash the loaded detector weights, not just the repo name."""
+        digest = hashlib.sha256()
+        for label in ("body_estimation", "face_estimation"):
+            sub = getattr(self.detector, label, None)
+            model = getattr(sub, "model", None)
+            if model is None:
+                continue
+            digest.update(label.encode())
+            for name, param in sorted(model.state_dict().items()):
+                digest.update(name.encode())
+                digest.update(param.detach().cpu().numpy().tobytes())
+        return digest.hexdigest()
 
     @property
     def weight_sha256(self) -> str:
         return self._weight_sha256
 
+    def _keypoints(self, poses) -> np.ndarray:
+        """Flatten every detected keypoint into (x, y, confidence) pixels."""
+        rows = []
+        for pose in poses:
+            body = getattr(pose, "body", None)
+            if body is not None:
+                for point in body.keypoints:
+                    if point is None:
+                        continue
+                    rows.append((point.x * self.output_size,
+                                 point.y * self.output_size,
+                                 float(getattr(point, "score", 1.0) or 1.0)))
+            if self.include_face:
+                for point in (getattr(pose, "face", None) or []):
+                    if point is None:
+                        continue
+                    rows.append((point.x * self.output_size,
+                                 point.y * self.output_size,
+                                 float(getattr(point, "score", 1.0) or 1.0)))
+        if not rows:
+            return np.zeros((0, 3), dtype=np.float32)
+        return np.asarray(rows, dtype=np.float32)
+
     def extract(self, image: Image.Image) -> Dict[str, Any]:
         image_rgb = image.convert("RGB").resize(
             (self.output_size, self.output_size), Image.BICUBIC
         )
-
-        result = self.detector(image_rgb, hand_and_face=True)
-
-        # result is a PIL image of the rendered pose
-        if result is None:
+        poses = self.detector.detect_poses(
+            np.asarray(image_rgb),
+            include_hand=self.include_hand,
+            include_face=self.include_face,
+        )
+        keypoints = self._keypoints(poses)
+        if keypoints.shape[0] < self.min_keypoints:
             return {
                 "feature_kind": "skeleton",
-                "feature": np.zeros((0, 3), dtype=np.float32),
+                "feature": keypoints,
                 "preview": None,
                 "model_id": self.model_id,
                 "weight_sha256": self._weight_sha256,
                 "min_keypoints": self.min_keypoints,
                 "status": "no_face",
             }
-
-        preview = result.resize((self.output_size, self.output_size))
-
-        # Dummy keypoints for compatibility (OpenPose via controlnet_aux
-        # returns rendered image, not raw keypoints by default)
-        keypoints = np.array([[256, 256, 1.0]] * self.min_keypoints, dtype=np.float32)
-
+        canvas = self._draw_poses(
+            poses, self.output_size, self.output_size,
+            draw_body=True, draw_hand=self.include_hand,
+            draw_face=self.include_face,
+        )
         return {
             "feature_kind": "skeleton",
             "feature": keypoints,
-            "preview": preview,
+            "preview": Image.fromarray(canvas),
             "model_id": self.model_id,
             "weight_sha256": self._weight_sha256,
             "min_keypoints": self.min_keypoints,
@@ -448,10 +621,60 @@ class OpenPoseExtractor:
         }
 
     def unload(self):
-        pass
+        self.detector = None
 
 
 # ── Style Feature (none) ────────────────────────────────────────────────────
+
+class FacialFeatureChain:
+    """OpenPose (the paper's annotator) with a MediaPipe fallback per image.
+
+    OpenPose places face keypoints only inside a detected body, so a tight
+    portrait crop where its body detector finds nothing yields no skeleton at
+    all. Instead of conditioning ControlNet on an empty image, such a record
+    falls back to the MediaPipe face mesh. The order is fixed and both models
+    are deterministic, so Tx and Rx still agree; ``extract`` reports which
+    annotator was used and ``fallbacks`` counts them for the manifest.
+    """
+
+    def __init__(self, primary, fallback_factory) -> None:
+        self.primary = primary
+        self._fallback_factory = fallback_factory
+        self._fallback = None
+        self.fallbacks = 0
+        self.method = primary.method
+        self.model_id = primary.model_id
+
+    @property
+    def weight_sha256(self) -> str:
+        return self.primary.weight_sha256
+
+    def _get_fallback(self):
+        if self._fallback is None:
+            self._fallback = self._fallback_factory()
+            print(f"[features] facial fallback built: {self._fallback.method}",
+                  flush=True)
+        return self._fallback
+
+    def extract(self, image: Image.Image) -> Dict[str, Any]:
+        result = self.primary.extract(image)
+        if result.get("status") == "ok":
+            result["feature_method"] = self.primary.method
+            return result
+        fallback = self._get_fallback()
+        result = fallback.extract(image)
+        result["feature_method"] = fallback.method
+        result["primary_method"] = self.primary.method
+        if result.get("status") == "ok":
+            self.fallbacks += 1
+        return result
+
+    def unload(self):
+        self.primary.unload()
+        if self._fallback is not None:
+            self._fallback.unload()
+            self._fallback = None
+
 
 class NoFeatureExtractor:
     """Explicit no-feature for style class."""
@@ -494,6 +717,17 @@ def build_feature_extractor(config: dict, class_name: str):
     method = class_config.get("method", "")
 
     if class_name == "common":
+        if method == "oneformer":
+            return OneFormerExtractor(
+                model_id=class_config.get(
+                    "model_id", "shi-labs/oneformer_ade20k_swin_large"
+                ),
+                device=class_config.get("device"),
+                dtype=class_config.get("dtype", "float16"),
+                output_size=class_config.get("output_size", 512),
+                num_classes=class_config.get("num_classes", 150),
+                model_path=class_config.get("model_path"),
+            )
         if method == "segformer" or not method:
             return SegFormerExtractor(
                 model_id=class_config.get("model_id", "nvidia/segformer-b0-finetuned-ade-512-512"),
@@ -507,15 +741,28 @@ def build_feature_extractor(config: dict, class_name: str):
             raise ValueError(f"unknown common feature method: {method!r}")
 
     if class_name == "facial":
+        def build_mediapipe():
+            return MediaPipeFaceExtractor(
+                output_size=class_config.get("output_size", 512),
+                min_keypoints=class_config.get("min_keypoints", 5),
+                model_path=class_config.get("mediapipe_model_path"),
+            )
+
         if method == "openpose":
             try:
-                return OpenPoseExtractor(
+                primary = OpenPoseExtractor(
                     output_size=class_config.get("output_size", 512),
                     min_keypoints=class_config.get("min_keypoints", 5),
                     model_path=class_config.get("model_path"),
+                    repo_id=class_config.get("model_id", "lllyasviel/Annotators"),
+                    include_face=class_config.get("include_face", True),
+                    include_hand=class_config.get("include_hand", False),
                 )
-            except Exception as exc:
-                print(f"[features] OpenPose failed ({exc}), falling back to MediaPipe")
+                if class_config.get("fallback", "mediapipe") == "none":
+                    return primary
+                return FacialFeatureChain(primary, build_mediapipe)
+            except Exception as exc:  # noqa: BLE001
+                print(f"[features] OpenPose unavailable ({exc}); using MediaPipe")
                 method = "mediapipe"
 
         if method == "mediapipe" or not method:

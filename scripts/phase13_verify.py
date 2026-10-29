@@ -45,8 +45,13 @@ def main() -> int:
     codec = build_codec(cfg, edict)
     add("checkpoint hash matches manifest", codec["sha256"] == doc.get("codec", {}).get("sha256"),
         f"{codec['sha256'][:16]}")
+    # ``sd_vae_substitute`` exposes the VAE directly; ``swinjscc`` wraps its net.
+    codec_module = (codec["vae"] if codec["kind"] == "sd_vae_substitute"
+                    else codec["net"].net)
     add("codec is in eval mode and frozen",
-        not codec["vae"].training and not any(p.requires_grad for p in codec["vae"].parameters()))
+        not codec_module.training
+        and not any(p.requires_grad for p in codec_module.parameters()),
+        f"kind={codec['kind']}")
 
     finite = all(
         isolated.get(str(int(s)), {}).get("n") == 20

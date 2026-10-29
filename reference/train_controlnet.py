@@ -30,6 +30,7 @@ from PIL import Image  # noqa: E402
 from transformers import CLIPTextModel, CLIPTokenizer  # noqa: E402
 
 from common.device import get_device  # noqa: E402
+from reference.generate import resolve_model_source  # noqa: E402
 
 
 def _free() -> None:
@@ -40,6 +41,8 @@ def _free() -> None:
 
 def load_components(model_id: str, controlnet_id: str, dtype=torch.float16):
     device = get_device()
+    # ``model_id`` may be a repo-relative local checkpoint (e.g. PicX-Real).
+    model_id = resolve_model_source(model_id)
     kwargs = {"torch_dtype": dtype, "device_map": str(device)} if device.type == "cuda" else {}
     unet = UNet2DConditionModel.from_pretrained(model_id, subfolder="unet", **kwargs)
     vae = AutoencoderKL.from_pretrained(model_id, subfolder="vae", **kwargs)

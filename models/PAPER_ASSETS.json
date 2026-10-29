@@ -1,0 +1,204 @@
+{
+  "assets": {
+    "oneformer": {
+      "repo": "shi-labs/oneformer_ade20k_swin_large",
+      "dir": "models/oneformer-ade20k-swin-large",
+      "files": [
+        {
+          "path": "models/oneformer-ade20k-swin-large/config.json",
+          "size": 84289,
+          "sha256": "27452b656a467dbdebdf879dc413d6f3facd2bfe3643824ae66c32c22884b4bd"
+        },
+        {
+          "path": "models/oneformer-ade20k-swin-large/preprocessor_config.json",
+          "size": 8709,
+          "sha256": "49e2c8f207405d063cf7824f97c2814fa864f8f19ea9e02c9e20a9ff539c6d49"
+        },
+        {
+          "path": "models/oneformer-ade20k-swin-large/pytorch_model.bin",
+          "size": 879517517,
+          "sha256": "c0b2fe11dfecee6f2f1f315f466946e96f4e94813f3f6d660ff3747b83c28cc9"
+        }
+      ]
+    },
+    "picx_real": {
+      "repo": "GraydientPlatformAPI/picx-real",
+      "dir": "models/picx-real",
+      "files": [
+        {
+          "path": "models/picx-real/model_index.json",
+          "size": 579,
+          "sha256": "d368b2df84a0e06986751cb723b501a88885cb9faed400f5e55808a09441aa51"
+        },
+        {
+          "path": "models/picx-real/scheduler/scheduler_config.json",
+          "size": 374,
+          "sha256": "9ea02e72401b7278c426293c600ce82dd6a5eeda9787d380a1f6d783ab21c2aa"
+        },
+        {
+          "path": "models/picx-real/text_encoder/config.json",
+          "size": 560,
+          "sha256": "f0c4583f0f393b5f1f926531c305c155ae1757d8ae70de823b6c837f2c09d115"
+        },
+        {
+          "path": "models/picx-real/text_encoder/model.safetensors",
+          "size": 246144864,
+          "sha256": "fbb2fbcfbf03b950cdd37ad0d27a3f34e6d646ec040ce7a08f6bbf0200297c76"
+        },
+        {
+          "path": "models/picx-real/tokenizer/merges.txt",
+          "size": 524619,
+          "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+        },
+        {
+          "path": "models/picx-real/tokenizer/special_tokens_map.json",
+          "size": 472,
+          "sha256": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac"
+        },
+        {
+          "path": "models/picx-real/tokenizer/tokenizer_config.json",
+          "size": 737,
+          "sha256": "19d7b034cb0cc3ce9766c2231373ab8aa8991fc72e2c8f76558bfaae3de0d563"
+        },
+        {
+          "path": "models/picx-real/tokenizer/vocab.json",
+          "size": 1059962,
+          "sha256": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+        },
+        {
+          "path": "models/picx-real/unet/config.json",
+          "size": 1682,
+          "sha256": "42c5a16eac566213ad63bf1c440cb0433999e3b6f982efebae7a7b78f95eae6d"
+        },
+        {
+          "path": "models/picx-real/unet/diffusion_pytorch_model.safetensors",
+          "size": 1719125304,
+          "sha256": "2da9b72da9e1437e056df228650ae6199e80f89e959ef030a04450d2b03d91c4"
+        },
+        {
+          "path": "models/picx-real/vae/config.json",
+          "size": 601,
+          "sha256": "17e377a554284af81da113498c2ae6a62e750d5c40b3888cc2fde306184441a1"
+        },
+        {
+          "path": "models/picx-real/vae/diffusion_pytorch_model.safetensors",
+          "size": 167335342,
+          "sha256": "573958fd7d2b2e299304c7bc52008df7395a6ebe205beedad6ed18a8eeb1a080"
+        }
+      ]
+    },
+    "ipadapter": {
+      "repo": "h94/IP-Adapter",
+      "dir": "models/ip-adapter",
+      "files": [
+        {
+          "path": "models/ip-adapter/models/image_encoder/config.json",
+          "size": 560,
+          "sha256": "625d37b31afbf2f0792a87846b3654ee23f20568409e35b78a1f795b04e1a7a1"
+        },
+        {
+          "path": "models/ip-adapter/models/image_encoder/model.safetensors",
+          "size": 2528373448,
+          "sha256": "6ca9667da1ca9e0b0f75e46bb030f7e011f44f86cbfb8d5a36590fcd7507b030"
+        },
+        {
+          "path": "models/ip-adapter/models/ip-adapter-plus_sd15.safetensors",
+          "size": 98183288,
+          "sha256": "a1c250be40455cc61a43da1201ec3f1edaea71214865fb47f57927e06cbe4996"
+        }
+      ]
+    },
+    "codeformer": {
+      "repo": "sczhou/CodeFormer",
+      "files": [
+        {
+          "path": "models/codeformer/codeformer.pth",
+          "size": 376637898,
+          "sha256": "1009e537e0c2a07d4cabce6355f53cb66767cd4b4297ec7a4a64ca4b8a5684b7",
+          "source": "https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/codeformer.pth"
+        },
+        {
+          "path": "models/codeformer/detection_Resnet50_Final.pth",
+          "size": 109497761,
+          "sha256": "6d1de9c2944f2ccddca5f5e010ea5ae64a39845a86311af6fdf30841b0a5a16d",
+          "source": "https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/detection_Resnet50_Final.pth"
+        },
+        {
+          "path": "models/codeformer/parsing_parsenet.pth",
+          "size": 85331193,
+          "sha256": "3d558d8d0e42c20224f13cf5a29c79eba2d59913419f945545d8cf7b72920de2",
+          "source": "https://github.com/sczhou/CodeFormer/releases/download/v0.1.0/parsing_parsenet.pth"
+        }
+      ]
+    },
+    "swinjscc": {
+      "repo": "semcomm/SwinJSCC",
+      "files": [
+        {
+          "path": "models/swinjscc/SwinJSCC_wo_SAandRA_AWGN_HRimage_snr10_psnr_C64.model",
+          "size": 125905540,
+          "sha256": "7a45d4fa6a5b4210909e4d529b5b82ce3f1270cb0021adafe8c5f7318d164030",
+          "source": "gdrive:1PMYjEjU-N3q9Q6xcCAu2jnGbLvEI3hiv"
+        }
+      ]
+    },
+    "qwen": {
+      "repo": "Qwen/Qwen2.5-0.5B-Instruct",
+      "dir": "models/qwen2.5-0.5b-instruct",
+      "files": [
+        {
+          "path": "models/qwen2.5-0.5b-instruct/.gitattributes",
+          "size": 1519,
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+        },
+        {
+          "path": "models/qwen2.5-0.5b-instruct/LICENSE",
+          "size": 11343,
+          "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+        },
+        {
+          "path": "models/qwen2.5-0.5b-instruct/README.md",
+          "size": 4917,
+          "sha256": "b19c806a904db6dc878a0462e70b551f6b7ac78dfbb88c2eb966ca2b9109ae15"
+        },
+        {
+          "path": "models/qwen2.5-0.5b-instruct/config.json",
+          "size": 659,
+          "sha256": "18e18afcaccafade98daf13a54092927904649e1dd4eba8299ab717d5d94ff45"
+        },
+        {
+          "path": "models/qwen2.5-0.5b-instruct/generation_config.json",
+          "size": 242,
+          "sha256": "e558847a8b4402616f1273797b015104dc266fe4b520056fca88823ba8f8ebe6"
+        },
+        {
+          "path": "models/qwen2.5-0.5b-instruct/merges.txt",
+          "size": 1671839,
+          "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+        },
+        {
+          "path": "models/qwen2.5-0.5b-instruct/model.safetensors",
+          "size": 988097824,
+          "sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe"
+        },
+        {
+          "path": "models/qwen2.5-0.5b-instruct/tokenizer.json",
+          "size": 7031645,
+          "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+        },
+        {
+          "path": "models/qwen2.5-0.5b-instruct/tokenizer_config.json",
+          "size": 7305,
+          "sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583"
+        },
+        {
+          "path": "models/qwen2.5-0.5b-instruct/vocab.json",
+          "size": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ]
+    }
+  },
+  "created_utc": "2026-10-29T06:25:14Z",
+  "elapsed_s": 58.9
+}

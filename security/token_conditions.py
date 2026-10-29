@@ -45,6 +45,10 @@ def receive(*, stego, token, token_mode: str, config: dict, context: dict) -> di
 
 def _recover(baseline, stego, used, prompt, config, blob, delta, noise):
     from steganography.recover import recover
+    embeds = None
+    if blob.get("reference_path"):
+        embeds = baseline.embeds_from_path(blob["reference_path"])
     return recover(baseline.edict, stego, used, prompt, config, delta=delta,
                    eta=blob["eta"], steps=blob["steps"], mixing=blob["mixing"],
-                   guidance=config.get("guidance_scale", 1.0), noise=noise)
+                   guidance=config.get("guidance_scale", 1.0), noise=noise,
+                   image_embeds=embeds)

@@ -83,7 +83,16 @@ def main() -> None:
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--token-mode", choices=TOKEN_MODES, default="correct")
+    parser.add_argument("--ids", default=None,
+                        help="comma-separated image_ids to rebuild (patches the "
+                             "existing manifest instead of rewriting it)")
     args = parser.parse_args()
+
+    target_ids = None
+    if args.ids:
+        target_ids = {part.strip() for part in args.ids.split(",") if part.strip()}
+        if not target_ids:
+            parser.error("--ids was given but no image ids were parsed")
 
     set_seed(42, verbose=True)
     with open(paths.PROJECT_ROOT / "configs" / "base.yaml", "r", encoding="utf-8") as fh:
@@ -107,6 +116,15 @@ def main() -> None:
     tokens, tokens_version = load_tokens()
     conditions_dir = paths.RESULTS_DIR / "public_conditions"
 
+    # Provenance of the previous run: a cached reference may only be reused if
+    # the public condition it was generated from is still identical.
+    previous = {}
+    previous_manifest = None
+    if manifest_path.exists():
+        with open(manifest_path, "r", encoding="utf-8") as fh:
+            previous_manifest = json.load(fh)
+        previous = {r["image_id"]: r for r in previous_manifest.get("records", [])}
+
     records: List[Dict[str, Any]] = []
     grid_rows: List[Dict[str, Any]] = []
     failures: List[Dict[str, str]] = []
@@ -125,6 +143,9 @@ def main() -> None:
             ),
             "unet_fingerprint": _fingerprint(pipe.unet),
             "controlnet_fingerprint": None if controlnet is None else _fingerprint(controlnet),
+            # which checkpoint each component actually came from (PicX-Real, or
+            # the SD v1.5 fallback for anything PicX-Real does not ship)
+            "sources": getattr(pipe, "racs_sources", None),
         }
         try:
             for role in roles:
@@ -134,16 +155,28 @@ def main() -> None:
                     recs = recs[: args.limit]
                 for rec in recs:
                     image_id = rec["image_id"]
+                    if target_ids is not None and image_id not in target_ids:
+                        continue
                     src_path = paths.PROJECT_ROOT / rec["path"]
                     if sha256_file(src_path) != rec["sha256"]:
                         failures.append({"image_id": image_id, "error": "source sha256 mismatch"})
                         continue
                     cond = load_conditions(conditions_dir, image_id)
+                    cond_kpub_sha = sha256_string(cond["kpub"])
+                    cond_feat_sha = feature_sha256(cond.get("feature"))
                     token = tokens[image_id][
                         "token" if args.token_mode == "correct" else "wrong_token"
                     ]
                     ref_path = out_dir / f"{image_id}__{token}.png"
-                    if ref_path.exists() and not args.force:
+                    prev = previous.get(image_id, {})
+                    provenance_ok = (
+                        prev.get("token_mode") == args.token_mode
+                        and prev.get("kpub_sha256") == cond_kpub_sha
+                        and prev.get("feature_sha256") == cond_feat_sha
+                        and prev.get("reference_path")
+                        == str(ref_path.relative_to(paths.PROJECT_ROOT))
+                    )
+                    if ref_path.exists() and not args.force and provenance_ok:
                         ref_sha = sha256_file(ref_path)
                         status = "cached"
                         seed = derive_seed(token)
@@ -184,8 +217,8 @@ def main() -> None:
                         "class": cls,
                         "token_mode": args.token_mode,
                         "seed": seed,
-                        "kpub_sha256": sha256_string(cond["kpub"]),
-                        "feature_sha256": feature_sha256(cond.get("feature")),
+                        "kpub_sha256": cond_kpub_sha,
+                        "feature_sha256": cond_feat_sha,
                         "reference_path": str(ref_path.relative_to(paths.PROJECT_ROOT)),
                         "reference_sha256": ref_sha,
                         "latents_sha256": latents_sha,
@@ -233,6 +266,30 @@ def main() -> None:
         "records": sorted(records, key=lambda r: (r["role"], r["class"], r["image_id"])),
         "failures": failures,
     }
+
+    if target_ids is not None:
+        if not manifest_path.exists():
+            print(f"[ERROR] --ids requires an existing manifest at {manifest_path}")
+            sys.exit(1)
+        existing = previous_manifest
+        replaced = {r["image_id"] for r in records}
+        merged = [r for r in existing.get("records", [])
+                  if r["image_id"] not in replaced]
+        merged.extend(records)
+        merged_counts = defaultdict(lambda: defaultdict(int))
+        for rec in merged:
+            merged_counts[rec["role"]][rec["class"]] += 1
+        existing["records"] = sorted(
+            merged, key=lambda r: (r["role"], r["class"], r["image_id"])
+        )
+        existing["counts"] = {
+            role: dict(cls_counts) for role, cls_counts in merged_counts.items()
+        }
+        existing["split_version"] = manifest["split_version"]
+        existing["tokens_version"] = manifest["tokens_version"]
+        existing.setdefault("models", {}).update(manifest["models"])
+        existing["failures"] = failures
+        manifest = existing
     tmp = manifest_path.with_name(manifest_path.name + ".tmp")
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
@@ -241,7 +298,8 @@ def main() -> None:
     os.replace(tmp, manifest_path)
     print(f"[phase8] manifest -> {manifest_path}", flush=True)
 
-    _contact_sheet(grid_rows, paths.RESULTS_DIR / "phase8_reference_grid.png")
+    if grid_rows and target_ids is None:
+        _contact_sheet(grid_rows, paths.RESULTS_DIR / "phase8_reference_grid.png")
     print(f"[phase8] records={len(records)} failures={len(failures)} "
           f"elapsed={time.time() - t_all:.1f}s", flush=True)
     if failures:

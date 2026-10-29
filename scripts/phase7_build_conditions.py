@@ -43,6 +43,8 @@ from semantic.cache import (
     build_manifest_record,
     compute_config_hash,
     feature_sha256,
+    read_cache_npz,
+    read_manifest,
     sha256_string,
     write_cache_npz,
     write_manifest,
@@ -112,6 +114,173 @@ def make_contact_sheet(
     print(f"[contact sheet] {output_path}")
 
 
+def read_valid_cache(cache_path: Path, config_hash: str, source_sha: str):
+    """Return the cached record if it was built from this config and source."""
+    if not cache_path.exists():
+        return None
+    try:
+        cached = read_cache_npz(cache_path)
+    except Exception:  # noqa: BLE001
+        return None
+    if str(cached.get("config_hash", "")) != config_hash:
+        return None
+    if str(cached.get("source_sha256", "")) != source_sha:
+        return None
+    return cached
+
+
+def collect_kpubs(*, keygen_cfg, splits, roles_to_build, tokens_all, cache_dir,
+                  config_hash, limit, target_ids, force):
+    """Pass 1: generate every Kpub with only the keygen loaded, then unload it.
+
+    Returns ``(kpubs, keygen_info, failures)``. Records whose cache is already
+    valid are skipped, so a rerun does not pay for the LLM again.
+    """
+    wanted = []
+    for cls in CLASSES:
+        for role in roles_to_build:
+            records = splits[role].records(cls)
+            if limit > 0:
+                records = records[:limit]
+            for record in records:
+                image_id = record["image_id"]
+                if target_ids is not None and image_id not in target_ids:
+                    continue
+                if not force and read_valid_cache(
+                        cache_dir / f"{image_id}.npz", config_hash,
+                        record["sha256"]) is not None:
+                    continue
+                wanted.append((role, cls, record))
+
+    if not wanted:
+        print("[keygen] every record already cached; keygen not loaded")
+        return {}, {"method": keygen_cfg.get("method", "blip_template"),
+                    "model_id": keygen_cfg.get("model_id", ""),
+                    "weight_sha256": "", "llm_fallbacks": 0,
+                    "loaded": False}, []
+
+    print(f"[keygen] pass 1/2: {len(wanted)} Kpub to generate "
+          f"(method = {keygen_cfg.get('method', 'blip_template')})", flush=True)
+    keygen = build_keygen(keygen_cfg)
+    print(f"[keygen] model loaded, weight_sha256 = {keygen.weight_sha256}", flush=True)
+
+    kpubs, failures = {}, []
+    for index, (role, cls, record) in enumerate(wanted, 1):
+        image_id = record["image_id"]
+        source_path = paths.PROJECT_ROOT / record["path"]
+        try:
+            image = Image.open(source_path).convert("RGB").resize(
+                (512, 512), Image.BICUBIC)
+        except Exception as exc:  # noqa: BLE001
+            failures.append({"image_id": image_id, "error": f"load failed: {exc}"})
+            continue
+        try:
+            result = keygen.generate_kpub(image, context={
+                "image_id": image_id, "role": role, "class": cls})
+        except Exception as exc:  # noqa: BLE001
+            print(f"[ERROR] Keygen failed for {image_id}: {exc}")
+            failures.append({"image_id": image_id, "error": f"keygen failed: {exc}"})
+            continue
+        token_info = tokens_all.get(image_id, {})
+        errors = validate_kpub(
+            result["kpub"],
+            max_chars=keygen_cfg.get("max_chars", 300),
+            image_id=image_id,
+            token=token_info.get("token", ""),
+            wrong_token=token_info.get("wrong_token", ""),
+            path=str(record["path"]),
+            sha256=record["sha256"],
+        )
+        if errors:
+            msg = f"Kpub validation failed for {image_id}: {errors}"
+            print(f"[ERROR] {msg}")
+            failures.append({"image_id": image_id, "error": msg})
+            continue
+        kpubs[image_id] = result
+        if index % 20 == 0 or index == len(wanted):
+            print(f"  [kpub {index}/{len(wanted)}] {image_id} "
+                  f"{result['kpub'][:60]}", flush=True)
+
+    info = {
+        "method": keygen_cfg.get("method", "blip_template"),
+        # ``keygen.model_id`` is the model that writes Kpub (the LLM on the
+        # local_llm path); the perception model is recorded alongside it.
+        "model_id": getattr(keygen, "model_id", keygen_cfg.get("model_id", "")),
+        "perception_model_id": keygen_cfg.get("model_id", ""),
+        "weight_sha256": keygen.weight_sha256,
+        "llm_fallbacks": int(getattr(keygen, "fallback_count", 0)),
+        "loaded": True,
+    }
+    keygen.unload()
+    del keygen
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    print(f"[keygen] pass 1/2 done: {len(kpubs)} Kpub, "
+          f"{info['llm_fallbacks']} fallbacks; keygen unloaded", flush=True)
+    return kpubs, info, failures
+
+
+class LazyExtractors:
+    """Hold at most one feature extractor, and remember what each one was.
+
+    The manifest needs every class's model identity, but the 6 GB card cannot
+    hold them all at once, so metadata is captured at first build and kept
+    after the model itself is released.
+    """
+
+    def __init__(self, features_cfg: dict) -> None:
+        self.features_cfg = features_cfg
+        self._active = None
+        self._active_class = None
+        self._info: dict = {}
+
+    def get(self, class_name: str):
+        if self._active_class != class_name:
+            self.release()
+            self._active = build_feature_extractor(self.features_cfg, class_name)
+            self._active_class = class_name
+            self._info[class_name] = {
+                "method": self._active.method,
+                "model_id": self._active.model_id,
+                "weight_sha256": self._active.weight_sha256,
+            }
+            print(f"[features] {class_name}: method = {self._active.method}, "
+                  f"model_id = {self._active.model_id}", flush=True)
+        return self._active
+
+    def describe(self, class_name: str) -> dict:
+        """Model identity for the manifest, building the extractor if needed."""
+        if class_name not in self._info:
+            self.get(class_name)
+        self._capture_counters()
+        return dict(self._info[class_name])
+
+    def active_method(self, class_name: str) -> str:
+        return str(self._info.get(class_name, {}).get("method", ""))
+
+    def _capture_counters(self) -> None:
+        """Keep per-class counters (e.g. annotator fallbacks) after release."""
+        if self._active is None or self._active_class is None:
+            return
+        fallbacks = getattr(self._active, "fallbacks", None)
+        if fallbacks is not None:
+            self._info[self._active_class]["fallbacks"] = int(fallbacks)
+
+    def release(self) -> None:
+        self._capture_counters()
+        if self._active is not None:
+            try:
+                self._active.unload()
+            except Exception:  # noqa: BLE001
+                pass
+        self._active = None
+        self._active_class = None
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Phase 7: build public conditions")
     parser.add_argument("--split", choices=["calibration", "evaluation"],
@@ -122,7 +291,16 @@ def main():
                         help="rebuild even if cache exists")
     parser.add_argument("--method", default=None,
                         help="override keygen method")
+    parser.add_argument("--ids", default=None,
+                        help="comma-separated image_ids to rebuild (patches the "
+                             "existing manifest instead of rewriting it)")
     args = parser.parse_args()
+
+    target_ids = None
+    if args.ids:
+        target_ids = {part.strip() for part in args.ids.split(",") if part.strip()}
+        if not target_ids:
+            parser.error("--ids was given but no image ids were parsed")
 
     # ── 1. Seed ──────────────────────────────────────────────────────────────
     set_seed(42, verbose=True)
@@ -180,34 +358,43 @@ def main():
     tokens_all, tokens_version = load_tokens()
 
     # ── 4. Build backends ────────────────────────────────────────────────────
-    print(f"[keygen] method = {keygen_cfg.get('method', 'blip_template')}")
-    keygen = build_keygen(keygen_cfg)
-    print(f"[keygen] model loaded, weight_sha256 = {keygen.weight_sha256}")
-
-    # Build feature extractors per class (reuse across images)
-    extractors = {}
-    for cls in CLASSES:
-        extractors[cls] = build_feature_extractor(features_cfg, cls)
-        print(f"[features] {cls}: method = {extractors[cls].method}, "
-              f"model_id = {extractors[cls].model_id}")
+    # Pass 1: every Kpub, with only the keygen resident. Pass 2 (below) does
+    # the features, one extractor at a time. BLIP + the LLM + OneFormer or
+    # OpenPose together exhaust this machine, and nothing needs them together.
+    kpub_cache, keygen_info, keygen_failures = collect_kpubs(
+        keygen_cfg=keygen_cfg,
+        splits=splits,
+        roles_to_build=roles_to_build,
+        tokens_all=tokens_all,
+        cache_dir=cache_dir,
+        config_hash=config_hash,
+        limit=args.limit,
+        target_ids=target_ids,
+        force=args.force,
+    )
+    extractors = LazyExtractors(features_cfg)
 
     # ── 5. Process all images ────────────────────────────────────────────────
     manifest_records = []
     contact_sheet_data = []
     counts = defaultdict(lambda: defaultdict(int))
-    failures = []
+    failures = list(keygen_failures)
     total_processed = 0
+    reused_count = 0
+    built_count = 0
     t_start = time.time()
 
-    for role in roles_to_build:
-        split = splits[role]
-        for cls in CLASSES:
+    for cls in CLASSES:
+        for role in roles_to_build:
+            split = splits[role]
             records = split.records(cls)
             if args.limit > 0:
                 records = records[:args.limit]
 
             for record in records:
                 image_id = record["image_id"]
+                if target_ids is not None and image_id not in target_ids:
+                    continue
                 source_path = paths.PROJECT_ROOT / record["path"]
                 source_sha = record["sha256"]
 
@@ -223,11 +410,10 @@ def main():
                 cache_path = cache_dir / f"{image_id}.npz"
                 preview_path = cache_dir / f"{image_id}_preview.png"
 
-                if not args.force and cache_path.exists():
-                    # Verify config hash matches
-                    try:
-                        cached = np.load(str(cache_path), allow_pickle=False)
-                        if str(cached.get("config_hash", "")) == config_hash:
+                if not args.force:
+                    cached = read_valid_cache(cache_path, config_hash, source_sha)
+                    if cached is not None:
+                        if True:
                             # Cache is valid, read the record for manifest
                             kpub = str(cached["kpub"])
                             feature_kind = str(cached["feature_kind"])
@@ -253,9 +439,8 @@ def main():
                             ))
                             counts[role][cls] += 1
                             total_processed += 1
+                            reused_count += 1
                             continue
-                    except Exception:
-                        pass  # cache invalid, rebuild
 
                 # Load image
                 try:
@@ -267,41 +452,15 @@ def main():
                     failures.append({"image_id": image_id, "error": msg})
                     continue
 
-                # Generate Kpub
-                try:
-                    token_info = tokens_all.get(image_id, {})
-                    context = {
-                        "image_id": image_id,
-                        "role": role,
-                        "class": cls,
-                    }
-                    kpub_result = keygen.generate_kpub(image, context=context)
-                    kpub = kpub_result["kpub"]
-
-                    # Validate
-                    kpub_errors = validate_kpub(
-                        kpub,
-                        max_chars=keygen_cfg.get("max_chars", 300),
-                        image_id=image_id,
-                        token=token_info.get("token", ""),
-                        wrong_token=token_info.get("wrong_token", ""),
-                        path=str(record["path"]),
-                        sha256=source_sha,
-                    )
-                    if kpub_errors:
-                        msg = f"Kpub validation failed for {image_id}: {kpub_errors}"
-                        print(f"[ERROR] {msg}")
-                        failures.append({"image_id": image_id, "error": msg})
-                        continue
-                except Exception as exc:
-                    msg = f"Keygen failed for {image_id}: {exc}"
-                    print(f"[ERROR] {msg}")
-                    failures.append({"image_id": image_id, "error": msg})
+                # Kpub comes from pass 1; a record missing one already failed there
+                kpub_result = kpub_cache.get(image_id)
+                if kpub_result is None:
                     continue
+                kpub = kpub_result["kpub"]
 
                 # Extract feature
                 try:
-                    feat_result = extractors[cls].extract(image)
+                    feat_result = extractors.get(cls).extract(image)
                     feature_kind = feat_result["feature_kind"]
                     feat_array = feat_result.get("feature")
                     feat_preview = feat_result.get("preview")
@@ -332,6 +491,8 @@ def main():
                         feature_kind=feature_kind,
                         feature=feat_array,
                         config_hash=config_hash,
+                        feature_method=feat_result.get(
+                            "feature_method", extractors.active_method(cls)),
                     )
 
                     # Write preview
@@ -364,6 +525,7 @@ def main():
                 ))
                 counts[role][cls] += 1
                 total_processed += 1
+                built_count += 1
 
                 # Collect for contact sheet
                 contact_sheet_data.append({
@@ -381,21 +543,13 @@ def main():
     elapsed = time.time() - t_start
 
     # ── 6. Write manifest ────────────────────────────────────────────────────
-    models_info = {
-        "keygen": {
-            "method": keygen_cfg.get("method", "blip_template"),
-            "model_id": keygen_cfg.get("model_id", ""),
-            "weight_sha256": keygen.weight_sha256,
-        },
-    }
+    # ``llm_fallbacks`` counts degenerate LLM replies that fell back to the
+    # deterministic perception prompt.
+    models_info = {"keygen": dict(keygen_info)}
     for cls in CLASSES:
-        ext = extractors[cls]
-        models_info[cls] = {
-            "method": ext.method,
-            "model_id": ext.model_id,
-            "weight_sha256": ext.weight_sha256,
-        }
+        models_info[cls] = extractors.describe(cls)
 
+    manifest_records.sort(key=lambda r: (r["role"], r["class"], r["image_id"]))
     manifest = build_manifest(
         records=manifest_records,
         split_version=split_version,
@@ -404,12 +558,40 @@ def main():
         models=models_info,
         counts={role: dict(cls_counts) for role, cls_counts in counts.items()},
     )
+
+    if target_ids is not None:
+        # Partial rebuild: merge into the existing manifest so unrelated
+        # records (and their hashes) are preserved.
+        if not manifest_path.exists():
+            print(f"[ERROR] --ids requires an existing manifest at {manifest_path}")
+            sys.exit(1)
+        existing = read_manifest(manifest_path)
+        replaced = {r["image_id"] for r in manifest_records}
+        merged = [r for r in existing.get("records", [])
+                  if r["image_id"] not in replaced]
+        merged.extend(manifest_records)
+        if existing.get("config_hash") and existing["config_hash"] != config_hash:
+            print("[WARN] existing manifest config_hash differs; "
+                  "mixed manifest may fail verification")
+        merged_counts = defaultdict(lambda: defaultdict(int))
+        for rec in merged:
+            merged_counts[rec["role"]][rec["class"]] += 1
+        existing["records"] = sorted(
+            merged, key=lambda r: (r["role"], r["class"], r["image_id"])
+        )
+        existing["counts"] = {
+            role: dict(cls_counts) for role, cls_counts in merged_counts.items()
+        }
+        existing["config_hash"] = config_hash
+        existing["models"] = models_info
+        manifest = existing
     write_manifest(manifest, manifest_path)
     print(f"\n[manifest] written to {manifest_path}")
 
     # ── 7. Contact sheet ─────────────────────────────────────────────────────
     grid_path = paths.RESULTS_DIR / "phase7_conditions_grid.png"
-    if contact_sheet_data:
+    # Never clobber a complete contact sheet with a partial (reused/subsampled) run.
+    if contact_sheet_data and target_ids is None and reused_count == 0:
         make_contact_sheet(contact_sheet_data, grid_path, cols_per_class=3, thumb=128)
 
     # ── 8. Summary ───────────────────────────────────────────────────────────
@@ -421,6 +603,8 @@ def main():
         parts = [f"{cls}={role_counts.get(cls, 0)}" for cls in CLASSES]
         print(f"  {role:15s}  {', '.join(parts)}")
     print(f"  total processed: {total_processed}")
+    print(f"  reused:          {reused_count}")
+    print(f"  rebuilt:         {built_count}")
     print(f"  failed:          {len(failures)}")
     print(f"  config_hash:     {config_hash}")
     print(f"  split_version:   {split_version}")
@@ -432,9 +616,7 @@ def main():
             print(f"  {f['image_id']}: {f['error']}")
 
     # ── 9. Cleanup ───────────────────────────────────────────────────────────
-    keygen.unload()
-    for ext in extractors.values():
-        ext.unload()
+    extractors.release()
     gc.collect()
     if torch.cuda.is_available():
         torch.cuda.empty_cache()

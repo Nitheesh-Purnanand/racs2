@@ -611,7 +611,13 @@ Consequences today:
 - `phase7_verify.py` / `phase8_verify.py` will fail because the live config hash no longer matches
   the frozen caches/references.
 
-Choose one state and record it:
+**Chosen and recorded on 2026-10-29: Option B, the paper components.** The assets were
+fetched (`scripts/fetch_paper_assets.py`), the config was switched, and Phases 7-16 were rerun
+and re-frozen end to end with `scripts/run_baseline.py --mode paper`. The superseded artifacts
+are archived under `experiments/results/archive/`. Option A below is kept only as the recipe for
+reproducing that older baseline from a past commit (`--mode frozen --frozen-ref <commit>`).
+
+The original choice, for the record:
 
 **Option A - keep the frozen baseline**
 

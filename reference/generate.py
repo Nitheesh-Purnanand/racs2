@@ -49,8 +49,23 @@ def _fingerprint(module) -> str:
     return digest.hexdigest()
 
 
+def resolve_model_source(model_id: str) -> str:
+    """Accept either a hub id or a repo-relative local model directory."""
+    candidate = Path(model_id)
+    if not candidate.is_absolute():
+        candidate = _ROOT / model_id
+    return str(candidate) if candidate.exists() else str(model_id)
+
+
 def build_pipeline(class_name: str, config: dict):
-    """Build the base or ControlNet pipeline for one class."""
+    """Build the base or ControlNet pipeline for one class.
+
+    ``backend: picx_real`` points ``model_id`` at the local PicX-Real
+    checkpoint (the paper's reference generator); ``backend: sd_controlnet``
+    keeps plain SD v1.5. Either way the pipeline is SD v1.5-shaped, so the
+    SD v1.5 ControlNets apply unchanged. Any component the primary checkpoint
+    does not ship is taken from ``fallback_model_id`` and recorded.
+    """
     device = get_device()
     dtype = torch.float16 if config.get("dtype", "float16") == "float16" else torch.float32
     device_map = str(device) if device.type == "cuda" else None
@@ -58,17 +73,35 @@ def build_pipeline(class_name: str, config: dict):
     if device_map:
         load_kwargs["device_map"] = device_map
     model_id = config.get("model_id", "stable-diffusion-v1-5/stable-diffusion-v1-5")
+    primary = resolve_model_source(model_id)
+    fallback = resolve_model_source(
+        config.get("fallback_model_id", "stable-diffusion-v1-5/stable-diffusion-v1-5")
+    )
+    sources: Dict[str, str] = {}
+
+    def component(name: str, loader, **kwargs):
+        """Load one sub-module from the primary checkpoint, else the fallback."""
+        try:
+            module = loader.from_pretrained(primary, subfolder=name, **kwargs)
+            sources[name] = primary
+            return module
+        except Exception as exc:  # noqa: BLE001
+            if primary == fallback:
+                raise
+            print(f"[reference] {name}: primary checkpoint unusable ({type(exc).__name__}); "
+                  f"falling back to {fallback}")
+            module = loader.from_pretrained(fallback, subfolder=name, **kwargs)
+            sources[name] = fallback
+            return module
 
     # Load components one by one. Loading the whole pipeline at once duplicates
     # the ControlNet on CPU and GPU, which exhausts the 6 GB card's commit
     # budget on Windows.
-    unet = UNet2DConditionModel.from_pretrained(model_id, subfolder="unet", **load_kwargs)
-    vae = AutoencoderKL.from_pretrained(model_id, subfolder="vae", **load_kwargs)
-    text_encoder = CLIPTextModel.from_pretrained(
-        model_id, subfolder="text_encoder", **load_kwargs
-    )
-    tokenizer = CLIPTokenizer.from_pretrained(model_id, subfolder="tokenizer")
-    scheduler = DDIMScheduler.from_pretrained(model_id, subfolder="scheduler")
+    unet = component("unet", UNet2DConditionModel, **load_kwargs)
+    vae = component("vae", AutoencoderKL, **load_kwargs)
+    text_encoder = component("text_encoder", CLIPTextModel, **load_kwargs)
+    tokenizer = component("tokenizer", CLIPTokenizer)
+    scheduler = component("scheduler", DDIMScheduler)
 
     if class_name == "style":
         controlnet = None
@@ -94,6 +127,12 @@ def build_pipeline(class_name: str, config: dict):
         pipe.enable_vae_slicing()
     except Exception:  # noqa: BLE001
         pass
+    pipe.racs_sources = {
+        "backend": config.get("backend", "sd_controlnet"),
+        "model_id": model_id,
+        "resolved": primary,
+        "components": sources,
+    }
     return pipe, controlnet
 
 
@@ -151,5 +190,10 @@ def generate_reference(
 
 
 def unload(pipe) -> None:
+    """Release a pipeline's GPU memory.
+
+    Callers must also drop their own reference (``pipe = None``); verifiers run
+    one class per subprocess so a lingering handle cannot block the next load.
+    """
     del pipe
     _free()

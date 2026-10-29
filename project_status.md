@@ -1,9 +1,18 @@
 # RACS2 — Project Status & Change Log
 
 > **Location**: `d:\racs2\project_status.md`  
-> **Last Updated**: 2026-10-28  
-> **Current Phase**: Phases 11-16 complete. Phase 15 froze the baseline; Phase 16 froze the
-> baseline security table and XuNet steganalysis. Phase 17 (RACS retrieval stack) is next.
+> **Last Updated**: 2026-10-29 14:35  
+> **Current Phase**: the pipeline now runs the paper's own components (PicX-Real,
+> IPAdapter-plus, OneFormer, OpenPose, LLM `Kpub`, SwinJSCC, CodeFormer) and
+> **Phases 7-9 are rebuilt and verified on them**. The rebuild was stopped partway:
+> **Phases 10-16 still hold substitute-stack artifacts**, so the tree is in a mixed
+> state and `--verify-only` fails there by design (Phase 15 on the config-vs-manifest
+> check, Phase 16 16/17 on the frozen-hash check). Finish with
+> `scripts\run_baseline.py --mode paper --from-phase 10 --to-phase 16 --yes`.
+> **Free memory first**: this box has 1.9 GB of free commit and 3.3 GB free on C:, and a
+> long phase needs about 5 GB. See `handoff_file.md` §5.1 and §7.
+> **One command**: `.venv\Scripts\python.exe scripts\run_baseline.py --show` prints the
+> current (still superseded) results. See `README.md` and `handoff_file.md` §2.
 > **Runbooks**: `PHASE_RUNBOOK_1_TO_6.md`, `PHASE_RUNBOOK_7_TO_16.md`, `PHASE_RUNBOOK_17_TO_20.md`.
 
 ---
@@ -28,16 +37,53 @@
 | **Phase 4 — Retrieval Image Database** | ✅ Completed | `retrieval/schema.py`, `retrieval/corpus.py`, `scripts/phase4_build_corpus.py`, `scripts/phase4_verify.py`. 1,000-image COCO val2017 corpus (512×512 RGB), versioned `image_index.json`, loader + integrity/determinism checks pass. |
 | **Phase 5 — CLIP Embeddings** | ✅ Completed | `models/clip_encoder.py`, `scripts/phase5_clip.py`, `scripts/phase5_verify.py`, `scripts/phase5_fetch_model.py`. CLIP ViT-B/32, 1,000 × 512-d float32 L2-normalised vectors aligned with the corpus. Verify PASS: re-encode max|diff| 2.5e-07, caption→image top-1 0.476, within-topic 0.779 vs across 0.542. |
 | **Phase 6 — Evaluation Harness & Splits** | ✅ Completed | `evaluation/splits.py` (role enforcement, tokens), `evaluation/report.py` (frozen report schema), extended `evaluation/metrics.py` (LPIPS + `distribution()`), `scripts/phase6_build_testset.py`, `scripts/phase6_eval_selftest.py`, `scripts/eval_report.py`, `scripts/dummy_runner.py`, `docs/DEVIATIONS.md`. Two frozen splits: **calibration** (UniStega, 22/class) and **evaluation** (COCO val2017 / Commons human portraits / Commons cats, 22/class). `split_version a57d9c8c...`, `tokens_version 20166234...`. Selftest **83/83 PASS**; dummy evaluation 264 cases across 12 cells. |
-| **Phase 7 — Public Conditions (`Kpub` + `Xfeat`)** | ✅ Completed | `semantic/keygen.py` (BLIP + template), `semantic/features.py` (SegFormer-B0 segmentation, MediaPipe FaceLandmarker skeleton, style `none`), `semantic/cache.py`, `scripts/phase7_build_conditions.py`, `scripts/phase7_verify.py`. 132 records (22 per class per role), `config_hash 6e5eec49...`, `split_version e52d2ddf...` (live split; earlier notes used a57d9c8c before the split manifest was regenerated). Determinism exact for Kpub and features; `phase7_verify.json` PASS; grid inspected. |
-| **Phase 8 — Reference Generator** | ✅ Completed | `reference/seed.py`, `reference/conditions.py`, `reference/generate.py`, `scripts/phase8_reference.py`, `scripts/phase8_verify.py`. SD v1.5 + seg/OpenPose ControlNet, 256 px, 20 DDIM steps. 132 references, exact rerun hashes, peak 2.84 GB, `phase8_verify.json` PASS. PicX-Real/IPAdapter and 512 px are deviations. |
-| **Phase 9 — ControlNet Zero-Conv Fine-Tune** | ✅ Completed | `reference/train_controlnet.py`, `scripts/phase9_train_controlnet.py`, `scripts/phase9_verify.py`. 50 bf16 steps on calibration common+facial, only zero-conv blocks trainable (11.48M trainable / 349.8M frozen), probe MSE 0.1488 -> 0.1296, checkpoint `controlnet_zero_conv_50_88159c58.safetensors`, verify PASS. |
-| **Phase 10 — EDICT** | ✅ Completed | `steganography/edict.py`, `scripts/phase10_edict.py`, `scripts/phase10_verify.py`. 256 px / 32x32 float32 latent, fp16 SD UNet, 20 steps, mixing 0.93, guidance 1.0. 20 random + 20 image latents; max relative error 3.58e-3, max abs 9.49e-3; verify PASS with the documented fp16 numerical-floor deviation. |
-| **Phase 11 — Local Steganography Core** | ✅ Completed | `steganography/mask.py`, `hide.py`, `recover.py`, `pipeline.py`, `scripts/phase11_local.py`, `scripts/phase11_verify.py`. Token mask from the Phase 8 seed contract, bounded-strength EDICT hide/recover at 256 px, 20 steps, eta 0.05, strength 0.2, guidance 3.0. 20 matched + 20 mismatched evaluation images. Recovery PSNR 26.77 dB (matched) vs 26.62 dB (mismatched); stego PSNR 23.28 dB; deterministic reruns; verify 12/12 PASS. |
-| **Phase 12 — AWGN Channel** | ✅ Completed | `communication/awgn.py`, `scripts/phase12_awgn.py`, `scripts/phase12_verify.py`. sigma^2 = P_signal / 10^(SNR/10) from the measured power, fixed seed per cell. Mean recovery PSNR 12.68 / 14.96 / 17.93 / 21.08 dB at 5/10/15/20 dB. Analytic variance max relative error 0.46 percent; seed replay exact; verify 7/7 PASS. |
-| **Phase 13 — Semantic Codec** | ✅ Completed | `communication/semantic_codec.py`, `scripts/phase13_codec.py`, `scripts/phase13_verify.py`. Frozen SD-VAE analog JSCC substitute (paper checkpoints unavailable), explicit invertible power normalisation, pinned state-dict hash. Isolated PSNR 17.88 / 22.88 / 26.70 / 28.51 dB. Codec+recovery beats raw AWGN by +1.40 to +2.33 dB PSNR. Verify 9/9 PASS. |
-| **Phase 14 — Optional CodeFormer Enhancement** | ✅ Completed | `enhancement/codeformer.py`, `scripts/phase14_enhance.py`, `scripts/phase14_verify.py`. CodeFormer/facelib stack unavailable in this environment, so the module is a documented deterministic pass-through kept **off by default** and restricted to the facial class; deltas are exactly 0 at all four SNR cells. Non-facial control unchanged. Verify 13/13 PASS. |
-| **Phase 15 — Baseline Gate** | ✅ Completed | `pipelines/agentsemstecom.py`, `scripts/phase15_baseline.py`, `scripts/phase15_verify.py`. 15A calibration on UniStega (approximate, deviations recorded) and 15B authoritative evaluation baseline: 264 cases, 12 cells, `baseline_table.json` frozen, `phase15_verify.json` PASS. |
-| **Phase 16 — Baseline Security & Steganalysis** | ✅ Completed | `security/token_conditions.py`, `security/steganalysis.py`, `scripts/phase16_security.py`, `phase16_steganalysis.py`, `phase16_manifest.py`, `phase16_verify.py`. Three receiver conditions (correct / wrong / no_token) on 264 frozen cases, N=22 per cell; aggregate PSNR 17.39 / 13.05 / 13.07 dB, correct-minus-wrong gap **4.34 dB** (threshold 4 dB), 6 low-SNR per-cell exceptions documented. XuNet (SRM front end, 5 blocks) trained on 2x2 128 px patches from 66 images, image-disjoint 46/10/10 split (368/80/80 samples); test accuracy **0.4875** (n=80) vs chance 0.5 and paper anchor 0.5091. Verify **17/17 PASS**. Report: `docs/phase16_report.md`. |
+| **Phase 7 — Public Conditions (`Kpub` + `Xfeat`)** | ✅ Rebuilt on paper components (2026-10-29) | `semantic/keygen.py` (Qwen2.5-0.5B-Instruct over a BLIP perception caption), `semantic/features.py` (OneFormer ADE20K Swin-L; OpenPose body+face with a per-image MediaPipe fallback on 3 of 22 portraits), `semantic/cache.py` (now records `feature_method`). Two-pass build (all `Kpub`, then features) to fit the 6 GB card. 132 records, 0 degenerate LLM replies, `config_hash 9e83de1b…`, `phase7_verify.json` PASS. |
+| **Phase 8 — Reference Generator** | ✅ Rebuilt on paper components (2026-10-29) | `reference/generate.py` gained `backend: picx_real` with per-component provenance. 132 PicX-Real references at 256 px / 20 DDIM steps, exact rerun determinism, peak VRAM 2.84 GB, `phase8_verify.json` **12/12 PASS**. New `scripts/phase8_embeds.py` prefills the IPAdapter embedding cache (132 entries, keyed by reference SHA-256) so the baseline loop never loads CLIP-H. |
+| **Phase 9 — ControlNet Zero-Conv Fine-Tune** | ✅ Rerun on the PicX-Real base (2026-10-29) | `reference/train_controlnet.py` now resolves local checkpoints. `phase9_verify.json` PASS. |
+| **Phase 10 — EDICT** | ⏸ Stale (substitute-stack artifact from 2026-10-27) | Rebuild attempted and stopped. A latent bug was found and fixed: `edict.sweep_mixing` contained `0.5`, the singular point of the EDICT coupling, which the invertibility guard rejects — the full build could never complete, hidden because recent runs were verify-only. Sweep now starts at 0.55 and out-of-range cells are skipped with a note. |
+| **Phase 11 — Local Steganography Core** | ⏸ Stale | IPAdapter-plus is wired through `hide`/`recover` symmetrically and phase 11 passes the reference path so both ends read the cached embedding. Not yet rerun. |
+| **Phase 12 — AWGN Channel** | ⏸ Stale | Unchanged code; needs rerun only for consistency with the new upstream artifacts. |
+| **Phase 13 — Semantic Codec** | ⏸ Stale | `communication/swinjscc.py` loads the official `SwinJSCC_wo_SAandRA_AWGN_HRimage_snr10_psnr_C64` release in float32. Measured standalone: **32.54 dB at 10 dB SNR**, seed-replay bit-identical (SD-VAE substitute gave 22.88 dB). Verify no longer assumes the codec exposes a `.vae`. |
+| **Phase 14 — CodeFormer Enhancement** | ⏸ Stale | Real `codeformer.pth` loads and runs (CPU, float32, 512 px, fidelity 0.5, facial only, **enabled**); deterministic on repeat. Verify rewritten: it no longer asserts "disabled / delta exactly zero" but requires measured deltas, a real backend and size preservation. |
+| **Phase 15 — Baseline Gate** | ⏸ Stale (substitute-stack table from 2026-10-28) | Manifest now records the full component set (reference backend, `Kpub`/`Xfeat` methods, IPAdapter weight hash, codec hash). Verify now checks that config and frozen manifest **agree** instead of hardcoding "enhancement off". |
+| **Phase 16 — Baseline Security & Steganalysis** | ⏸ Stale | Receiver side already reads the cached IPAdapter embedding, so the three token conditions stay symmetric. Needs rerun after Phase 15. The on-disk substitute-stack run (2026-10-29 11:32) gives 17.33 / 13.01 / 13.04 dB, gap 4.32 dB, XuNet 0.4625, and `phase16_verify.json` is 16/17: the only failure is the frozen-hash check, because `phase16_manifest.json` (08:28) pins `8ab321a5…` / `78db750b…` while the files now hash to `54ffbe66…` / `d5936ac4…`. |
+
+### Where the tree stands (2026-10-29 14:35, re-checked on disk)
+
+**Done and verified on the paper stack**
+
+- Paper components fetched and pinned by SHA-256 in `models/PAPER_ASSETS.json`.
+- Phase 7 PASS: 132 records, 0 degenerate LLM replies, 3 recorded MediaPipe fallbacks,
+  semantic `config_hash 9e83de1b…`.
+- Phase 8 12/12 PASS: 132 PicX-Real references, exact rerun determinism, 2.84 GB peak.
+  All 132 PNGs show as modified in git, because they were regenerated in place.
+- Phase 9 PASS on the PicX-Real base.
+- Standalone measurements: SwinJSCC 32.54 dB at 10 dB SNR (substitute 22.88 dB); one facial
+  image end to end 24.25 dB correct vs 13.90 wrong (10.3 dB gap).
+
+**Stale, from the old substitute stack**
+
+- Phases 10-16 artifacts and `baseline_table.json` / `baseline_manifest.json` (frozen
+  2026-10-28 21:32 UTC, `config_hash da93514e…`, codec `sd_vae_substitute`, enhancement
+  disabled).
+- Live config is now `397b0e7c…` (`codec.kind: swinjscc`, `enhancement.enabled: true`,
+  `ipadapter.enabled: true`, `reference.backend: picx_real`), so the frozen manifest and the
+  config disagree on purpose until Phase 15 is rebuilt.
+- `phase16_manifest.json` is stale in three layers: its own `baseline_table_sha256`
+  (`a6db2536…`) predates the table on disk (`2d5cc07a…`), and its security/steganalysis
+  hashes predate the 11:32 rerun.
+- `docs/phase16_report.md` still quotes the pre-rerun freeze (17.39 / 13.05 / 13.07 dB, XuNet
+  0.4875). Neither that nor the newer on-disk values are final; both are substitute-stack.
+
+**Blocking next step**
+
+```powershell
+cd D:\racs2
+.venv\Scripts\python.exe scripts\run_baseline.py --mode paper --from-phase 10 --to-phase 16 --yes --retries 2
+```
+
+Then re-freeze in the order table → 15A manifest → security → steganalysis → Phase 16 manifest
+→ verify, and regenerate `docs/phase16_report.md`. Full checklist: `handoff_file.md` §5 and §10.
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -223,6 +269,132 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
 
 ## 5. Change Log
 
+### [2026-10-29] - Pipeline moved to the paper's own components (rebuild stopped after Phase 9)
+
+Every component the paper names and that can be obtained is now the component the pipeline
+runs, fetched by `scripts/fetch_paper_assets.py` and pinned by SHA-256 in
+`models/PAPER_ASSETS.json`.
+
+**Status of the rebuild**: Phases 7, 8 and 9 were rebuilt on these components and verified
+(PASS, 12/12 PASS, PASS). The run was stopped during Phase 10 at the user's request, so
+**Phases 10-16 still hold substitute-stack artifacts** and the tree is in a mixed state:
+the 132 reference images changed in place, so the Phase 11/15/16 per-case records no longer
+match their inputs and `--verify-only` fails there by design. Resume with
+`scripts/run_baseline.py --mode paper --from-phase 10 --to-phase 16 --yes`.
+
+| Stage | Before | Now |
+| :-- | :-- | :-- |
+| `Kpub` | BLIP caption + fixed template | **Qwen2.5-0.5B-Instruct** over a BLIP perception caption, greedy |
+| `Xfeat` common | SegFormer-B0 | **OneFormer ADE20K Swin-L** |
+| `Xfeat` facial | MediaPipe face mesh | **OpenPose** body+face (MediaPipe only where OpenPose detects no body: 3 of 22) |
+| reference | SD v1.5 + ControlNet | **PicX-Real** + SD v1.5 ControlNet (seg / openpose) |
+| image prompt | none | **IPAdapter-plus weight 1**, injected at both ends |
+| codec | SD-VAE substitute | **SwinJSCC** C=64, AWGN, trained 10 dB |
+| enhancement | pass-through, disabled | **CodeFormer** fidelity 0.5, facial, enabled |
+
+- **Added** `communication/swinjscc.py`, `steganography/ipadapter.py`,
+  `scripts/fetch_paper_assets.py`, `scripts/phase8_embeds.py`, `scripts/run_baseline.py`
+  (the single orchestrator, renamed from `run_phases_1_to_16.py`) and
+  `scripts/baseline_example.py` (one image end to end). `README.md` is new.
+- **`semantic/keygen.py`**: `LLMKeygen` with a one-shot chat prompt, instruction-echo
+  stripping, markdown/URL sanitising and a deterministic fallback to the perception prompt
+  for degenerate replies. Fallbacks are counted in the Phase 7 manifest. The prompt text and
+  a `llm_prompt_version` knob live in the config, so changing either invalidates every
+  cached `Kpub`.
+- **`semantic/features.py`**: real `OneFormerExtractor`; `OpenPoseExtractor` rewritten from
+  a stub that returned fabricated keypoints to the real `controlnet_aux` detector (body +
+  70 face keypoints, rendered skeleton as the ControlNet input); `FacialFeatureChain` adds
+  the recorded per-image MediaPipe fallback.
+- **`reference/generate.py`**: `backend: picx_real` loads every component from the local
+  PicX-Real checkpoint and records, per component, whether it came from PicX-Real or the
+  SD v1.5 fallback. `reference/train_controlnet.py` resolves local checkpoints the same way.
+- **IPAdapter determinism**: `Xref` embeddings are cached by reference SHA-256
+  (`scripts/phase8_embeds.py`), so the transmitter and the receiver read the *same tensor*
+  instead of each deriving one from pixels. A float-to-uint8 truncation on the transmitter
+  side, which could have shifted a pixel and desynced the two, is fixed.
+- **Memory discipline** (6 GB card, ~5 GB free commit): Phase 7 runs in two passes, all
+  `Kpub` first and then features, with one extractor resident; the CLIP-H image encoder and
+  CodeFormer run on the CPU. Before this, Phase 7 died with a CUDA OOM that cascaded into
+  host `MemoryError`. `run_baseline.py` launches every phase with `-X faulthandler` and
+  retries transient access violations.
+- **Gates updated, not weakened**: Phase 13's codec check no longer assumes a `.vae`
+  attribute; Phase 14 no longer asserts "enhancement disabled" and "delta exactly zero" but
+  requires the deltas to be measured and the enhancer to have acted, with size preservation;
+  Phase 15 now checks that the config and the frozen manifest *agree* on codec, enhancement,
+  IPAdapter and EDICT settings rather than hardcoding the old choices. The Phase 15 manifest
+  records the full component set, including the IPAdapter weight hash and the codec hash.
+- **Removed**: `scripts/verify_baseline_example.py` (duplicate of `baseline_example.py`),
+  `imp_code`, a 2.5 GB duplicate IPAdapter image-encoder checkpoint, ~80 one-off scratch
+  files in `temp/`, the pip cache, stale Phase 16 PNGs and `experiments/results/
+  custom_example/`. `.gitignore` now covers every model weight directory, `third_party/`
+  and the embedding cache.
+- **Provenance**: the superseded substitute baseline is archived under
+  `experiments/results/archive/`, and every remaining difference from the paper (256 px,
+  20 EDICT steps, SwinJSCC C=64 instead of C=48, no MDJCM digital branch, the facial
+  annotator fallback) is a row in `docs/DEVIATIONS.md`.
+- **Bug found**: `edict.sweep_mixing` contained `0.5`, the singular point of the EDICT
+  coupling. `phase10_edict.py` therefore crashed on its first sweep cell and could never
+  complete a full rebuild; recent runs were verify-only, which hid it. Sweep now starts at
+  0.55 and out-of-range cells are skipped with a printed note.
+
+#### Measured on the paper stack so far
+
+| Check | Result |
+| :-- | :-- |
+| SwinJSCC isolated round-trip @ 10 dB | **32.54 dB**, seed-replay bit-identical (substitute: 22.88 dB) |
+| One image end to end (facial, 10 dB) | correct **24.25 dB** / SSIM 0.656 / LPIPS 0.182; wrong token 13.90 dB; no_token 14.06 dB → **10.3 dB** gap (substitute 4.32 dB, paper 6.46 dB) |
+| Phase 7 | 132 records, 0 degenerate LLM replies, 3 documented annotator fallbacks, verify PASS |
+| Phase 8 | 132 PicX-Real references, exact rerun determinism, 2.84 GB peak, 12/12 PASS |
+| Phase 9 | PASS on the PicX-Real base |
+| Determinism spot-checks | OneFormer, OpenPose, Qwen `Kpub`, CodeFormer and the IPAdapter embedding each reproduce exactly |
+
+The single-image figure is one case, not a table. The authoritative numbers only exist once
+Phases 15 and 16 are rerun.
+
+#### What remains
+
+1. **Finish the rebuild**: `scripts/run_baseline.py --mode paper --from-phase 10 --to-phase 16
+   --yes --retries 2` (~5-6 h; Phase 15B accepts `--resume`; chunk it as 10-14, 15, 16). Then
+   re-freeze in the order table -> 15A manifest -> security -> steganalysis -> Phase 16
+   manifest -> verify, because the present `phase16_manifest.json` is stale in three layers.
+2. **Refresh `docs/phase16_report.md`**, which matches the 10-28 freeze (17.39 / 13.05 /
+   13.07 dB, XuNet 0.4875) and not even the JSONs currently on disk (17.33 / 13.01 / 13.04 dB,
+   0.4625).
+3. **Commit**: the whole upgrade is uncommitted (211 modified paths plus seven new files).
+4. **Machine**: commit limit 21.2 GB with ~17 GB committed, C: at 3.3 GB free and only 1.86 GB
+   of free commit at handoff, so a long run cannot start now. Free memory, add a pagefile on D:
+   (15.8 GB free) and/or reboot (nonpaged pool sat at 1.63 GB after repeated CUDA crashes).
+5. **Frozen-split contamination**: `eva_style_0011` is a human portrait inside the
+   cat-photograph *style* class, dating from the Phase 6 freeze (2026-10-23). Fixing it means
+   rebuilding the split and everything downstream, so decide before the Phase 22 comparison;
+   the other 21 style images deserve the same audit.
+
+#### Documentation and handoff pass (2026-10-29 14:35)
+
+Re-verified the state of the tree against the artifacts on disk, then completed
+`handoff_file.md` and this file so the next session starts from facts rather than from the
+last narrative. Nothing was rebuilt or re-run in this pass.
+
+Confirmed on disk:
+
+- live `configs/base.yaml` -> `config_hash 397b0e7c…`; the frozen baseline manifest says
+  `da93514e…` with codec `sd_vae_substitute` and enhancement disabled. They differ, which is
+  the mixed state.
+- Phase 7 PASS, Phase 8 12/12 PASS, Phase 9 PASS (all built on the paper stack today).
+- `final_baseline_report.json` (12:49) reports `status: fail`.
+- `phase16_verify.json` is 16/17, failing only "frozen security and steganalysis hashes match
+  the phase16 manifest": manifest `8ab321a5…` / `78db750b…` vs on-disk `54ffbe66…` /
+  `d5936ac4…`. The manifest's `baseline_table_sha256` (`a6db2536…`) also predates the table
+  on disk (`2d5cc07a…`).
+- `phase15_verify.json` says `pass: true`, but it was written at 10:22, before the config was
+  switched at 13:36; its "component choices match frozen manifests" check cannot pass now.
+- Machine headroom: 1.86 GB free commit, C: 3.3 GB, D: 15.8 GB.
+
+`handoff_file.md` gained a verified state table at the top, a corrected artifact table with
+local timestamps, the concrete hash evidence above, a pre-flight and chunked rebuild sequence,
+an ordered re-freeze sequence, and §10, a resume checklist for the next session.
+
+
 ### [2026-10-28] - Phase 16 Complete (Baseline Security & Steganalysis)
 
 - **Security**: `security/token_conditions.py` implements the receiver half for three
@@ -252,6 +424,13 @@ artifacts     : phase5_corpus_embeddings.npz (3.82 MB) + manifest + experiments.
   `phase16_manifest.json`, so artifact drift fails the freeze.
 - **Deviations**: patch-based XuNet dataset at 128 px and the explicit no-token fallback are
   recorded in `docs/DEVIATIONS.md`.
+- **Superseded 2026-10-29**: this entry describes the freeze as it stood on 10-28 (aggregate
+  17.39 / 13.05 / 13.07 dB, gap 4.34 dB, XuNet 0.4875, checkpoints and hashes in
+  `phase16_manifest.json`). Security and steganalysis were rerun on 10-29 at 11:32-11:33,
+  still on the substitute stack, giving 17.33 / 13.01 / 13.04 dB, gap 4.32 dB and XuNet
+  0.4625, so `phase16_verify.py` is now 16/17 with the frozen-hash check failing by design.
+  `docs/phase16_report.md` still matches this 10-28 freeze and must be regenerated after the
+  rebuild. Do not quote either set of numbers as final.
 
 ### [2026-10-27] - Phases 11-14 Complete (stego core, channel, codec, enhancement)
 
@@ -489,26 +668,61 @@ Active next steps (new numbering):
   `scikit-image` installed; metrics extended; two role-tagged splits built (22/class each);
   `evaluation/splits.py`, `evaluation/report.py`, `scripts/eval_report.py` with loader role
   enforcement; `docs/DEVIATIONS.md` created. Selftest 83/83 PASS.
-- [x] **Phase 7**: Complete. `Kpub` + `Xfeat` cached for both roles (132 records),
-  `phase7_verify.json` PASS, grid inspected.
-- [x] **Phase 8**: Complete. SD v1.5 + ControlNet at 256 px, 132 deterministic references,
-  `phase8_verify.json` PASS. PicX-Real/IPAdapter deviations recorded.
-- [x] **Phase 9**: Complete. 50-step bf16 zero-conv fine-tune, probe improved, `phase9_verify.json` PASS.
-- [x] **Phase 10**: Complete. 12-cell EDICT sweep + 20/20 operating point, 3.58e-3 relative
-  error, `phase10_verify.json` PASS with the numerical-floor deviation recorded.
-- [x] **Phase 11**: Complete. Local hide/recover with eta = 0.05 and a manual reference;
-  `phase11_verify.json` 12/12 PASS.
-- [x] **Phase 12-14**: Complete. AWGN (`7/7`), semantic codec (`9/9`), and the documented
-  CodeFormer pass-through fallback (`13/13`).
-- [x] **Phase 15 (GATE)**: Complete. Assemble AgentSemSteCom. 15A: approximate reproduction on the
-  UniStega calibration split (wide tolerance). 15B: authoritative baseline on our evaluation
-  split. Calibration numbers never appear in any claim table. `phase15_verify.json` PASS.
-- [x] **Phase 16**: Complete. Baseline security and steganalysis frozen; `phase16_verify.json`
-  17/17 PASS. Report: `docs/phase16_report.md`.
-- [ ] **Phase 17-20**: FAISS, token selection, structural reranking (consumes the banked
-  Phase 4-5 artifacts). Instructions written: `phase17_instructions.md` through
+
+> Phases 7-16 were first completed on the **substitute stack** (SegFormer, MediaPipe, BLIP
+> template, SD v1.5 references, SD-VAE codec, CodeFormer off). On 2026-10-29 the pipeline moved
+> to the paper's own components, so the list below tracks each phase **against the paper stack**.
+> A phase marked stale has a passing artifact that was built from the old components and no
+> longer matches its inputs.
+
+- [x] **Phase 7** (paper stack): `Kpub` from Qwen2.5-0.5B-Instruct over a BLIP perception
+  caption; `Xfeat` from OneFormer (common) and OpenPose (facial, 3 of 22 via the recorded
+  MediaPipe fallback). 132 records, 0 degenerate LLM replies, `phase7_verify.json` PASS.
+- [x] **Phase 8** (paper stack): 132 PicX-Real references at 256 px, exact rerun determinism,
+  2.84 GB peak, `phase8_verify.json` 12/12 PASS. IPAdapter embedding cache prefilled by
+  `scripts/phase8_embeds.py` (132 entries keyed by reference SHA-256).
+- [x] **Phase 9** (paper stack): zero-conv fine-tune rerun on the PicX-Real base,
+  `phase9_verify.json` PASS.
+- [ ] **Phase 10** (stale): artifact is from the substitute stack. The sweep bug
+  (`sweep_mixing` contained the singular value 0.5) is fixed; needs a rerun.
+- [ ] **Phase 11** (stale): IPAdapter-plus is wired symmetrically through hide/recover and the
+  reference path is passed so both ends read the cached embedding. Expect the matched-vs-
+  mismatched reference gap to become real rather than 0.15 dB.
+- [ ] **Phase 12** (stale): unchanged code; rerun only for consistency with the new upstream.
+- [ ] **Phase 13** (stale): SwinJSCC C=64 loads and measures **32.54 dB at 10 dB SNR**,
+  seed-replay bit-identical. Verify no longer assumes a `.vae` on the codec.
+- [ ] **Phase 14** (stale): real CodeFormer runs (CPU, 512 px, fidelity 0.5, facial, enabled)
+  and is deterministic. Expect a negative PSNR delta with improved LPIPS; the gate allows it.
+- [ ] **Phase 15 (GATE)** (stale): rerun 15A (calibration) and 15B (authoritative). The
+  manifest now records the full component set; the verify checks config-vs-manifest agreement.
+- [ ] **Phase 16** (stale): rerun security and XuNet after Phase 15. Expect the
+  correct-minus-wrong gap well above the 4 dB threshold (10.3 dB on a single-image probe).
+- [ ] **Phase 17-20**: FAISS, token selection, structural representation, reranking (consumes
+  the banked Phase 4-5 artifacts). Instructions written: `phase17_instructions.md` through
   `phase20_instructions.md`, plus `PHASE_RUNBOOK_17_TO_20.md`.
 - [ ] **Phase 21 (GATE)**: RACS-Base, `Xref_tx == Xref_rx` on 100 percent of images.
 - [ ] **Phase 22**: Controlled AgentSemSteCom vs RACS-Base comparison (primary result).
 
-Nothing RACS-specific is wired into the pipeline before Phase 15 passes.
+Nothing RACS-specific is wired into the pipeline before Phase 15 passes. The immediate next
+command is below, but check memory first: at handoff the box had **1.86 GB of free commit**
+(target is about 5 GB) and C: had 3.3 GB free so Windows cannot grow the pagefile there. Close
+memory-heavy apps or reboot before starting, and prefer the three chunks (10-14, then 15, then
+16) over one 5-6 h window.
+
+```powershell
+cd D:\racs2
+.venv\Scripts\python.exe scripts\run_baseline.py --mode paper --from-phase 10 --to-phase 14 --yes --retries 2
+.venv\Scripts\python.exe scripts\run_baseline.py --mode paper --from-phase 15 --to-phase 15 --yes --resume yes
+.venv\Scripts\python.exe scripts\run_baseline.py --mode paper --from-phase 16 --to-phase 16 --yes
+.venv\Scripts\python.exe scripts\run_baseline.py --verify-only --yes
+```
+
+`--resume yes` matters: with `--mode paper` the orchestrator's default is `auto`, which does not
+forward `--resume` to Phase 15B. A non-frozen run that reaches Phase 15 also archives the
+existing frozen artifacts to `experiments/results/archive/<timestamp>_before_nonfrozen_run/`
+first, so the substitute baseline is preserved automatically.
+
+After the rebuild passes, in this order: re-freeze (table -> 15A manifest -> security ->
+steganalysis -> Phase 16 manifest -> verify), regenerate `docs/phase16_report.md`, update §2
+above and `handoff_file.md` §6 with the new numbers, then commit. Full checklist:
+`handoff_file.md` §10.

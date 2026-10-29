@@ -48,18 +48,17 @@ cd D:\racs2
 .venv\Scripts\python.exe -c "import faiss; print(faiss.__version__)"
 ```
 
-Current working-tree caveat: `phase15_verify.py` fails while the paper-asset upgrade is
-uncommitted (config points at missing SwinJSCC/CodeFormer/IP-Adapter weights). Decide and record
-one state before starting:
+**Baseline state: resolved on 2026-10-29 (State A).** Every paper asset is fetched and
+pinned in `models/PAPER_ASSETS.json`, `configs/base.yaml` selects the paper components, and
+Phases 7-16 were rerun and re-frozen on them. The superseded substitute baseline is kept
+under `experiments/results/archive/`. So the pre-flight above simply has to pass:
 
-- **State A**: fetch the missing assets, rerun and re-freeze Phases 15/16, then build 17-20 on
-  that baseline (preferred if the assets are the target).
-- **State B**: stash only `configs/base.yaml`, run the frozen baseline checks, then restore the
-  config and build 17-20. This keeps the original baseline for Phase 21; record that choice
-  explicitly.
+```powershell
+.venv\Scripts\python.exe scripts\run_baseline.py --verify-only --yes
+```
 
-Phases 17-20 themselves do not depend on the codec/enhancer weights, but Phase 20's A/B and
-Phase 21 do. Resolve the state before Phase 20.
+Phases 17-20 do not depend on the codec or enhancer weights, but Phase 20's A/B and Phase 21
+read the frozen Phase 15/16 artifacts, which now come from the paper stack.
 
 ---
 
@@ -158,11 +157,10 @@ After Phase 20, set `ranking.alpha`, `ranking.beta`, `ranking.top_k` to the froz
 
 ## 6. The Phase 20 decision gate (read before writing code)
 
-The frozen Phase 15 downstream is text-conditioned: `steganography/hide.py` uses
-`reference_pixels` only through optional IP-Adapter image embeddings, and those are disabled in
-the frozen config. If that is still true for the Phase 21 protocol, **changing the retrieved
-reference cannot change recovery quality**; only the prompt can. The reranking quality claim then
-has no mechanism.
+**Resolved on 2026-10-29.** IPAdapter-plus is now enabled at weight 1 and injects `Xref`
+into the EDICT sampler at *both* ends (`steganography/ipadapter.py`, cached per reference by
+SHA-256). The stego therefore depends on the reference pixels, so reranking has a mechanism and
+the Phase 20 A/B is meaningful. Re-run the probe below anyway to confirm it on your tree.
 
 Before running the Phase 20 A/B, hide the same secret with two different reference images:
 

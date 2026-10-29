@@ -227,8 +227,10 @@ class EDICT:
         cond: torch.Tensor,
         uncond: torch.Tensor,
         guidance_scale: float,
+        image_embeds: Optional[List[torch.Tensor]] = None,
     ) -> torch.Tensor:
         """Classifier-free guidance with both branches in one UNet batch."""
+        added = {"image_embeds": image_embeds} if image_embeds is not None else None
         latent_in = latent.to(dtype=self.dtype)
         timestep = timestep.to(self.device)
         if float(guidance_scale) == 1.0:
@@ -236,13 +238,17 @@ class EDICT:
             model_in = latent_in
             with torch.inference_mode():
                 pred = self.unet(
-                    model_in, timestep, encoder_hidden_states=embeds
+                    model_in, timestep, encoder_hidden_states=embeds,
+                    added_cond_kwargs=added,
                 ).sample
             return pred.to(self.latent_dtype)
         embeds = torch.cat([uncond, cond], dim=0).to(dtype=self.dtype)
         model_in = torch.cat([latent_in, latent_in], dim=0)
         with torch.inference_mode():
-            pred = self.unet(model_in, timestep, encoder_hidden_states=embeds).sample
+            pred = self.unet(
+                model_in, timestep, encoder_hidden_states=embeds,
+                added_cond_kwargs=added,
+            ).sample
         pred_uncond, pred_cond = pred.chunk(2, dim=0)
         pred = pred_uncond + guidance_scale * (pred_cond - pred_uncond)
         return pred.to(self.latent_dtype)
@@ -280,6 +286,7 @@ class EDICT:
         mixing: float = 0.93,
         guidance_scale: float = 7.5,
         seed: Optional[int] = None,
+        image_embeds: Optional[List[torch.Tensor]] = None,
     ) -> List[torch.Tensor]:
         if not 0.5 < float(mixing) <= 1.0:
             raise ValueError("mixing must satisfy 0.5 < mixing <= 1.0")
@@ -302,7 +309,8 @@ class EDICT:
                 latent_j = 1 - latent_i
                 model_input = pair[latent_j]
                 noise_pred = self._predict(
-                    model_input, t, cond, uncond, guidance_scale
+                    model_input, t, cond, uncond, guidance_scale,
+                    image_embeds=image_embeds,
                 )
                 pair[latent_i] = forward_step(
                     self.scheduler, noise_pred, t, pair[latent_i], steps
@@ -319,6 +327,7 @@ class EDICT:
         steps: int = 50,
         mixing: float = 0.93,
         guidance_scale: float = 7.5,
+        image_embeds: Optional[List[torch.Tensor]] = None,
     ) -> List[torch.Tensor]:
         if not 0.5 < float(mixing) <= 1.0:
             raise ValueError("mixing must satisfy 0.5 < mixing <= 1.0")
@@ -344,7 +353,8 @@ class EDICT:
                 latent_j = 1 - latent_i
                 model_input = pair[latent_j]
                 noise_pred = self._predict(
-                    model_input, t, cond, uncond, guidance_scale
+                    model_input, t, cond, uncond, guidance_scale,
+                    image_embeds=image_embeds,
                 )
                 pair[latent_i] = reverse_step(
                     self.scheduler, noise_pred, t, pair[latent_i], steps
@@ -400,6 +410,7 @@ class EDICT:
         guidance_scale: float = 1.0,
         strength: float = 0.3,
         noise: Optional[torch.Tensor] = None,
+        image_embeds: Optional[List[torch.Tensor]] = None,
     ) -> Dict[str, object]:
         """Bounded EDICT chain: noise to strength, then denoise back.
 
@@ -425,7 +436,10 @@ class EDICT:
             for base_i in range(2):
                 latent_i = (base_i + g % 2) % 2
                 latent_j = 1 - latent_i
-                noise_pred = self._predict(pair[latent_j], t, cond, uncond, guidance_scale)
+                noise_pred = self._predict(
+                    pair[latent_j], t, cond, uncond, guidance_scale,
+                    image_embeds=image_embeds,
+                )
                 pair[latent_i] = forward_step(
                     self.scheduler, noise_pred, t, pair[latent_i], steps
                 ).to(self.latent_dtype)
@@ -444,6 +458,7 @@ class EDICT:
         guidance_scale: float = 1.0,
         strength: float = 0.3,
         noise: Optional[torch.Tensor] = None,
+        image_embeds: Optional[List[torch.Tensor]] = None,
     ) -> List[torch.Tensor]:
         """Exact reverse of ``forward_img2img`` back to the clean latent."""
         if not 0.5 < float(mixing) <= 1.0:
@@ -466,7 +481,10 @@ class EDICT:
             for base_i in range(2):
                 latent_i = (base_i + (g + 1) % 2) % 2
                 latent_j = 1 - latent_i
-                noise_pred = self._predict(pair[latent_j], t, cond, uncond, guidance_scale)
+                noise_pred = self._predict(
+                    pair[latent_j], t, cond, uncond, guidance_scale,
+                    image_embeds=image_embeds,
+                )
                 pair[latent_i] = reverse_step(
                     self.scheduler, noise_pred, t, pair[latent_i], steps
                 ).to(self.latent_dtype)

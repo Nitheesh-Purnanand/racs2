@@ -133,6 +133,7 @@ def main() -> int:
                             "steps": hidden["steps"], "mixing": hidden["mixing"],
                             "token": tok["token"], "wrong_token": tok["wrong_token"],
                             "prompt": baseline.conditions(image_id)["kpub"],
+                            "reference_path": out["reference_path"],
                             "secret_path": str(paths.PROJECT_ROOT / rec["path"])},
                            stem.with_suffix(".pt"))
                 pipeline.write_json(stem.with_suffix(".json"),
@@ -144,12 +145,32 @@ def main() -> int:
 
     report = build_report("agentsemstecom", role, split, results,
                           approximate=approximate, config=cfg_all,
-                          meta={"models": {"reference": cfg_all["reference"]["model_id"],
-                                           "controlnet": cfg_all["reference"]["controlnet_id"],
-                                           "edict": cfg_all["edict"],
-                                           "codec": baseline.codec["kind"],
-                                           "enhancement": ("enabled"
-                                                           if baseline.enhancer else "disabled")}})
+                          meta={"models": {
+                              "reference_backend": cfg_all["reference"].get(
+                                  "backend", "sd_controlnet"),
+                              "reference": cfg_all["reference"]["model_id"],
+                              "controlnet": cfg_all["reference"]["controlnet_id"],
+                              "facial_controlnet": cfg_all["reference"].get(
+                                  "facial_controlnet_id"),
+                              "kpub": cfg_all["semantic"]["keygen"].get("method"),
+                              "xfeat": {
+                                  cls: cfg_all["semantic"]["features"]
+                                  .get(cls, {}).get("method")
+                                  for cls in ("common", "facial", "style")},
+                              "edict": cfg_all["edict"],
+                              "ipadapter": (
+                                  {"enabled": True,
+                                   "weight_name": baseline.ip_cfg.get("weight_name"),
+                                   "scale": baseline.ip_cfg.get("scale", 1.0),
+                                   "weight_sha256": baseline.ipadapter["weight_sha256"]}
+                                  if baseline.ipadapter else {"enabled": False}),
+                              "codec": baseline.codec["kind"],
+                              "codec_sha256": baseline.codec.get("sha256", ""),
+                              "enhancement": ("enabled" if baseline.enhancer
+                                              else "disabled"),
+                              "enhancement_backend": (
+                                  baseline.enhancer.get("backend")
+                                  if baseline.enhancer else None)}})
     for cell in report["cells"]:
         for name in METRICS:
             if name in cell["metrics"]:
