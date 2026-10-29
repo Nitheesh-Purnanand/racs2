@@ -102,7 +102,7 @@ the public description), and share the key separately. **Receiver**: upload the 
 recovered secret. A wrong key returns noise. The laptop does all the compute (6 GB GPU);
 works at 512 px with the photo's aspect ratio kept (edge-padded to a square, cropped back on receive); hide ~30 s, plus ~20 s for the public description. `--size 256` is faster but blurrier.
 
-**Default mode is now `lossless`** (`app/lossless.py`): the secret file is encrypted with the key
+**Default mode is `hybrid`**: EDICT (strength 0.5) blends the secret toward the RACS-retrieved reference for a paper-style stego look, then the encrypted original file goes into that stego's LSBs, so recovery is still byte-exact. `--mode lossless` (below) skips the diffusion look. Lossless mode (`app/lossless.py`): the secret file is encrypted with the key
 (PBKDF2 + SHAKE-256 stream + HMAC-SHA256) and hidden in the 2 LSBs of a RACS-retrieved cover
 (CLIP Top-10 + token pick), so the receiver gets a **byte-identical** copy and a wrong key is
 rejected. No model runs on the receive side. `--mode diffusion` keeps the paper's EDICT pipeline
