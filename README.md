@@ -87,3 +87,23 @@ off the GPU on purpose (CodeFormer, the IPAdapter image encoder) — see `docs/D
 | `docs/DEVIATIONS.md` | every place the reimplementation differs from the paper |
 | `racs2_implementation_plan.md` | the plan (v2, baseline-first) |
 | `PHASE_RUNBOOK_*.md`, `phaseN_instructions.md` | per-phase commands, gates and theory |
+
+## Phone app (send / receive a secret image)
+
+```powershell
+.venv\Scripts\python.exe app\server.py          # prints http://<laptop-ip>:8000
+.venv\Scripts\python.exe app\server.py --selftest data\secret_images\test_001.png
+```
+
+Open the printed address on two phones on the same Wi-Fi as the laptop (allow Python through
+Windows Firewall when asked). **Sender**: upload a secret image -> download the stego PNG and
+note the 8-digit key. Send the PNG **as a file/document** (photo mode recompresses it and strips
+the public description), and share the key separately. **Receiver**: upload the PNG + key ->
+recovered secret. A wrong key returns noise. The laptop does all the compute (6 GB GPU);
+works at 512 px with the photo's aspect ratio kept (edge-padded to a square, cropped back on receive); hide ~30 s, plus ~20 s for the public description. `--size 256` is faster but blurrier.
+
+**Default mode is now `lossless`** (`app/lossless.py`): the secret file is encrypted with the key
+(PBKDF2 + SHAKE-256 stream + HMAC-SHA256) and hidden in the 2 LSBs of a RACS-retrieved cover
+(CLIP Top-10 + token pick), so the receiver gets a **byte-identical** copy and a wrong key is
+rejected. No model runs on the receive side. `--mode diffusion` keeps the paper's EDICT pipeline
+(approximate recovery).
