@@ -196,6 +196,41 @@ class LosslessEngine:
                 "timing": {"extract_s": time.perf_counter() - t0}}
 
 
+class HybridEngine(Engine):
+    """Paper-style stego look (EDICT + RACS reference) with exact recovery.
+
+    EDICT blends the secret toward the retrieved reference at the paper's
+    strength, then the encrypted original file is embedded in the 2 LSBs of
+    that stego. The receiver extracts it byte for byte; no model is needed
+    on the receive side.
+    """
+
+    def __init__(self, size: int = 512, strength: float = 0.5):
+        super().__init__(size)
+        from app import lossless
+        self.L = lossless
+        self.b.stego_cfg["edict_strength"] = float(strength)
+
+    def send(self, secret_path: Path, cls: str, kpub: str = "", name: str = "") -> dict:
+        data = secret_path.read_bytes()
+        r = super().send(secret_path, cls, kpub)
+        t0 = time.perf_counter()
+        look = Image.open(r["stego"])
+        # crop the padding back off so the stego keeps the photo's shape
+        g = json.loads(look.info[META_KEY])["geom"]
+        s = look.size[0] / g["side"]
+        look = look.crop([round(v * s) for v in (g["left"], g["top"], g["left"] + g["w"],
+                                                 g["top"] + g["h"])])
+        stego = self.L.embed(look, name or secret_path.name, data, r["key"], keep_aspect=True)
+        stego.save(r["stego"])
+        r["timing"]["embed_s"] = time.perf_counter() - t0
+        r["sha256"] = self.L.sha256(data)
+        return r
+
+    def receive(self, stego_path: Path, key: str, kpub: str = "", cls: str = "") -> dict:
+        return LosslessEngine.receive(self, stego_path, key)
+
+
 # ---------------------------------------------------------------------------
 # HTML
 # ---------------------------------------------------------------------------
@@ -289,7 +324,7 @@ class Handler(BaseHTTPRequestHandler):
             up.write_bytes(item.file.read())
             if self.path == "/send":
                 cls = form.getfirst("cls", "common")
-                if isinstance(ENGINE, LosslessEngine):
+                if isinstance(ENGINE, (LosslessEngine, HybridEngine)):
                     r = ENGINE.send(up, cls, name=Path(item.filename or up.name).name)
                 else:
                     r = ENGINE.send(up, cls if cls in CLASSES else "common",
@@ -342,13 +377,16 @@ def main() -> int:
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8000)
-    ap.add_argument("--mode", choices=("lossless", "diffusion"), default="lossless",
-                    help="lossless: exact recovery (LSB); diffusion: the paper's EDICT pipeline")
+    ap.add_argument("--mode", choices=("hybrid", "lossless", "diffusion"), default="hybrid",
+                    help="hybrid: paper-style stego look + exact recovery; lossless: exact "
+                         "recovery in a retrieved cover; diffusion: the paper's EDICT pipeline")
+    ap.add_argument("--strength", type=float, default=0.5, help="hybrid: EDICT strength")
     ap.add_argument("--size", type=int, default=512, help="working resolution (256 or 512)")
     ap.add_argument("--selftest", default="", help="secret image path: send+receive once, no server")
     args = ap.parse_args()
-    ENGINE = LosslessEngine() if args.mode == "lossless" else Engine(args.size)
-    if args.selftest and isinstance(ENGINE, LosslessEngine):
+    ENGINE = (HybridEngine(args.size, args.strength) if args.mode == "hybrid"
+              else LosslessEngine() if args.mode == "lossless" else Engine(args.size))
+    if args.selftest and isinstance(ENGINE, (LosslessEngine, HybridEngine)):
         src = Path(args.selftest)
         s = ENGINE.send(src, "common")
         r = ENGINE.receive(s["stego"], s["key"])

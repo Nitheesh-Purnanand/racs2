@@ -70,14 +70,30 @@ def unpack(payload: bytes) -> tuple[str, bytes]:
     return payload[1:1 + n].decode(errors="replace"), payload[1 + n:]
 
 
-def embed(cover: Image.Image, secret_name: str, secret_bytes: bytes, key: str) -> Image.Image:
+def capacity_size(n_bytes: int, w: int, h: int) -> tuple[int, int]:
+    """Smallest size with the cover's aspect ratio (never below it) that holds n_bytes."""
+    need = n_bytes * 8 / (3 * BITS)
+    scale = max(1.0, math.sqrt(need / (w * h)))
+    while True:
+        size = (math.ceil(w * scale), math.ceil(h * scale))
+        if size[0] * size[1] * 3 * BITS >= n_bytes * 8:
+            return size
+        scale *= 1.01
+
+
+def embed(cover: Image.Image, secret_name: str, secret_bytes: bytes, key: str,
+          keep_aspect: bool = False) -> Image.Image:
     body = pack(secret_name, secret_bytes)
     enc_key, mac_key, seed = _keys(key)
     plain = MAGIC + struct.pack(">I", len(body)) + body
     cipher = (np.frombuffer(plain, np.uint8) ^ _stream(enc_key, len(plain))).tobytes()
     blob = cipher + hmac.new(mac_key, cipher, "sha256").digest()
-    side = capacity_side(len(blob))
-    arr = np.asarray(cover.convert("RGB").resize((side, side), Image.LANCZOS)).copy()
+    if keep_aspect:
+        size = capacity_size(len(blob), *cover.size)
+    else:
+        size = (capacity_side(len(blob)),) * 2
+    img = cover.convert("RGB")
+    arr = np.asarray(img if img.size == size else img.resize(size, Image.LANCZOS)).copy()
     flat = arr.reshape(-1)
     sym = _to_symbols(blob)
     if sym.size > flat.size:
