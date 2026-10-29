@@ -40,6 +40,10 @@ correct 22.37 / wrong 13.96 / no_token 14.02 dB (**gap 8.41 dB**, paper 6.46); X
 (n=8, chance). Verifiers fail only their N=22 count checks (see DEVIATIONS, last section).
 Report: `experiments/results/final_baseline_report.md`.
 
+**Contribution 2 (exact-recovery layer)**: see `docs/CONTRIBUTION_2.md`. 66/66 pixel-exact,
+66/66 wrong keys rejected, chi-square AUC 0.50, SPA AUC 0.83 (from 1.00), payload -32 %.
+Phone app: `app/server.py` (default hybrid mode uses this layer).
+
 ---
 
 > **Last updated**: 2026-10-29 14:35 (end of the paper-component upgrade session)

@@ -178,7 +178,8 @@ class LosslessEngine:
         cover = self.worker.call(op="retrieve_image", image=str(secret_path), token=key)
         data = secret_path.read_bytes()
         t0 = time.perf_counter()
-        stego = self.L.embed(Image.open(cover["path"]), name or secret_path.name, data, key)
+        cname, cdata = self.L.compact(name or secret_path.name, data)
+        stego = self.L.embed_adaptive(Image.open(cover["path"]), cname, cdata, key)
         out = WORK / f"stego_{uuid.uuid4().hex[:8]}.png"
         stego.save(out, optimize=False)
         return {"stego": out, "key": key, "kpub": "(not needed in lossless mode)",
@@ -188,7 +189,7 @@ class LosslessEngine:
 
     def receive(self, stego_path: Path, key: str, kpub: str = "", cls: str = "") -> dict:
         t0 = time.perf_counter()
-        name, data = self.L.extract(Image.open(stego_path), key)
+        name, data = self.L.extract_any(Image.open(stego_path), key)
         out = WORK / f"recovered_{uuid.uuid4().hex[:8]}{Path(name).suffix or '.png'}"
         out.write_bytes(data)
         return {"recovered": out, "name": name, "sha256": self.L.sha256(data),
@@ -221,7 +222,8 @@ class HybridEngine(Engine):
         s = look.size[0] / g["side"]
         look = look.crop([round(v * s) for v in (g["left"], g["top"], g["left"] + g["w"],
                                                  g["top"] + g["h"])])
-        stego = self.L.embed(look, name or secret_path.name, data, r["key"], keep_aspect=True)
+        cname, cdata = self.L.compact(name or secret_path.name, data)
+        stego = self.L.embed_adaptive(look, cname, cdata, r["key"])
         stego.save(r["stego"])
         r["timing"]["embed_s"] = time.perf_counter() - t0
         r["sha256"] = self.L.sha256(data)
@@ -390,7 +392,9 @@ def main() -> int:
         src = Path(args.selftest)
         s = ENGINE.send(src, "common")
         r = ENGINE.receive(s["stego"], s["key"])
-        print(f"[selftest] exact copy: {r['recovered'].read_bytes() == src.read_bytes()} "
+        same = np.array_equal(np.asarray(Image.open(r["recovered"]).convert("RGB")),
+                              np.asarray(Image.open(src).convert("RGB")))
+        print(f"[selftest] exact copy (pixels): {same} "
               f"cover={s['xref']['image_id']} timing={json.dumps(s['timing'])}")
         try:
             ENGINE.receive(s["stego"], f"{(int(s['key']) + 1) % 10 ** 8:08d}")
