@@ -3,11 +3,11 @@
   "phase": 15,
   "role": "calibration",
   "approximate": true,
-  "created_utc": "2026-10-27T18:34:53Z",
-  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
+  "created_utc": "2026-10-28T18:06:30Z",
+  "split_version": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202",
   "tokens_version": "201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1",
-  "config_hash": "1f3da1d296e1e6c5c57f0e33cc65ea0088cc4180fbde2b8aefbb1d6aba84f96b",
-  "code_commit": "af93a37fedcf41c83b1b243920106082dab105c5",
+  "config_hash": "da93514ef6f31a949263214acd9c9f8c024c1af7ccf670ac15cf1e307ebe5874",
+  "code_commit": "cd45d0a756fcdcc76f548d314f087ee611600357",
   "models": {
     "reference": "stable-diffusion-v1-5/stable-diffusion-v1-5",
     "controlnet": "lllyasviel/control_v11p_sd15_seg",
@@ -12722,7 +12722,7 @@
   ],
   "failures": [],
   "table_path": "D:\\racs2\\experiments\\results\\phase15A_calibration_table.json",
-  "table_sha256": "ecbcd89097f8fc2f2715a2af5a16be0a101ce6ff2bda6e5094df5865511ed416",
+  "table_sha256": "5ac4d2b75620830a76a9450513512cb7c356df32b6d6933b373a9b28195a54fd",
   "grid_path": "D:\\racs2\\experiments\\results\\calibration_baseline_grid.png",
-  "elapsed_s": 1022.0915820598602
+  "elapsed_s": 2297.2594780921936
 }

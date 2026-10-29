@@ -1,8 +1,8 @@
 {
   "pass": true,
   "schema_version": 1,
-  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
-  "config_hash": "75359372bebded8da9e411e5e9b516264a4845b14caa6f3aa9858625794bbfdc",
+  "split_version": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202",
+  "config_hash": "35140723e068b936b5b82fc07d9bba70890cf6b093bdf783d37f17f832e3d012",
   "checks": [
     {
       "check": "schema_version",
@@ -12,7 +12,7 @@
     {
       "check": "split_version",
       "pass": true,
-      "detail": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a"
+      "detail": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202"
     },
     {
       "check": "tokens_version",
@@ -62,7 +62,7 @@
     {
       "check": "vram_budget",
       "pass": true,
-      "detail": "max=2.841923713684082 <= 5.5"
+      "detail": "max=2.842221260070801 <= 5.5"
     }
   ],
   "counts": {

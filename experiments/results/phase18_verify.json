@@ -1,0 +1,12 @@
+{
+  "phase": 18,
+  "pass": true,
+  "checks": {
+    "cross_process_identical": true,
+    "k1_always_zero": true,
+    "k10_spreads_all_buckets": true,
+    "k10_near_uniform": true,
+    "no_builtin_hash": true
+  },
+  "created_utc": "2026-10-29T09:58:08Z"
+}

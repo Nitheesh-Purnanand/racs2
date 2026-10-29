@@ -1,0 +1,19 @@
+{
+  "created_utc": "2026-10-29T07:12:51Z",
+  "reason": "before_nonfrozen_run",
+  "files": [
+    "baseline_table.json",
+    "baseline_manifest.json",
+    "phase15A_calibration_table.json",
+    "phase15A_manifest.json",
+    "baseline_security.json",
+    "baseline_steganalysis.json",
+    "phase15_verify.json",
+    "phase16_verify.json",
+    "phase16_manifest.json",
+    "phase7_verify.json",
+    "phase8_verify.json",
+    "public_conditions/manifest.json",
+    "phase8_references.json"
+  ]
+}

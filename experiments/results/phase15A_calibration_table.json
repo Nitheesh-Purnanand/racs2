@@ -3,7 +3,7 @@
   "system": "agentsemstecom",
   "role": "calibration",
   "approximate": true,
-  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
+  "split_version": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202",
   "split_counts": {
     "calibration": {
       "common": 22,
@@ -17,7 +17,7 @@
     }
   },
   "corpus_version": "cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff",
-  "config_hash": "1f3da1d296e1e6c5c57f0e33cc65ea0088cc4180fbde2b8aefbb1d6aba84f96b",
+  "config_hash": "da93514ef6f31a949263214acd9c9f8c024c1af7ccf670ac15cf1e307ebe5874",
   "lpips_net": null,
   "percentiles": [
     5,
@@ -26,7 +26,7 @@
     75,
     95
   ],
-  "created_utc": "2026-10-27T18:33:42Z",
+  "created_utc": "2026-10-28T18:05:18Z",
   "meta": {
     "models": {
       "reference": "stable-diffusion-v1-5/stable-diffusion-v1-5",
@@ -1793,7 +1793,7 @@
   ],
   "n_results": 264,
   "n_expected": 66,
-  "code_commit": "af93a37fedcf41c83b1b243920106082dab105c5",
+  "code_commit": "cd45d0a756fcdcc76f548d314f087ee611600357",
   "models": {
     "reference": "stable-diffusion-v1-5/stable-diffusion-v1-5",
     "controlnet": "lllyasviel/control_v11p_sd15_seg",

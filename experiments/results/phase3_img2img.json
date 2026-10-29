@@ -11,8 +11,8 @@
       "num_inference_steps": 30,
       "guidance_scale": 7.5,
       "seed": 42,
-      "seconds": 2.941,
-      "peak_vram_gb": 2.604,
+      "seconds": 3.143,
+      "peak_vram_gb": 2.605,
       "mean_abs_diff_vs_input": 10.45
     },
     {
@@ -23,8 +23,8 @@
       "num_inference_steps": 30,
       "guidance_scale": 7.5,
       "seed": 42,
-      "seconds": 4.46,
-      "peak_vram_gb": 2.604,
+      "seconds": 4.441,
+      "peak_vram_gb": 2.605,
       "mean_abs_diff_vs_input": 19.864
     },
     {
@@ -35,8 +35,8 @@
       "num_inference_steps": 30,
       "guidance_scale": 7.5,
       "seed": 42,
-      "seconds": 6.31,
-      "peak_vram_gb": 2.604,
+      "seconds": 6.313,
+      "peak_vram_gb": 2.605,
       "mean_abs_diff_vs_input": 38.066
     }
   ]

@@ -1,8 +1,8 @@
 {
   "pass": true,
   "schema_version": 1,
-  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
-  "config_hash": "88159c5807ceee116e0507decc780cec2c3f4560bb7dbb941451903824992d35",
+  "split_version": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202",
+  "config_hash": "0c6efb26cd738626701a4ca9b4c67ff0fcfd32cb95a7d8f5e32cc15d75728fd0",
   "checks": [
     {
       "check": "schema_version",
@@ -27,17 +27,17 @@
     {
       "check": "loss_decreased",
       "pass": true,
-      "detail": "0.3099847435951233 -> 0.0030436436645686626"
+      "detail": "0.24175125360488892 -> 0.0029586998280137777"
     },
     {
       "check": "loss_finite",
       "pass": true,
-      "detail": "min=0.002895662095397711"
+      "detail": "min=0.0029586998280137777"
     },
     {
       "check": "checkpoint_exists",
       "pass": true,
-      "detail": "D:\\racs2\\experiments\\checkpoints\\controlnet_zero_conv_50_88159c58.safetensors"
+      "detail": "D:\\racs2\\experiments\\checkpoints\\controlnet_zero_conv_50_0c6efb26.safetensors"
     },
     {
       "check": "checkpoint_sha",
@@ -52,7 +52,7 @@
     {
       "check": "probe_improved",
       "pass": true,
-      "detail": "0.148828125 -> 0.12958984375"
+      "detail": "0.10341796875 -> 0.102294921875"
     }
   ],
   "failures": []
