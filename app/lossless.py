@@ -123,6 +123,144 @@ def extract(stego: Image.Image, key: str) -> tuple[str, bytes]:
     return unpack(plain[HEADER:])
 
 
+# ---------------------------------------------------------------------------
+# Contribution 2: texture-adaptive +-1 embedding (receiver-recomputable)
+# ---------------------------------------------------------------------------
+ADAPT_FRACTION = 0.5        # share of channel values eligible (most textured)
+ADAPT_RATE = 0.25           # target payload bits per channel value (carrier grows to fit)
+SHIFT = 3                   # texture on the top 5 bits; +-1 never crosses an 8-boundary
+ADAPT_NOISE = 1.0           # sensor-like dither on the upscaled carrier (sigma, grey levels)
+
+
+def carrier_seed(key: str) -> int:
+    return _keys(key)[2] ^ 0x5EED
+
+
+def prepare_carrier(img: Image.Image, size: tuple, seed: int,
+                    noise: float = ADAPT_NOISE) -> np.ndarray:
+    """Upscale the generative stego to the needed size, then add camera-like noise.
+
+    An upscaled 256 px image has an almost noise-free LSB plane, which makes any
+    embedding stand out; real photos never look like that. The dither belongs to
+    the cover source, so a payload-free carrier is made exactly the same way.
+    """
+    img = img.convert("RGB")
+    arr = np.asarray(img if img.size == tuple(size) else img.resize(size, Image.LANCZOS))
+    if noise > 0:
+        n = np.random.default_rng(seed).normal(0.0, noise, arr.shape)
+        arr = np.clip(np.rint(arr + n), 0, 255)
+    return arr.astype(np.uint8).copy()
+
+
+def _texture(arr: np.ndarray) -> np.ndarray:
+    """Local activity of the top 5 bits; the +-1 embedding below never changes it."""
+    a = (arr >> SHIFT).astype(np.int16)
+    t = np.zeros_like(a)
+    t[:, :-1] += np.abs(a[:, 1:] - a[:, :-1])
+    t[:, 1:] += np.abs(a[:, 1:] - a[:, :-1])
+    t[:-1] += np.abs(a[1:] - a[:-1])
+    t[1:] += np.abs(a[1:] - a[:-1])
+    return t.reshape(-1)
+
+
+def _adaptive_positions(arr: np.ndarray, seed: int) -> np.ndarray:
+    tex = _texture(arr)
+    n = int(tex.size * ADAPT_FRACTION)
+    rank = np.random.default_rng(seed).permutation(tex.size)   # key-driven tie-break
+    score = (int(tex.max()) - tex.astype(np.int64)) * tex.size + rank  # unique keys
+    sel = np.sort(np.argpartition(score, n - 1)[:n])                   # the n most textured
+    return sel[np.random.default_rng(seed + 1).permutation(n)]
+
+
+def _seal(name: str, data: bytes, key: str) -> tuple[bytes, int]:
+    body = pack(name, data)
+    enc_key, mac_key, seed = _keys(key)
+    plain = MAGIC + struct.pack(">I", len(body)) + body
+    cipher = (np.frombuffer(plain, np.uint8) ^ _stream(enc_key, len(plain))).tobytes()
+    return cipher + hmac.new(mac_key, cipher, "sha256").digest(), seed
+
+
+def _open(read_bytes, key: str) -> tuple[str, bytes]:
+    enc_key, mac_key, _ = _keys(key)
+    head = np.frombuffer(read_bytes(HEADER), np.uint8) ^ _stream(enc_key, HEADER)
+    if head[:4].tobytes() != MAGIC:
+        raise ValueError("wrong key, or the image was modified/recompressed")
+    n = struct.unpack(">I", head[4:8].tobytes())[0]
+    raw = read_bytes(HEADER + n + TAG)
+    if raw is None:
+        raise ValueError("wrong key, or the image was modified/recompressed")
+    cipher, tag = raw[: HEADER + n], raw[HEADER + n:]
+    if not hmac.compare_digest(tag, hmac.new(mac_key, cipher, "sha256").digest()):
+        raise ValueError("integrity check failed: wrong key or modified image")
+    plain = (np.frombuffer(cipher, np.uint8) ^ _stream(enc_key, len(cipher))).tobytes()
+    return unpack(plain[HEADER:])
+
+
+def compact(name: str, data: bytes) -> tuple[str, bytes]:
+    """Lossless WebP if it is smaller: pixel-identical secret, fewer bits to hide."""
+    import io
+    try:
+        im = Image.open(io.BytesIO(data))
+        im.load()
+        buf = io.BytesIO()
+        im.save(buf, format="WEBP", lossless=True, quality=100, method=6, exact=True)
+        if buf.tell() < len(data):
+            return Path(name).stem + ".webp", buf.getvalue()
+    except Exception:  # noqa: BLE001  (not an image PIL can re-encode)
+        pass
+    return name, data
+
+
+def embed_adaptive(cover: Image.Image, secret_name: str, secret_bytes: bytes, key: str,
+                   keep_aspect: bool = True, noise: float = ADAPT_NOISE) -> Image.Image:
+    blob, seed = _seal(secret_name, secret_bytes, key)
+    bits = np.unpackbits(np.frombuffer(blob, np.uint8))
+    img = cover.convert("RGB")
+    w, h = img.size
+    scale = 1.0
+    while True:  # 1 bit per eligible value; eligible = ADAPT_FRACTION of values
+        size = ((math.ceil(w * scale), math.ceil(h * scale)) if keep_aspect
+                else (max(512, math.ceil(max(w, h) * scale)),) * 2)
+        if size[0] * size[1] * 3 * ADAPT_RATE >= bits.size:
+            break
+        scale = max(scale * 1.02, math.sqrt(bits.size / (w * h * 3 * ADAPT_RATE)))
+    arr = prepare_carrier(img, size, carrier_seed(key), noise)
+    flat = arr.reshape(-1)
+    pos = _adaptive_positions(arr, seed)[: bits.size]
+    v = flat[pos].astype(np.int16)
+    need = (v & 1) != bits
+    low = v & ((1 << SHIFT) - 1)
+    top = (1 << SHIFT) - 1
+    # LSB matching: random +-1, except at the edges of an 8-value block where
+    # only one direction keeps the top bits (and so the receiver's texture map)
+    rnd = np.random.default_rng(seed ^ 0xA5A5).integers(0, 2, size=v.size) * 2 - 1
+    step = np.where(low == 0, 1, np.where(low == top, -1, rnd))
+    v = np.where(need, v + step, v)
+    flat[pos] = v.astype(np.uint8)
+    return Image.fromarray(arr)
+
+
+def extract_adaptive(stego: Image.Image, key: str) -> tuple[str, bytes]:
+    arr = np.asarray(stego.convert("RGB"))
+    flat = arr.reshape(-1)
+    _, _, seed = _keys(key)
+    pos = _adaptive_positions(arr, seed)
+
+    def read(nbytes):
+        if nbytes * 8 > pos.size:
+            return None
+        return np.packbits(flat[pos[: nbytes * 8]] & 1).tobytes()
+
+    return _open(read, key)
+
+
+def extract_any(stego: Image.Image, key: str) -> tuple[str, bytes]:
+    try:
+        return extract_adaptive(stego, key)
+    except ValueError:
+        return extract(stego, key)
+
+
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
