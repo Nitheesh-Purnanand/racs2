@@ -59,6 +59,23 @@ def main() -> int:
     from steganography.edict import EDICT
 
     edict = EDICT(latent_dtype=torch.float32)
+    ipadapter = None
+    ip_cfg = dict(cfg.get("ipadapter", {}) or {})
+    if ip_cfg.get("enabled"):
+        from steganography.ipadapter import build_ipadapter
+
+        ipadapter = build_ipadapter(
+            edict.unet,
+            root=ip_cfg.get("root", "models/ip-adapter"),
+            subfolder=ip_cfg.get("subfolder", "models"),
+            weight_name=ip_cfg.get("weight_name", "ip-adapter-plus_sd15.safetensors"),
+            image_encoder_folder=ip_cfg.get(
+                "image_encoder_folder", "models/image_encoder"
+            ),
+            scale=float(ip_cfg.get("scale", 1.0)),
+            device=edict.device,
+            dtype=torch.float16,
+        )
     conditions = CONDITIONS if args.reference == "both" else (args.reference,)
     started = time.time()
     results = {}
@@ -72,6 +89,8 @@ def main() -> int:
             reference = pipeline.load_pixels(ref["reference_path"], size)
             t0 = time.time()
             hidden = hide_and_recover(edict, secret, reference, prompt, rec["token"], cfg,
+                                      ipadapter=ipadapter,
+                                      reference_path=ref["reference_path"],
                                       recover_prompt=rec["kpub"])
             elapsed = time.time() - t0
 
@@ -139,7 +158,9 @@ def main() -> int:
         secret = pipeline.load_pixels(rec["path"], size)
         reference = pipeline.load_pixels(rec["reference_path"], size)
         rerun = hide_and_recover(edict, secret, reference, rec["kpub"], rec["token"], cfg,
-                                 recover_prompt=rec["kpub"])
+                                 ipadapter=ipadapter,
+                                 recover_prompt=rec["kpub"],
+                                 reference_path=rec["reference_path"])
         first = results["matched"]["cells"][0]
         determinism = {
             "checked": True,

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import gc
+import subprocess
 import sys
 import time
 from collections import defaultdict
@@ -36,7 +37,9 @@ def check(name: str, passed: bool, detail: str = "") -> Dict[str, Any]:
 
 
 def main() -> None:
-    set_seed(42, verbose=True)
+    # CPU-only seeding: creating a CUDA context in the parent would take ~0.7 GB
+    # of VRAM away from the per-class determinism workers on a 6 GB card.
+    torch.manual_seed(42)
     with open(paths.PROJECT_ROOT / "configs" / "base.yaml", "r", encoding="utf-8") as fh:
         config = yaml.safe_load(fh)
     cfg = config.get("reference", {})
@@ -124,43 +127,56 @@ def main() -> None:
         if len(samples[key]) < 2:
             samples[key].append(rec)
     det_ok = True
+
+    # Run each class in a subprocess to avoid GPU OOM on 6 GB cards.
+    # Loading SD + ControlNet for one class uses ~3.4 GB; loading a second
+    # class without a full process restart can OOM due to CUDA fragmentation
+    # and Windows commit-charge accounting.
     for cls in CLASSES:
-        pipe = None
+        todo = [r for r in records if r["class"] == cls and
+                r in samples.get((r["role"], cls), [])]
+        if not todo:
+            continue
+        # Serialise the todo list to a temp file for the subprocess
+        import tempfile
+        todo_file = Path(tempfile.mktemp(suffix=".json", prefix="phase8_det_"))
+        with open(todo_file, "w", encoding="utf-8") as tf:
+            json.dump({"class": cls, "records": todo, "size": size,
+                       "steps": steps, "guidance": guidance,
+                       "config": cfg}, tf)
         try:
-            todo = [r for r in records if r["class"] == cls and
-                    r in samples.get((r["role"], cls), [])]
-            if not todo:
-                continue
-            pipe, _ = build_pipeline(cls, cfg)
-            for rec in todo:
-                cond = load_conditions(paths.RESULTS_DIR / "public_conditions",
-                                       rec["image_id"])
-                token = tokens[rec["image_id"]][
-                    "token" if rec["token_mode"] == "correct" else "wrong_token"
-                ]
-                out = generate_reference(
-                    pipe, prompt=cond["kpub"], control=control_image(cond, size),
-                    token=token, output_size=size, steps=steps,
-                    guidance_scale=guidance,
-                )
-                digest = __import__("hashlib").sha256(
-                    out["image"].tobytes()
-                ).hexdigest()
-                stored = Image.open(paths.PROJECT_ROOT / rec["reference_path"]).convert("RGB")
-                stored_digest = __import__("hashlib").sha256(stored.tobytes()).hexdigest()
-                if digest != stored_digest:
+            result = subprocess.run(
+                [sys.executable, "-X", "faulthandler",
+                 str(Path(__file__).resolve()), "--determinism-worker",
+                 str(todo_file)],
+                cwd=_ROOT, capture_output=True, text=True, timeout=600,
+            )
+            if result.returncode != 0:
+                # Parse any failure lines from stdout
+                for line in result.stdout.strip().splitlines():
+                    if line.startswith("FAIL:"):
+                        det_ok = False
+                        failures.append(line[5:])
+                if not any(l.startswith("FAIL:") for l in result.stdout.strip().splitlines()):
                     det_ok = False
-                    failures.append(f"determinism:{rec['image_id']}")
-                if out["latents_sha256"] != rec["latents_sha256"]:
-                    det_ok = False
-                    failures.append(f"latents:{rec['image_id']}")
+                    failures.append(f"determinism_subprocess:{cls}")
+                    print(f"  subprocess for {cls} failed (rc={result.returncode})")
+                    if result.stderr:
+                        for line in result.stderr.strip().splitlines()[-5:]:
+                            print(f"    {line}")
+            else:
+                for line in result.stdout.strip().splitlines():
+                    if line.startswith("FAIL:"):
+                        det_ok = False
+                        failures.append(line[5:])
+                    elif line.startswith("OK:"):
+                        print(f"    {line}")
+        except subprocess.TimeoutExpired:
+            det_ok = False
+            failures.append(f"determinism_timeout:{cls}")
         finally:
-            if pipe is not None:
-                unload(pipe)
-            pipe = None
-            gc.collect()
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+            if todo_file.exists():
+                todo_file.unlink()
     add("determinism", det_ok)
 
     print("=" * 60)
@@ -194,5 +210,60 @@ def main() -> None:
     sys.exit(0 if result["pass"] else 1)
 
 
+def _determinism_worker(todo_path: str) -> None:
+    """Subprocess worker: verify determinism for one class's records."""
+    with open(todo_path, "r", encoding="utf-8") as fh:
+        payload = json.load(fh)
+    cls = payload["class"]
+    todo = payload["records"]
+    size = int(payload["size"])
+    steps = int(payload["steps"])
+    guidance = float(payload["guidance"])
+    cfg = payload["config"]
+
+    tokens, _ = load_tokens()
+    pipe = None
+    try:
+        pipe, _ = build_pipeline(cls, cfg)
+        for rec in todo:
+            cond = load_conditions(paths.RESULTS_DIR / "public_conditions",
+                                   rec["image_id"])
+            token = tokens[rec["image_id"]][
+                "token" if rec["token_mode"] == "correct" else "wrong_token"
+            ]
+            out = generate_reference(
+                pipe, prompt=cond["kpub"], control=control_image(cond, size),
+                token=token, output_size=size, steps=steps,
+                guidance_scale=guidance,
+            )
+            digest = __import__("hashlib").sha256(
+                out["image"].tobytes()
+            ).hexdigest()
+            stored = Image.open(
+                paths.PROJECT_ROOT / rec["reference_path"]
+            ).convert("RGB")
+            stored_digest = __import__("hashlib").sha256(
+                stored.tobytes()
+            ).hexdigest()
+            img_ok = (digest == stored_digest)
+            lat_ok = (out["latents_sha256"] == rec["latents_sha256"])
+            if not img_ok:
+                print(f"FAIL:determinism:{rec['image_id']}", flush=True)
+            if not lat_ok:
+                print(f"FAIL:latents:{rec['image_id']}", flush=True)
+            if img_ok and lat_ok:
+                print(f"OK: {rec['image_id']} deterministic", flush=True)
+    finally:
+        if pipe is not None:
+            unload(pipe)
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+
 if __name__ == "__main__":
-    main()
+    if "--determinism-worker" in sys.argv:
+        idx = sys.argv.index("--determinism-worker")
+        _determinism_worker(sys.argv[idx + 1])
+    else:
+        main()

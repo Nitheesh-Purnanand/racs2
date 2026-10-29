@@ -37,3 +37,46 @@ No entry, no claim.
   branch (fine-tuned or not), and the semantic codec.
 - A calibration result is always labelled approximate. It never enters an evaluation cell or
   a claim table.
+
+## Paper-asset upgrade (2026-10-29)
+
+Every row below **supersedes** an earlier row in the table above: the component the
+paper names is now the component the pipeline runs. Append-only rules still apply, so the
+original rows stay for the record, and `experiments/results/archive/` keeps the superseded
+baseline artifacts. Fetch and hashes: `scripts/fetch_paper_assets.py`, `models/PAPER_ASSETS.json`.
+
+| Phase | Paper component | What we now use | Status vs the old row | Remaining gap |
+| :-- | :-- | :-- | :-- | :-- |
+| 7 | LLM-generated `Kpub` | `Qwen/Qwen2.5-0.5B-Instruct` (greedy, local) rewriting a BLIP perception caption into the public prompt | Supersedes "BLIP + fixed template" | The paper does not name its LLM, so the wording differs; ours is local, frozen and deterministic |
+| 7 | OneFormer structural feature (common) | `shi-labs/oneformer_ade20k_swin_large`, 150-class ADE20K, fp16, 512 px | Supersedes SegFormer-B0 | None for the model; see the 6 GB memory note below |
+| 7 | OpenPose structural feature (facial) | `controlnet_aux` OpenPose (`lllyasviel/Annotators`), body + 70 face keypoints, rendered skeleton as the ControlNet input | Supersedes MediaPipe Face Mesh | `controlnet_aux` 0.0.9 imports mediapipe's removed `solutions` API at package level, so its unused `mediapipe_face` submodule is stubbed before import |
+| 8 | PicX-Real reference generator | `GraydientPlatformAPI/picx-real` (local), all SD v1.5-shaped components loaded from that checkpoint, with the SD v1.5 ControlNets (seg / openpose) | Supersedes "SD v1.5 + ControlNet" | Still 256 px, 20 DDIM steps (6 GB card) |
+| 8/11 | IPAdapter-plus, weight 1 | `h94/IP-Adapter` `ip-adapter-plus_sd15.safetensors` attached to the EDICT UNet; `Xref` is injected at **both** ends through `added_cond_kwargs["image_embeds"]` | Supersedes "IPAdapter not used" | The paper is not explicit about where the image prompt enters; we inject at the EDICT stage because that is the only stage the receiver can reproduce. This also makes the stego reference-sensitive, which the retrieval phases need |
+| 8/11 | IPAdapter image encoder placement | CLIP-H kept on the **CPU** in float32 and every reference embedding cached on disk by reference SHA-256 (`scripts/phase8_embeds.py`) | New | Placement only, not a model change. The 2.5 GB encoder cannot sit beside SD on a 6 GB card, and the cache makes Tx and Rx read a byte-identical tensor |
+| 13 | SwinJSCC, C = 48, CelebA-HQ, 10 dB | Official `semcomm/SwinJSCC` release, `SwinJSCC_wo_SAandRA_AWGN_HRimage_snr10_psnr_C64`, float32, with a seeded complex-AWGN draw | Supersedes the SD-VAE substitute | The release ships C = 32/64/96/128/192; C = 64 is the nearest to the paper's C = 48, and it is the HRimage (DIV2K-style) model, not CelebA-HQ. Only the noise generator is replaced, by a seeded one, so Tx and Rx share the realisation |
+| 14 | CodeFormer, fidelity 0.5 | Official `sczhou/CodeFormer` architecture and `codeformer.pth`, 512 px, fidelity 0.5, facial class only, **enabled** | Supersedes the pass-through fallback | Runs on the CPU in float32: at 512 px the VQGAN needs more memory than the card has left beside SD. `has_aligned`-style direct restoration, so the retinaface detector and the face parser are not used on these already-cropped faces |
+| 13 | MDJCM digital codec, modulation 64 | Not reproduced | Unchanged | The paper's digital branch has no public checkpoint; only the analog SwinJSCC branch is reproduced, and no digital-branch number is claimed |
+| 10/11 | EDICT 50 steps, edit strength 0.5 | 20 steps, strength 0.2, 256 px | Unchanged | Hardware. Both are single config values (`steganography.edict_steps`, `edict_strength`); a 50-step run is a config change, not a code change |
+
+| Phase | Paper component | What we now use | Status vs the old row | Remaining gap |
+| :-- | :-- | :-- | :-- | :-- |
+| 7 | OpenPose on every facial image | OpenPose on 19 of the 22 evaluation portraits; the MediaPipe face mesh on the other 3 (`eva_facial_0006/0010/0018`), recorded per record in the `.npz` (`feature_method`) and counted in the Phase 7 manifest | Refines the OpenPose row above | OpenPose places face keypoints only inside a detected body, and on those three tight crops its body detector returns nothing — plain, autocontrast, equalized and padded variants all give zero poses. Conditioning ControlNet on an empty skeleton would be worse than a different annotator, so the fallback order is fixed, both models are deterministic, and the choice is visible per image |
+
+## RACS retrieval stack (Phases 17-22), 2026-10-29
+
+| Phase | Plan item | What we use | Why |
+| :-- | :-- | :-- | :-- |
+| 17 | FAISS `IndexFlatIP` in the Tx/Rx path | `faiss-cpu` 1.8.0 builds and saves the index (`phase17/corpus.faiss`) in its own process and is checked to give identical Top-50 rows and scores; the pipeline searches with the same exact inner product in numpy | faiss and PyTorch load clashing OpenMP runtimes on Windows (`OMP Error #15`) in one process. Exact search is the same arithmetic, so nothing changes in what is retrieved |
+| 17 | Query | CLIP ViT-B/32 **text** embedding of `Kpub` (public), never the secret | The receiver must recompute `Xref` from public material only |
+| 19 | Structural representation | Dilated binary edges (128 px) for corpus rows; query structure from the public `Xfeat`: OneFormer segment boundaries (common), OpenPose keypoint coverage (facial), none for style (style has no `Xfeat`, so it ranks on semantics only) | Simplest representation that validates; the Xfeat is the only public structure both ends hold |
+| 20 | Rerank | CLIP Top-50 pool reranked by `alpha*(cos+1)/2 + beta*structure`, top 10 kept, token picks one. Frozen `alpha=0.75, beta=0.25` from a calibration-only sweep (objective: equal-weight secret similarity and edge IoU of the selected pool) | Token selection is uniform over the Top-K, so reranking only matters if it changes the pool; it must rerank a wider pool |
+| 21/22 | Full evaluation split | Phase 21 is run on a subset (`--limit 2` per class, all 4 SNRs) because Phases 15/16 on the paper stack were not rebuilt in this session. Both systems are measured fresh through **one** object and the imported baseline `run_case`, differing only in `reference_path`; the Tx/Rx invariant is checked on all 66 evaluation images | Time. `scripts\phase21_racs.py --limit 0` runs the full split with no code change |
+
+## Quick paper-stack baseline (Phases 15B/16), 2026-10-29
+
+Phase 15B and 16 were run on the paper stack with `--limit 2` (2 evaluation images per class,
+all 4 SNRs, 24 cases) instead of N=22, to fit a ~15 min budget. The numbers are measured, not
+copied. `phase15_verify` and `phase16_verify` fail **only** their N=22 count checks (and the
+XuNet sample-count check, n=8); every determinism, provenance and component check passes.
+Phase 15A (calibration) was not rerun, so Gate A still compares the paper against the old
+substitute-stack calibration table. Full run: `scripts\run_baseline.py --mode paper --from-phase 15 --to-phase 16 --yes --resume yes`.

@@ -30,9 +30,9 @@ cd D:\racs2
 Expected: Phase 15 verify PASS, Phase 5 verify PASS, shape `(1000,) (1000, 512) float32`,
 norms within `1 +/- 1e-5`.
 
-> Phase 15 verify currently fails on the paper-asset working tree. Either fetch the assets and
-> re-freeze, or temporarily `git stash push -- configs/base.yaml` while checking. This phase does
-> not depend on those components; record which state you used.
+> As of 2026-10-29 the paper assets are in place and Phases 7-16 were re-frozen on them, so
+> `phase15_verify.py` passes as-is (Gate A misses stay documented in `docs/DEVIATIONS.md`).
+> This phase does not depend on those components.
 
 Install FAISS:
 

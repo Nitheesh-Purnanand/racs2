@@ -166,6 +166,13 @@ def main() -> None:
             existing_cells = []
     grid = ([(op_steps, op_mix)] if args.operating_only
             else [(s, m) for s in steps_list for m in mixing_list])
+    # EDICT's coupling is invertible only for 0.5 < p <= 1; a sweep value at or
+    # below the singular point is a config error, not a measurable cell.
+    skipped = [(s, m) for s, m in grid if not 0.5 < float(m) <= 1.0]
+    if skipped:
+        print(f"[edict] skipping {len(skipped)} cell(s) outside 0.5 < mixing <= 1: "
+              f"{sorted({m for _, m in skipped})}", flush=True)
+        grid = [(s, m) for s, m in grid if 0.5 < float(m) <= 1.0]
     for steps, mixing in grid:
             t0 = time.time()
             errs_by_kind = {}

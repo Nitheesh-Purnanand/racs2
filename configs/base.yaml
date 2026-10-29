@@ -21,6 +21,25 @@ retrieval:
   canonical_size: 512        # stored image edge, matches SD/EDICT later
   resize_mode: "shortest_side_then_center_crop"   # documented, not implicit
   source: "coco_val2017"
+  # Phases 17-20 (RACS retrieval stack), shared by Tx and Rx
+  faiss:
+    index_type: "IndexFlatIP"
+    index_path: "experiments/results/phase17/corpus.faiss"
+    k_sweep: [1, 5, 10, 20, 50]
+  token_selection:
+    domain: "racs2-token-selection-v1"
+    top_k: 10
+  structural:
+    kind: "edges"
+    size: 128
+    cache_path: "experiments/results/phase19/structural_edges.npz"
+  ranking:
+    alpha: 0.75                # frozen by Phase 20 calibration sweep
+    beta: 0.25
+    top_k: 10
+    pool_k: 50                 # CLIP pool reranked down to top_k
+    sweep_alpha: [0.0, 0.25, 0.5, 0.75, 1.0]
+    freeze: true
 
 embedding:
   model_id: "openai/clip-vit-base-patch32"   # ViT-B/32: 512-d, ~600 MB, fast on 6 GB
@@ -57,26 +76,38 @@ semantic:
   cache_dir: "experiments/results/public_conditions"
   manifest_path: "experiments/results/public_conditions/manifest.json"
   keygen:
-    method: "blip_template"          # blip_template | clip_vocab | local_llm
-    model_id: "Salesforce/blip-image-captioning-base"
+    method: "local_llm"              # paper: an LLM writes Kpub after perceiving Xs
+    model_id: "Salesforce/blip-image-captioning-base"   # perception stage
     model_path: null
+    llm_model_id: "Qwen/Qwen2.5-0.5B-Instruct"
+    llm_model_path: "models/qwen2.5-0.5b-instruct"
+    llm_dtype: "float16"
+    kpub_sanitizer: "v2"             # markdown/URL stripping + perception fallback
+    llm_prompt_version: "v3"         # bump when LLM_ONE_SHOT in semantic/keygen.py changes
+    # Part of the semantic config hash: editing it invalidates every cached Kpub.
+    llm_system_prompt: "You turn an image description into one text-to-image prompt. Reply with a single plain sentence of 10 to 25 words describing only what is visible. Never use markdown, image syntax, links, quotes or lists."
     device: "cuda"
     dtype: "float16"
-    max_new_tokens: 40
+    max_new_tokens: 48
     num_beams: 1                     # greedy only, no sampling
     template: "a photorealistic photograph of {caption}, natural composition, detailed textures, realistic lighting"
     max_chars: 300
   features:
     common:
-      method: "segformer"            # segformer | oneformer
-      model_id: "nvidia/segformer-b0-finetuned-ade-512-512"
-      model_path: null
+      method: "oneformer"            # segformer | oneformer (paper: OneFormer)
+      model_id: "shi-labs/oneformer_ade20k_swin_large"
+      model_path: "models/oneformer-ade20k-swin-large"
       device: "cuda"
       dtype: "float16"
       output_size: 512
       num_classes: 150
     facial:
-      method: "mediapipe"            # openpose | mediapipe (mediapipe is 6GB safe)
+      method: "openpose"             # openpose (paper) | mediapipe (fallback)
+      model_id: "lllyasviel/Annotators"
+      model_path: null
+      include_face: true
+      include_hand: false
+      fallback: "mediapipe"          # per-image, when OpenPose detects no body
       output_size: 512
       min_keypoints: 5
     style:
@@ -127,7 +158,9 @@ edict:
   dtype: "float16"
   latent_dtype: "float32"
   sweep_steps: [10, 20, 50]
-  sweep_mixing: [0.5, 0.7, 0.93, 0.99]
+  # p = 0.5 is the singular point of the EDICT coupling (the inverse is
+  # undefined there), so the sweep probes just above it instead.
+  sweep_mixing: [0.55, 0.7, 0.93, 0.99]
   num_random_latents: 20
   num_image_latents: 20
   results_path: "experiments/results/phase10_edict.json"
@@ -137,12 +170,11 @@ edict:
 reference:
   cache_dir: "experiments/results/references"
   manifest_path: "experiments/results/phase8_references.json"
-  backend: "sd_controlnet"
-  model_id: "stable-diffusion-v1-5/stable-diffusion-v1-5"
+  backend: "picx_real"             # picx_real | sd_controlnet
+  model_id: "models/picx-real"     # paper's PicX-Real generator (local)
+  fallback_model_id: "stable-diffusion-v1-5/stable-diffusion-v1-5"
   controlnet_id: "lllyasviel/control_v11p_sd15_seg"
   facial_controlnet_id: "lllyasviel/control_v11p_sd15_openpose"
-  use_ipadapter: false
-  ipadapter_id: "h94/IP-Adapter"
   device: "cuda"
   dtype: "float16"
   scheduler: "ddim"
@@ -154,7 +186,7 @@ reference:
   max_peak_vram_gb: 5.5
 
 controlnet_train:
-  base_model_id: "stable-diffusion-v1-5/stable-diffusion-v1-5"
+  base_model_id: "models/picx-real"
   controlnet_id: "lllyasviel/control_v11p_sd15_seg"
   train_role: "calibration"
   classes: ["common", "facial"]
@@ -170,6 +202,19 @@ controlnet_train:
   probe_snr_db: 10
 
 steganography:
+  # IPAdapter-plus injects Xref into the EDICT sampler at both ends (paper
+  # weight 1.0). Both the transmitter and the receiver embed the same
+  # reference image, so the chain stays an exact paired inverse.
+  ipadapter:
+    enabled: true
+    root: "models/ip-adapter"
+    subfolder: "models"
+    weight_name: "ip-adapter-plus_sd15.safetensors"
+    image_encoder_folder: "models/image_encoder"
+    scale: 1.0                     # paper: IPAdapter-plus weight 1
+    encoder_device: "cpu"          # CLIP-H is 2.5 GB; it does not fit beside SD on 6 GB
+    encoder_dtype: "float32"
+    cache_dir: "experiments/results/ipadapter_embeds"   # filled by scripts/phase8_embeds.py
   eta: 0.05
   mask_fraction: 0.05
   mask_domain: "racs2-mask-v1"
@@ -195,10 +240,11 @@ channel:
   curve_path: "experiments/results/phase12/phase12_awgn_curve.png"
 
 codec:
-  kind: "sd_vae_substitute"       # pretrained substitute; see docs/DEVIATIONS.md
-  checkpoint: "stable-diffusion-v1-5/stable-diffusion-v1-5#vae"
+  kind: "swinjscc"                 # swinjscc | sd_vae_substitute (ablation)
+  checkpoint: "models/swinjscc/SwinJSCC_wo_SAandRA_AWGN_HRimage_snr10_psnr_C64.model"
   checkpoint_sha256: ""
-  compression_ratio: 12            # 256x256x3 -> 32x32x4 at 256 px
+  channel_number: 64               # paper C=48; nearest released model is C=64
+  compression_ratio: 12            # recomputed from the measured symbol shape
   trained_snr_db: 10
   modulation: 64
   input_size: 256
@@ -209,13 +255,15 @@ codec:
   grid_path: "experiments/results/phase13/phase13_codec_grid.png"
 
 enhancement:
-  enabled: false
+  enabled: true                    # paper applies CodeFormer to recovered faces
   kind: "codeformer"
   model_id: "sczhou/CodeFormer"
-  fidelity_weight: 0.5
+  weights_dir: "models/codeformer"
+  fidelity_weight: 0.5             # paper value
   classes: ["facial"]
-  input_size: 256
-  dtype: "float16"
+  input_size: 512                  # CodeFormer native; output is resized back
+  device: "cpu"                    # 512 px fp32 VQGAN does not fit beside SD on 6 GB
+  dtype: "float32"                 # released weights are float32; fp16 mixes dtypes
   results_dir: "experiments/results/phase14"
   manifest_path: "experiments/results/phase14_codeformer.json"
   grid_path: "experiments/results/phase14/phase14_enhance_grid.png"

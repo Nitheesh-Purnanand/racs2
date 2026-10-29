@@ -45,6 +45,17 @@ def _grid(rows, out_path: Path) -> None:
     sheet.save(out_path)
 
 
+def _jsonable(value):
+    """Manifest fields must survive json.dump; torch devices/dtypes do not."""
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    if isinstance(value, dict):
+        return {k: _jsonable(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_jsonable(v) for v in value]
+    return str(value)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--limit", type=int, default=0)
@@ -133,19 +144,27 @@ def main() -> int:
         "split_role": "evaluation",
         "class": "facial",
         "enabled_by_default": bool(cfg_all["enhancement"].get("enabled", False)),
-        "enhancer": {**{k: v for k, v in enhancer.items() if k != "model"},
+        "enhancer": {**_jsonable({k: v for k, v in enhancer.items() if k != "model"}),
                      "fingerprint": h1},
         "input_size": int(cfg["input_size"]),
-        "output_size": int(cfg["input_size"]),
+        # CodeFormer restores at its native 512 px and the result is resized
+        # back, so the pipeline sees an unchanged image size.
+        "restoration_size": int(cfg["input_size"]),
+        "output_size": int(a.size[0]),
         "snr_db": snrs,
         "results": results,
         "control": {"class": "common", "applied": applied,
                     "identical": control_identical},
         "deterministic": deterministic,
         "decisions": {
-            "codeformer_weights": "pretrained original CodeFormer weights are not "
-                                  "installed in this environment; fallback recorded "
-                                  "in docs/DEVIATIONS.md and module kept off by default",
+            "codeformer_weights": (
+                f"official sczhou/CodeFormer codeformer.pth in use, sha256 "
+                f"{enhancer.get('sha256', '')}, fidelity "
+                f"{enhancer.get('fidelity_weight')}, device {enhancer.get('device')}"
+                if enhancer.get("backend") == "codeformer" else
+                "pretrained CodeFormer weights unavailable in this environment; "
+                "pass-through fallback recorded in docs/DEVIATIONS.md"
+            ),
         },
         "elapsed_s": time.time() - started,
     }

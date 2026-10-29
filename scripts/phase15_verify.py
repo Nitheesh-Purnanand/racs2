@@ -152,11 +152,22 @@ def main() -> int:
     add("fresh-process determinism", fresh_ok, fresh_detail)
 
     stego_cfg = cfg_all["steganography"]
+    models = ev.get("models", {})
+    ip_cfg = stego_cfg.get("ipadapter") or {}
+    # The gate is agreement between the live config and what the frozen run
+    # recorded, not any particular component choice.
+    component_checks = {
+        "codec": models.get("codec") == cfg_all["codec"]["kind"],
+        "enhancement": ev.get("enhancement_enabled")
+        == bool(cfg_all["enhancement"].get("enabled")),
+        "ipadapter": bool((models.get("ipadapter") or {}).get("enabled"))
+        == bool(ip_cfg.get("enabled")),
+        "edict_steps": stego_cfg["edict_steps"] == cfg_all["edict"]["steps"],
+        "edict_mixing": stego_cfg["edict_mixing"] == cfg_all["edict"]["mixing"],
+    }
     add("component choices match frozen manifests",
-        ev.get("models", {}).get("codec") == cfg_all["codec"]["kind"]
-        and ev.get("enhancement_enabled") is False
-        and stego_cfg["edict_steps"] == cfg_all["edict"]["steps"]
-        and stego_cfg["edict_mixing"] == cfg_all["edict"]["mixing"])
+        all(component_checks.values()),
+        str({k: v for k, v in component_checks.items() if not v}) or "all agree")
 
     forbidden = ("retrieval", "faiss", "vlm", "racs", "clip_encoder")
     hits = pipeline.forbidden_import_hits(
