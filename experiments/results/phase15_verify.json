@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "phase": 15,
-  "created_utc": "2026-10-28T03:33:05Z",
-  "pass": true,
+  "created_utc": "2026-10-29T10:25:18Z",
+  "pass": false,
   "gate_a_pass": false,
-  "gate_b_pass": true,
+  "gate_b_pass": false,
   "checks": [
     {
       "check": "15A approximate=true, 15B approximate=false",
@@ -26,7 +26,7 @@
     },
     {
       "check": "12 cells per split (3 classes x 4 SNR), N=22, finite metrics",
-      "pass": true,
+      "pass": false,
       "detail": "cal=12 ev=12",
       "gate": "B"
     },
@@ -45,7 +45,7 @@
     {
       "check": "in-process determinism (reference, stego, recovered)",
       "pass": true,
-      "detail": "sample=6",
+      "detail": "sample=2",
       "gate": "B"
     },
     {
@@ -57,7 +57,7 @@
     {
       "check": "component choices match frozen manifests",
       "pass": true,
-      "detail": "",
+      "detail": "{}",
       "gate": "B"
     },
     {
@@ -184,7 +184,7 @@
     "Gate A tolerance misses: 8 (accepted in docs/DEVIATIONS.md)"
   ],
   "summary": {
-    "passed": 12,
+    "passed": 11,
     "total": 12,
     "gate_a_misses": 8
   }

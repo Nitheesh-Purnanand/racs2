@@ -1,0 +1,13 @@
+{
+  "phase": 21,
+  "pass": true,
+  "checks": {
+    "xref_tx_equals_rx_all_eval_images": true,
+    "downstream_is_imported_baseline": true,
+    "evaluation_split_only": true,
+    "all_cases_measured": true
+  },
+  "created_utc": "2026-10-29T10:11:51Z",
+  "cases": 6,
+  "note": "subset run"
+}

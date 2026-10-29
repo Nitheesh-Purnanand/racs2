@@ -1,0 +1,680 @@
+{
+  "schema_version": 1,
+  "phase": 21,
+  "created_utc": "2026-10-29T10:11:51Z",
+  "index_sha256": "40e7390befd76af22ef1e80d61acfd4ca3e4156d6b12a4fadc835e2b0352d70f",
+  "embeddings_sha256": "7f264f3798f01527e4968c28a75854a42e7b735d71dee0287f28d6cc34734721",
+  "corpus_version": "cc20af2154beb97e036b08401a350cecce252b72c0b5545dc8613c81abf89aff",
+  "structural_maps_sha256": "4b1a50b34a57a263e5194e81ff0907424b312e8d0ba00e9221ce78e1a9c2ea3b",
+  "alpha": 0.75,
+  "beta": 0.25,
+  "top_k": 10,
+  "pool_k": 50,
+  "token_domain": "racs2-token-selection-v1",
+  "split_version": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202",
+  "tokens_version": "201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1",
+  "xref_invariant": [
+    {
+      "image_id": "eva_common_0000",
+      "class": "common",
+      "xref_id": "coco_val2017_000000047769",
+      "xref_sha256": "491d1f3d397a2fa14c9c0d203fa2f35dcd929c9c2549c5b59a3d1825e1b61606",
+      "pick": 2,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.12104639999597566
+    },
+    {
+      "image_id": "eva_common_0001",
+      "class": "common",
+      "xref_id": "coco_val2017_000000512648",
+      "xref_sha256": "5fb6d5c4e46068dd5d9906a55bd02508d50b0a8093dc925a50b039d6e5351b70",
+      "pick": 7,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03430460000527091
+    },
+    {
+      "image_id": "eva_common_0002",
+      "class": "common",
+      "xref_id": "coco_val2017_000000385997",
+      "xref_sha256": "4d0fa8524f7f69b4da61741d7aa11f8d999ebf4a19120f2c59f12a03cac52da9",
+      "pick": 5,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.04035450000083074
+    },
+    {
+      "image_id": "eva_common_0003",
+      "class": "common",
+      "xref_id": "coco_val2017_000000089078",
+      "xref_sha256": "3f4416c85a1edaa495e45c1f16fbeedfd2443ada26c04bf7a2beb9266c813b3f",
+      "pick": 0,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03592400000343332
+    },
+    {
+      "image_id": "eva_common_0004",
+      "class": "common",
+      "xref_id": "coco_val2017_000000519569",
+      "xref_sha256": "782ec8d64e9be04ddd6cbd0e0fa575bf0abe1214d0a939b6b03643c2ebf5a9a6",
+      "pick": 0,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.034028200003376696
+    },
+    {
+      "image_id": "eva_common_0005",
+      "class": "common",
+      "xref_id": "coco_val2017_000000359540",
+      "xref_sha256": "f0d4a26192c8b7b8fcfc5f779c8b9630eac5256d2c80c8bac4cbd2d6409c2f25",
+      "pick": 6,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.046922000001359265
+    },
+    {
+      "image_id": "eva_common_0006",
+      "class": "common",
+      "xref_id": "coco_val2017_000000412286",
+      "xref_sha256": "15463b4b63f307fecdcaa143acc4b3046464d5055906a88c6d27756a24c258ea",
+      "pick": 2,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.04455930000403896
+    },
+    {
+      "image_id": "eva_common_0007",
+      "class": "common",
+      "xref_id": "coco_val2017_000000511321",
+      "xref_sha256": "ea1d08f011623464c87d1552c518ced5158bf436eb92a97d70b39a67c5d3ff34",
+      "pick": 2,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03262600000016391
+    },
+    {
+      "image_id": "eva_common_0008",
+      "class": "common",
+      "xref_id": "coco_val2017_000000459272",
+      "xref_sha256": "a5034b73699658e4347a7f4838096232ae5b590ecd0cb2093ebf3f9071274815",
+      "pick": 5,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03507489999901736
+    },
+    {
+      "image_id": "eva_common_0009",
+      "class": "common",
+      "xref_id": "coco_val2017_000000379800",
+      "xref_sha256": "8f44c10d879126a1b74230517c51af10f1dae5c81cc5379413b5bce638d5c594",
+      "pick": 5,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.030191600002581254
+    },
+    {
+      "image_id": "eva_common_0010",
+      "class": "common",
+      "xref_id": "coco_val2017_000000121673",
+      "xref_sha256": "9eba03ea1485c7bb8bba30c20eea0122b0a689325b43a696838cf52201f7a4b0",
+      "pick": 0,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03650510000443319
+    },
+    {
+      "image_id": "eva_common_0011",
+      "class": "common",
+      "xref_id": "coco_val2017_000000089045",
+      "xref_sha256": "e0ef16b6479c6a91215fa11a61cd3874281809d48daca87155d6e68c2755da69",
+      "pick": 6,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03467880000243895
+    },
+    {
+      "image_id": "eva_common_0012",
+      "class": "common",
+      "xref_id": "coco_val2017_000000232646",
+      "xref_sha256": "98c6ee450338a661c48372bc5be3b7ee06ed7042ad14507fe1c0877db8bbbbb5",
+      "pick": 2,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03191299999889452
+    },
+    {
+      "image_id": "eva_common_0013",
+      "class": "common",
+      "xref_id": "coco_val2017_000000101420",
+      "xref_sha256": "23ec7aa6d45179af1664f392fd3c0be9ccc38f752d65cfdb2e37da00cc019844",
+      "pick": 8,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.041548100001818966
+    },
+    {
+      "image_id": "eva_common_0014",
+      "class": "common",
+      "xref_id": "coco_val2017_000000134322",
+      "xref_sha256": "5287426ba359f036743b8cca9b2e856fb05ea6722760138d83a3978c758ca34f",
+      "pick": 5,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.040081700004520826
+    },
+    {
+      "image_id": "eva_common_0015",
+      "class": "common",
+      "xref_id": "coco_val2017_000000185409",
+      "xref_sha256": "6eb28ac2d0ef861b9d16c1e61b5a083959303bd3b728c87d28bd78f27c0ec397",
+      "pick": 6,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.04925100000400562
+    },
+    {
+      "image_id": "eva_common_0016",
+      "class": "common",
+      "xref_id": "coco_val2017_000000568290",
+      "xref_sha256": "00a5e21e6b8e9024727defca6554e0528a3f6b254662b889a8209722bfb41a1f",
+      "pick": 7,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.14571599999908358
+    },
+    {
+      "image_id": "eva_common_0017",
+      "class": "common",
+      "xref_id": "coco_val2017_000000480122",
+      "xref_sha256": "958a3462690cff5e03ee0c54b1aed38eb6b82a37f2ee7a4146ae22dc5c49e695",
+      "pick": 1,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.1320389000029536
+    },
+    {
+      "image_id": "eva_common_0018",
+      "class": "common",
+      "xref_id": "coco_val2017_000000262487",
+      "xref_sha256": "c969d9ec2804381f9b4df45d185c5ee6507ae9e10ceacdf7fb8631721f127dae",
+      "pick": 2,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.10258859999885317
+    },
+    {
+      "image_id": "eva_common_0019",
+      "class": "common",
+      "xref_id": "coco_val2017_000000556873",
+      "xref_sha256": "c82d92b591e11c4bbc2101dfa6328dc0320ee268fead503558bf337f42af10f3",
+      "pick": 0,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.08833880000020145
+    },
+    {
+      "image_id": "eva_common_0020",
+      "class": "common",
+      "xref_id": "coco_val2017_000000459662",
+      "xref_sha256": "ca1bf70f4617c7412d191b376aa5f262a331f3b5cf9339556ddeaa630ff4612c",
+      "pick": 5,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.04530919999524485
+    },
+    {
+      "image_id": "eva_common_0021",
+      "class": "common",
+      "xref_id": "coco_val2017_000000319617",
+      "xref_sha256": "24a62dc4a7e6c206eb6265e08dbb754cd6d51ef5fe643f46f724c9c31e0ff57c",
+      "pick": 8,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.040776800000458024
+    },
+    {
+      "image_id": "eva_facial_0000",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000581781",
+      "xref_sha256": "b1d62e964668fcbeddd5fa065fac508cf98e06b98cde7355c55544d24c9eee71",
+      "pick": 9,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.037892400003329385
+    },
+    {
+      "image_id": "eva_facial_0001",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000167159",
+      "xref_sha256": "ddfd315d90a8281f37ea0527c5d9be9953dd8e7324f8dd1f3bcefa7d35de06bf",
+      "pick": 3,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.036784000003535766
+    },
+    {
+      "image_id": "eva_facial_0002",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000442661",
+      "xref_sha256": "f0f3c8bdb4bf9e908aa62fd1188fa9fa3209a3633a7bae571514d58b366f21c9",
+      "pick": 1,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03766670000186423
+    },
+    {
+      "image_id": "eva_facial_0003",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000563267",
+      "xref_sha256": "9e7f9f4242e93e355e6172194119ac6b5ebec13db3360ceb10527dca6594525c",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03937679999944521
+    },
+    {
+      "image_id": "eva_facial_0004",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000284698",
+      "xref_sha256": "e8271b0f0070c28825b4718124d10d7f059227fe9b9708b0e6562ff05a99b84d",
+      "pick": 1,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.035754299999098293
+    },
+    {
+      "image_id": "eva_facial_0005",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000279145",
+      "xref_sha256": "d30a40b2ebf3f3c1756987337b92cf5341a84fbebc275189bc29ef8156e54fd5",
+      "pick": 7,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03768870000203606
+    },
+    {
+      "image_id": "eva_facial_0006",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000041635",
+      "xref_sha256": "d056fcffa149fe642a9cd530710c81e951689d1b4234547b1debd90dc90f1723",
+      "pick": 5,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.04318200000125216
+    },
+    {
+      "image_id": "eva_facial_0007",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000527029",
+      "xref_sha256": "4249d58539f939965abd19bb2be8265ac88488142452b6ef3016ac4ee7620612",
+      "pick": 7,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03645110000070417
+    },
+    {
+      "image_id": "eva_facial_0008",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000409268",
+      "xref_sha256": "f5cd0042b83c5cc7ecb2eac3291d7220abe0b77934e48180a6abbd08f247af7a",
+      "pick": 8,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.043041199998697266
+    },
+    {
+      "image_id": "eva_facial_0009",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000297578",
+      "xref_sha256": "50fe6dab15218114cf6e4576fa51bc3d63b677c1b3131fcb19c1f5c8e12c78ae",
+      "pick": 2,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03770760000043083
+    },
+    {
+      "image_id": "eva_facial_0010",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000118515",
+      "xref_sha256": "24b24cf4498205a5910b1b0d8fafe815838a4f6c737aceef1548c6f294e7bb40",
+      "pick": 6,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03852940000069793
+    },
+    {
+      "image_id": "eva_facial_0011",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000093965",
+      "xref_sha256": "bfab9f7f184fa080875532f8a616a73c1f40fda8bbe79f1f8f88967537dd88cd",
+      "pick": 7,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03848899999866262
+    },
+    {
+      "image_id": "eva_facial_0012",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000110784",
+      "xref_sha256": "ba680afcdf1a84bd7f88dbf07f780688c9b477eac9d5c7c6ecec6158e8176a07",
+      "pick": 8,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.041742399997019675
+    },
+    {
+      "image_id": "eva_facial_0013",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000391648",
+      "xref_sha256": "b1a7e7f5bd04879fb4f4e059176eef77ac3f3cc83978f43c484629402428d500",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.0413574000049266
+    },
+    {
+      "image_id": "eva_facial_0014",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000039914",
+      "xref_sha256": "5c80d723cf87b50d6f3814560d609a1550e183086429ccedb089c4dd154454f2",
+      "pick": 1,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.0355349000019487
+    },
+    {
+      "image_id": "eva_facial_0015",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000504389",
+      "xref_sha256": "f3a557e4476ba9159bb835acde9a0e7243ba0b07ce1a0287229385001bb21d56",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03551280000101542
+    },
+    {
+      "image_id": "eva_facial_0016",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000293794",
+      "xref_sha256": "367f31c9c4857cac0b2507b4090d58a8ccafc23e5308ff264097a510fe1e0a50",
+      "pick": 7,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.035865199999534525
+    },
+    {
+      "image_id": "eva_facial_0017",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000020333",
+      "xref_sha256": "7a9236081090b4416dad6703a7b7327e853e2cc32722e36930cfa4db8b0a1b16",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03313440000056289
+    },
+    {
+      "image_id": "eva_facial_0018",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000273132",
+      "xref_sha256": "23d798b7239cd0a4aa93d4be7213dbfa59b74c18c99227fbb72f06f21159f2ec",
+      "pick": 0,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.041954400003305636
+    },
+    {
+      "image_id": "eva_facial_0019",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000504389",
+      "xref_sha256": "f3a557e4476ba9159bb835acde9a0e7243ba0b07ce1a0287229385001bb21d56",
+      "pick": 7,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03389279999828432
+    },
+    {
+      "image_id": "eva_facial_0020",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000235836",
+      "xref_sha256": "55c41b44208088ccf97d2b5114fda23e8f994d45feee95cb03d72ab20e48ed78",
+      "pick": 2,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03398569999990286
+    },
+    {
+      "image_id": "eva_facial_0021",
+      "class": "facial",
+      "xref_id": "coco_val2017_000000062692",
+      "xref_sha256": "839fd78d92d7b793c5c516a51c12729cc33cecd0ac010385eda8e42159a46dce",
+      "pick": 0,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.045973600004799664
+    },
+    {
+      "image_id": "eva_style_0000",
+      "class": "style",
+      "xref_id": "coco_val2017_000000523811",
+      "xref_sha256": "185a1742f33137b06e038511444a685b2c6e20f0c11cee0a252514e024539c67",
+      "pick": 2,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.02826659999846015
+    },
+    {
+      "image_id": "eva_style_0001",
+      "class": "style",
+      "xref_id": "coco_val2017_000000118515",
+      "xref_sha256": "24b24cf4498205a5910b1b0d8fafe815838a4f6c737aceef1548c6f294e7bb40",
+      "pick": 6,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.0272938999987673
+    },
+    {
+      "image_id": "eva_style_0002",
+      "class": "style",
+      "xref_id": "coco_val2017_000000101420",
+      "xref_sha256": "23ec7aa6d45179af1664f392fd3c0be9ccc38f752d65cfdb2e37da00cc019844",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03318759999820031
+    },
+    {
+      "image_id": "eva_style_0003",
+      "class": "style",
+      "xref_id": "coco_val2017_000000433134",
+      "xref_sha256": "f151798bd4187cd4baeae56260ae366ed64f5487d84f3bd45dc29e988db79607",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.028009100002236664
+    },
+    {
+      "image_id": "eva_style_0004",
+      "class": "style",
+      "xref_id": "coco_val2017_000000094336",
+      "xref_sha256": "8a1977de74b2137405d08dcacd96221df2995320416c306dd4bc146ed8f91697",
+      "pick": 3,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.030963799996243324
+    },
+    {
+      "image_id": "eva_style_0005",
+      "class": "style",
+      "xref_id": "coco_val2017_000000312340",
+      "xref_sha256": "a8d956dba2d4d62f10f3432344444f835ff98d9a4914ecc4b4467649fd6b22d0",
+      "pick": 6,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.026768199997604825
+    },
+    {
+      "image_id": "eva_style_0006",
+      "class": "style",
+      "xref_id": "coco_val2017_000000094336",
+      "xref_sha256": "8a1977de74b2137405d08dcacd96221df2995320416c306dd4bc146ed8f91697",
+      "pick": 5,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.035013699998671655
+    },
+    {
+      "image_id": "eva_style_0007",
+      "class": "style",
+      "xref_id": "coco_val2017_000000524280",
+      "xref_sha256": "4a1e4ab5d6de7a6e3f3c8416a7d6229748a1b033572eb1ac612d2c66320a5dfd",
+      "pick": 8,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.026109700003871694
+    },
+    {
+      "image_id": "eva_style_0008",
+      "class": "style",
+      "xref_id": "coco_val2017_000000314914",
+      "xref_sha256": "c6fb61e824326ae3cbd01dedfc72fc88d4a3c6c7764bbafeda77464525b30e5a",
+      "pick": 9,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03609890000370797
+    },
+    {
+      "image_id": "eva_style_0009",
+      "class": "style",
+      "xref_id": "coco_val2017_000000524280",
+      "xref_sha256": "4a1e4ab5d6de7a6e3f3c8416a7d6229748a1b033572eb1ac612d2c66320a5dfd",
+      "pick": 6,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.02580139999918174
+    },
+    {
+      "image_id": "eva_style_0010",
+      "class": "style",
+      "xref_id": "coco_val2017_000000446117",
+      "xref_sha256": "bac278616a7fddcfbb54905a0065d8cd68e1adfab3c654b6eb66bdca3470a18a",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03130970000347588
+    },
+    {
+      "image_id": "eva_style_0011",
+      "class": "style",
+      "xref_id": "coco_val2017_000000230008",
+      "xref_sha256": "6f01d4083ee9cfab484830147bae114370832b905ca3ec86e4a1091cb8dcb0a6",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.027463800004625227
+    },
+    {
+      "image_id": "eva_style_0012",
+      "class": "style",
+      "xref_id": "coco_val2017_000000398810",
+      "xref_sha256": "71fd9cf9f35038cdd965a00cd53055ca557aecc7c04fb5c0fa7361e7d40caaf0",
+      "pick": 8,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.02882889999455074
+    },
+    {
+      "image_id": "eva_style_0013",
+      "class": "style",
+      "xref_id": "coco_val2017_000000312340",
+      "xref_sha256": "a8d956dba2d4d62f10f3432344444f835ff98d9a4914ecc4b4467649fd6b22d0",
+      "pick": 6,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.02771760000177892
+    },
+    {
+      "image_id": "eva_style_0014",
+      "class": "style",
+      "xref_id": "coco_val2017_000000107554",
+      "xref_sha256": "fc257e4a449b7d82a39dd69736a20674ef30e1dc247a7c3fdf5087cc734f2d20",
+      "pick": 2,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.030641800003650133
+    },
+    {
+      "image_id": "eva_style_0015",
+      "class": "style",
+      "xref_id": "coco_val2017_000000433134",
+      "xref_sha256": "f151798bd4187cd4baeae56260ae366ed64f5487d84f3bd45dc29e988db79607",
+      "pick": 0,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.02682979999372037
+    },
+    {
+      "image_id": "eva_style_0016",
+      "class": "style",
+      "xref_id": "coco_val2017_000000449909",
+      "xref_sha256": "cb817198a0d096dbbc9651593c5a1fd0e6817bb482ea595aba3133e25370dc5d",
+      "pick": 5,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.02580379999562865
+    },
+    {
+      "image_id": "eva_style_0017",
+      "class": "style",
+      "xref_id": "coco_val2017_000000433134",
+      "xref_sha256": "f151798bd4187cd4baeae56260ae366ed64f5487d84f3bd45dc29e988db79607",
+      "pick": 1,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.027026499999919906
+    },
+    {
+      "image_id": "eva_style_0018",
+      "class": "style",
+      "xref_id": "coco_val2017_000000101420",
+      "xref_sha256": "23ec7aa6d45179af1664f392fd3c0be9ccc38f752d65cfdb2e37da00cc019844",
+      "pick": 0,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.02483189999475144
+    },
+    {
+      "image_id": "eva_style_0019",
+      "class": "style",
+      "xref_id": "coco_val2017_000000433134",
+      "xref_sha256": "f151798bd4187cd4baeae56260ae366ed64f5487d84f3bd45dc29e988db79607",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.026764700000057928
+    },
+    {
+      "image_id": "eva_style_0020",
+      "class": "style",
+      "xref_id": "coco_val2017_000000545826",
+      "xref_sha256": "a152126723f39bcc9df0b309f512e44de2f7a20b5025c4b71a13448b23a981f4",
+      "pick": 6,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03237039999658009
+    },
+    {
+      "image_id": "eva_style_0021",
+      "class": "style",
+      "xref_id": "coco_val2017_000000314914",
+      "xref_sha256": "c6fb61e824326ae3cbd01dedfc72fc88d4a3c6c7764bbafeda77464525b30e5a",
+      "pick": 4,
+      "file_equal": true,
+      "tensor_equal": true,
+      "retrieval_latency_s": 0.03049279999686405
+    }
+  ],
+  "table_sha256": "d8ae5de8043b3a9b3f038c059c35b3cc2f6979c37cd7cb288c3a5225773cd40d",
+  "elapsed_s": 551.0896980762482
+}

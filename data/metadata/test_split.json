@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
-  "created_utc": "2026-10-26T10:44:16Z",
+  "split_version": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202",
+  "created_utc": "2026-10-28T13:52:51Z",
   "canonical": "shortest_side_512_bicubic -> center_crop_512",
   "classes": [
     "common",
@@ -1432,8 +1432,8 @@
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
-      "license": "Public domain",
-      "source_ref": "File:2004 Beverly Johnson (cropped to face).jpg",
+      "license": "CC BY-SA 3.0",
+      "source_ref": "File:Baby portrait 1-year-old.jpg",
       "original_id": "faces_eval_b14afc18_0024"
     },
     {
@@ -1446,8 +1446,8 @@
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
-      "license": "CC BY-SA 3.0",
-      "source_ref": "File:Baby portrait 1-year-old.jpg",
+      "license": "Public domain",
+      "source_ref": "File:2004 Beverly Johnson (cropped to face).jpg",
       "original_id": "faces_eval_b14afc18_0025"
     },
     {
@@ -1455,14 +1455,14 @@
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0014.png",
-      "sha256": "72f8ac1d1db132104404bb36e523ef9d762f353ebf9e771522a72c3d61c92680",
+      "sha256": "0b7b8e2f5ba770533436c6bb54037a38d0363a0cf214cfa9f15f0df65212663c",
       "width": 512,
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
       "license": "CC BY-SA 4.0",
       "source_ref": "File:Mugshot Portrait Photo User Vasyalstnv Front.jpg",
-      "original_id": "faces_eval_b14afc18_0027"
+      "original_id": "faces_eval_b14afc18_0026"
     },
     {
       "image_id": "eva_facial_0015",
@@ -1511,14 +1511,14 @@
       "role": "evaluation",
       "class": "facial",
       "path": "data/test_set/facial/eva_facial_0018.png",
-      "sha256": "099470fbcf4545a0ba75764dc9cab7a0e362add26e5c4491e9df642f07190892",
+      "sha256": "61150b8839708f2ddc6ffbd41a0d968b194dded5c22589e547ce6024ad62425a",
       "width": 512,
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap portrait photograph person face -painting -drawing -engraving",
-      "license": "CC BY-SA 2.0",
-      "source_ref": "File:Face (51853261471).jpg",
-      "original_id": "faces_eval_b14afc18_0039"
+      "license": "CC BY 2.0",
+      "source_ref": "File:Profile Photographic Portrait of Blonde Young Woman.jpg",
+      "original_id": "faces_eval_b14afc18_0035"
     },
     {
       "image_id": "eva_facial_0019",
@@ -1642,8 +1642,8 @@
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap cat photograph",
-      "license": "CC0",
-      "source_ref": "File:Tabby cat with blue eyes-3336579.jpg",
+      "license": "CC BY 4.0",
+      "source_ref": "File:Cat in Efremov, Russia1.jpg",
       "original_id": "style_eval_a5d83106_0005"
     },
     {
@@ -1656,8 +1656,8 @@
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap cat photograph",
-      "license": "CC BY 4.0",
-      "source_ref": "File:Cat in Efremov, Russia1.jpg",
+      "license": "CC0",
+      "source_ref": "File:Tabby cat with blue eyes-3336579.jpg",
       "original_id": "style_eval_a5d83106_0006"
     },
     {
@@ -1797,7 +1797,7 @@
       "mode": "RGB",
       "source": "commons:filetype:bitmap cat photograph",
       "license": "Public domain",
-      "source_ref": "File:An Afghan elder and his cat sit outside his store at the Anaba bazaar in Panjshir province, Afghanistan.jpg",
+      "source_ref": "File:Photograph of Socks the Cat - DPLA - 8e79cef8c53759b0385c95d83a4581a1.jpg",
       "original_id": "style_eval_a5d83106_0016"
     },
     {
@@ -1810,8 +1810,8 @@
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap cat photograph",
-      "license": "Public domain",
-      "source_ref": "File:Photograph of Socks the Cat - DPLA - 8e79cef8c53759b0385c95d83a4581a1.jpg",
+      "license": "CC BY-SA 4.0",
+      "source_ref": "File:Cat Porto Covo July 2026-2.jpg",
       "original_id": "style_eval_a5d83106_0017"
     },
     {
@@ -1824,8 +1824,8 @@
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap cat photograph",
-      "license": "CC BY-SA 4.0",
-      "source_ref": "File:Tabby cat–IMG 6135 02.jpg",
+      "license": "CC BY-SA 2.0",
+      "source_ref": "File:Centre for Alternative Technology (28801170625).jpg",
       "original_id": "style_eval_a5d83106_0018"
     },
     {
@@ -1838,8 +1838,8 @@
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap cat photograph",
-      "license": "CC0",
-      "source_ref": "File:A photograph of a cat lying down 0002.jpg",
+      "license": "Public domain",
+      "source_ref": "File:An Afghan elder and his cat sit outside his store at the Anaba bazaar in Panjshir province, Afghanistan.jpg",
       "original_id": "style_eval_a5d83106_0019"
     },
     {
@@ -1853,7 +1853,7 @@
       "mode": "RGB",
       "source": "commons:filetype:bitmap cat photograph",
       "license": "CC BY-SA 4.0",
-      "source_ref": "File:Cat Porto Covo July 2026-2.jpg",
+      "source_ref": "File:Cat Sphynx. img 025.jpg",
       "original_id": "style_eval_a5d83106_0020"
     },
     {
@@ -1866,8 +1866,8 @@
       "height": 512,
       "mode": "RGB",
       "source": "commons:filetype:bitmap cat photograph",
-      "license": "CC BY-SA 2.0",
-      "source_ref": "File:Centre for Alternative Technology (28801170625).jpg",
+      "license": "CC0",
+      "source_ref": "File:A photograph of a cat lying down 0002.jpg",
       "original_id": "style_eval_a5d83106_0021"
     }
   ]

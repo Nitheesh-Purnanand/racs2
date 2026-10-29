@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-10-29T07:17:58Z",
+  "finished_utc": "2026-10-29T07:19:21Z",
+  "mode": "paper",
+  "config_source": "configs/base.yaml",
+  "from_phase": 7,
+  "to_phase": 16,
+  "verify_only": false,
+  "resume": false,
+  "retries": 1,
+  "dry_run": false,
+  "archive_path": "D:\\racs2\\experiments\\results\\archive\\20261029_124758_before_nonfrozen_run",
+  "elapsed_s": 82.7,
+  "failed": true,
+  "entries": [
+    {
+      "cmd": "'D:\\racs2\\.venv\\Scripts\\python.exe' scripts/phase7_build_conditions.py",
+      "returncode": 1,
+      "elapsed_s": 28.2,
+      "dry_run": false,
+      "attempts": 2,
+      "phase": 7
+    }
+  ]
+}

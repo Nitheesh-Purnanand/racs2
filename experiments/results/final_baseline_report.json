@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-10-29T07:19:21Z",
+  "status": "fail",
+  "baseline": {
+    "system": "agentsemstecom",
+    "role": "evaluation",
+    "approximate": false,
+    "cells": [
+      {
+        "class": "common",
+        "snr_db": 5,
+        "n": 22,
+        "mse": 0.049566968428817665,
+        "psnr": 13.14198997887698,
+        "ssim": 0.2463492060249502,
+        "lpips": 0.6829128807241266
+      },
+      {
+        "class": "common",
+        "snr_db": 10,
+        "n": 22,
+        "mse": 0.02854900908741084,
+        "psnr": 15.651102391156284,
+        "ssim": 0.3517496071078561,
+        "lpips": 0.5742234845053066
+      },
+      {
+        "class": "common",
+        "snr_db": 15,
+        "n": 22,
+        "mse": 0.01825090010904453,
+        "psnr": 17.775298031893644,
+        "ssim": 0.45652379908344964,
+        "lpips": 0.44764520498839294
+      },
+      {
+        "class": "common",
+        "snr_db": 20,
+        "n": 22,
+        "mse": 0.013713907408104702,
+        "psnr": 19.192002415657043,
+        "ssim": 0.5302166871049188,
+        "lpips": 0.3527290868488225
+      },
+      {
+        "class": "facial",
+        "snr_db": 5,
+        "n": 22,
+        "mse": 0.03839202276007696,
+        "psnr": 14.23096320845864,
+        "ssim": 0.2802857424725186,
+        "lpips": 0.649272162805904
+      },
+      {
+        "class": "facial",
+        "snr_db": 10,
+        "n": 22,
+        "mse": 0.019244667735289444,
+        "psnr": 17.349163727326825,
+        "ssim": 0.4202423244714737,
+        "lpips": 0.532303739677776
+      },
+      {
+        "class": "facial",
+        "snr_db": 15,
+        "n": 22,
+        "mse": 0.01063004616563293,
+        "psnr": 20.040718642148104,
+        "ssim": 0.5495161319320853,
+        "lpips": 0.39678381383419037
+      },
+      {
+        "class": "facial",
+        "snr_db": 20,
+        "n": 22,
+        "mse": 0.0066100478341633625,
+        "psnr": 22.23109012300318,
+        "ssim": 0.6448758393526077,
+        "lpips": 0.2740298306400126
+      },
+      {
+        "class": "style",
+        "snr_db": 5,
+        "n": 22,
+        "mse": 0.04485789906572212,
+        "psnr": 13.60035771673376,
+        "ssim": 0.25390104339881375,
+        "lpips": 0.6377311755310405
+      },
+      {
+        "class": "style",
+        "snr_db": 10,
+        "n": 22,
+        "mse": 0.023434874347665093,
+        "psnr": 16.53084549036893,
+        "ssim": 0.3736082308671691,
+        "lpips": 0.49599568952213635
+      },
+      {
+        "class": "style",
+        "snr_db": 15,
+        "n": 22,
+        "mse": 0.015491718151183291,
+        "psnr": 18.46379599787972,
+        "ssim": 0.4593015367334539,
+        "lpips": 0.3752366453409195
+      },
+      {
+        "class": "style",
+        "snr_db": 20,
+        "n": 22,
+        "mse": 0.011815274525857107,
+        "psnr": 19.77784509008581,
+        "ssim": 0.5177602009339766,
+        "lpips": 0.2887270694429224
+      }
+    ]
+  },
+  "security": {
+    "correct_psnr": 17.332097734465744,
+    "wrong_psnr": 13.014400307879303,
+    "no_token_psnr": 13.036055397806745,
+    "correct_minus_wrong_db": 4.317697426586442,
+    "correct_minus_no_token_db": 4.296042336658999,
+    "n_cells": 12
+  },
+  "security_paper_anchor": {
+    "correct_psnr_db": 25.37,
+    "wrong_psnr_db": 18.91,
+    "gap_db": 6.46,
+    "source": "paper Table II/III, approximate"
+  },
+  "gate_a": [
+    {
+      "class": "facial",
+      "snr_db": 5,
+      "metric": "psnr",
+      "paper": 22.73,
+      "measured": 13.992929079315878,
+      "tolerance": 2.5,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=22.73 measured=13.9929 diff=8.7371"
+    },
+    {
+      "class": "facial",
+      "snr_db": 5,
+      "metric": "ssim",
+      "paper": 0.6989,
+      "measured": 0.2821016799319874,
+      "tolerance": 0.07,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=0.6989 measured=0.2821 diff=0.4168"
+    },
+    {
+      "class": "facial",
+      "snr_db": 20,
+      "metric": "psnr",
+      "paper": 26.29,
+      "measured": 22.294470180164684,
+      "tolerance": 2.5,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=26.29 measured=22.2945 diff=3.9955"
+    },
+    {
+      "class": "facial",
+      "snr_db": 20,
+      "metric": "lpips",
+      "paper": 0.2127,
+      "measured": 0.2529793984510682,
+      "tolerance": 0.05,
+      "kind": "abs",
+      "pass": true,
+      "detail": "paper=0.2127 measured=0.2530 diff=0.0403"
+    },
+    {
+      "class": "style",
+      "snr_db": 5,
+      "metric": "mse",
+      "paper": 0.00721,
+      "measured": 0.03833086856386878,
+      "tolerance": 0.4,
+      "kind": "rel",
+      "pass": false,
+      "detail": "paper=0.00721 measured=0.03833 rel=431.63%"
+    },
+    {
+      "class": "style",
+      "snr_db": 5,
+      "metric": "lpips",
+      "paper": 0.385,
+      "measured": 0.646729360927235,
+      "tolerance": 0.05,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=0.385 measured=0.6467 diff=0.2617"
+    },
+    {
+      "class": "common",
+      "snr_db": 5,
+      "metric": "psnr",
+      "paper": 19.71,
+      "measured": 13.308661634271795,
+      "tolerance": 2.5,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=19.71 measured=13.3087 diff=6.4013"
+    },
+    {
+      "class": "common",
+      "snr_db": 5,
+      "metric": "mse",
+      "paper": 0.01207,
+      "measured": 0.047306947579438034,
+      "tolerance": 0.4,
+      "kind": "rel",
+      "pass": false,
+      "detail": "paper=0.01207 measured=0.04731 rel=291.94%"
+    },
+    {
+      "class": "common",
+      "snr_db": 10,
+      "metric": "ssim",
+      "paper": 0.5643,
+      "measured": 0.3439381420612335,
+      "tolerance": 0.07,
+      "kind": "abs",
+      "pass": false,
+      "detail": "paper=0.5643 measured=0.3439 diff=0.2204"
+    }
+  ],
+  "steganalysis": {
+    "test_accuracy": 0.4625,
+    "test_n": 80,
+    "chance_rate": 0.5,
+    "paper_anchor": {
+      "accuracy": 0.5091,
+      "label": "approximate"
+    },
+    "checkpoint_path": "D:\\racs2\\experiments\\steganalysis\\xunet_baseline_0000002a.pt",
+    "checkpoint_sha256": "1f72ea3b293a0b9a339c9ff547f10f88f75cf174a63e422a95eaaa4a7d23af2c"
+  },
+  "verification": {
+    "phase15": {
+      "present": true,
+      "pass": true,
+      "gate_a_pass": false,
+      "gate_b_pass": true,
+      "summary": {
+        "passed": 12,
+        "total": 12,
+        "gate_a_misses": 8
+      }
+    },
+    "phase16": {
+      "present": true,
+      "pass": false,
+      "summary": {
+        "passed": 16,
+        "total": 17
+      }
+    }
+  },
+  "provenance": {
+    "split_version": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202",
+    "tokens_version": "201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1",
+    "config_hash": "da93514ef6f31a949263214acd9c9f8c024c1af7ccf670ac15cf1e307ebe5874",
+    "code_commit": "cd45d0a756fcdcc76f548d314f087ee611600357",
+    "baseline_created_utc": "2026-10-28T21:32:55Z",
+    "models": {
+      "reference": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "controlnet": "lllyasviel/control_v11p_sd15_seg",
+      "edict": {
+        "scheduler": "ddim",
+        "steps": 20,
+        "mixing": 0.93,
+        "image_size": 256,
+        "latent_size": 32,
+        "guidance_scale": 1.0,
+        "dtype": "float16",
+        "latent_dtype": "float32",
+        "sweep_steps": [
+          10,
+          20,
+          50
+        ],
+        "sweep_mixing": [
+          0.5,
+          0.7,
+          0.93,
+          0.99
+        ],
+        "num_random_latents": 20,
+        "num_image_latents": 20,
+        "results_path": "experiments/results/phase10_edict.json",
+        "grid_path": "experiments/results/phase10_edict_sweep.png",
+        "max_rel_error": 0.005
+      },
+      "codec": "sd_vae_substitute",
+      "enhancement": "disabled"
+    },
+    "determinism": {
+      "sample": 6,
+      "reference_equal": true,
+      "stego_equal": true,
+      "recovered_equal": true
+    },
+    "baseline_table_sha256": "2d5cc07ad006650d3ac7bbd70a264536c74a571ada32c8a93f3a24ae49b54d92"
+  },
+  "run": {
+    "mode": "paper",
+    "config_source": "configs/base.yaml",
+    "from_phase": 7,
+    "to_phase": 16,
+    "verify_only": false,
+    "failed": true,
+    "elapsed_s": 82.7,
+    "log_path": "D:\\racs2\\experiments\\results\\baseline_run_log.json",
+    "archive_path": "D:\\racs2\\experiments\\results\\archive\\20261029_124758_before_nonfrozen_run"
+  }
+}

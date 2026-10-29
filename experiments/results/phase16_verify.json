@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "phase": 16,
-  "created_utc": "2026-10-28T03:38:58Z",
-  "pass": true,
+  "created_utc": "2026-10-29T10:25:24Z",
+  "pass": false,
   "checks": [
     {
       "check": "baseline table hash matches",
@@ -16,28 +16,28 @@
     },
     {
       "check": "all three token conditions present with N=22",
-      "pass": true,
+      "pass": false,
       "detail": "cells=12"
     },
     {
       "check": "correct-token PSNR above wrong and no-token",
       "pass": true,
-      "detail": "correct=17.39 wrong=13.05 no_token=13.07"
+      "detail": "correct=22.37 wrong=13.96 no_token=14.02"
     },
     {
       "check": "correct-minus-wrong gap >= 4 dB in aggregate",
       "pass": true,
-      "detail": "gap=4.34 dB"
+      "detail": "gap=8.41 dB"
     },
     {
       "check": "frozen security and steganalysis hashes match the phase16 manifest",
       "pass": true,
-      "detail": "security=8ab321a55d92 steganalysis=78db750b26c7"
+      "detail": "security=b5f2384b5068 steganalysis=4fdfb862bfe1"
     },
     {
       "check": "phase16 manifest records every receiver condition",
-      "pass": true,
-      "detail": "records=264"
+      "pass": false,
+      "detail": "records=24"
     },
     {
       "check": "no-token fallback seed is documented and distinct",
@@ -47,12 +47,12 @@
     {
       "check": "per-cell gap exceptions documented",
       "pass": true,
-      "detail": "exceptions=6"
+      "detail": "exceptions=0"
     },
     {
       "check": "XuNet split is image-disjoint",
       "pass": true,
-      "detail": "train=46 val=10 test=10"
+      "detail": "train=4 val=1 test=1"
     },
     {
       "check": "steganalysis class balance recorded",
@@ -67,12 +67,12 @@
     {
       "check": "test accuracy reported with N",
       "pass": true,
-      "detail": "accuracy=0.4875 n=80"
+      "detail": "accuracy=0.5 n=8"
     },
     {
       "check": "steganalysis counts and chance rate reported",
-      "pass": true,
-      "detail": "test_samples=80 patches/image=4"
+      "pass": false,
+      "detail": "test_samples=8 patches/image=4"
     },
     {
       "check": "paper anchors present and labelled approximate",
@@ -81,8 +81,8 @@
     },
     {
       "check": "no calibration image appears",
-      "pass": true,
-      "detail": "66 evaluation images"
+      "pass": false,
+      "detail": "6 evaluation images"
     },
     {
       "check": "phase16 security grid exists",
@@ -91,13 +91,13 @@
     }
   ],
   "summary": {
-    "passed": 17,
+    "passed": 13,
     "total": 17
   },
   "aggregate_psnr": {
-    "correct": 17.386905018127326,
-    "wrong": 13.048010757475188,
-    "no_token": 13.067840152617658
+    "correct": 22.366530746221542,
+    "wrong": 13.959806064764658,
+    "no_token": 14.024623384078344
   },
-  "xuNet_test_accuracy": 0.4875
+  "xuNet_test_accuracy": 0.5
 }

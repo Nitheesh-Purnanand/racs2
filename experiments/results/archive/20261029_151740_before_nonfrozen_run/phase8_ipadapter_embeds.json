@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-29T07:58:10Z",
+  "references": 132,
+  "cached_files": 132,
+  "hits": 0,
+  "misses": 132,
+  "guidance_scale": 3.0,
+  "weight_name": "ip-adapter-plus_sd15.safetensors",
+  "weight_sha256": "a1c250be40455cc61a43da1201ec3f1edaea71214865fb47f57927e06cbe4996",
+  "image_encoder_folder": "models/image_encoder",
+  "cache_dir": "experiments\\results\\ipadapter_embeds",
+  "elapsed_s": 391.1,
+  "failures": []
+}

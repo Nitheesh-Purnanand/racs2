@@ -1,0 +1,72 @@
+{
+  "tune_split": "calibration",
+  "sweep": [
+    {
+      "alpha": 0.0,
+      "beta": 1.0,
+      "pool_semantic_to_secret": 0.5855874170633879,
+      "pool_edge_iou_to_secret": 0.7369028155759273,
+      "pool_changed_fraction": 0.6666666666666666,
+      "objective": 0.7648482620538106
+    },
+    {
+      "alpha": 0.25,
+      "beta": 0.75,
+      "pool_semantic_to_secret": 0.5959726977754722,
+      "pool_edge_iou_to_secret": 0.7400696325037639,
+      "pool_changed_fraction": 0.6666666666666666,
+      "objective": 0.76902799069575
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "pool_semantic_to_secret": 0.6039843238664395,
+      "pool_edge_iou_to_secret": 0.7414627667450506,
+      "pool_changed_fraction": 0.6666666666666666,
+      "objective": 0.7717274643391352
+    },
+    {
+      "alpha": 0.75,
+      "beta": 0.25,
+      "pool_semantic_to_secret": 0.6112187434326518,
+      "pool_edge_iou_to_secret": 0.7390334604041809,
+      "pool_changed_fraction": 0.6666666666666666,
+      "objective": 0.7723214160602534
+    },
+    {
+      "alpha": 1.0,
+      "beta": 0.0,
+      "pool_semantic_to_secret": 0.6254859188063577,
+      "pool_edge_iou_to_secret": 0.7152477849869762,
+      "pool_changed_fraction": 0.0,
+      "objective": 0.7639953721950775
+    }
+  ],
+  "frozen": {
+    "alpha": 0.75,
+    "beta": 0.25,
+    "top_k": 10,
+    "pool_k": 50
+  },
+  "ab": {
+    "clip_only": {
+      "alpha": 1.0,
+      "beta": 0.0,
+      "pool_semantic_to_secret": 0.6254859188063577,
+      "pool_edge_iou_to_secret": 0.7152477849869762,
+      "pool_changed_fraction": 0.0,
+      "objective": 0.7639953721950775
+    },
+    "chosen": {
+      "alpha": 0.75,
+      "beta": 0.25,
+      "pool_semantic_to_secret": 0.6112187434326518,
+      "pool_edge_iou_to_secret": 0.7390334604041809,
+      "pool_changed_fraction": 0.6666666666666666,
+      "objective": 0.7723214160602534
+    },
+    "helps": true
+  },
+  "reference_sensitivity": "IPAdapter-plus weight 1 conditions EDICT on Xref pixels at both ends (see handoff_file.md)",
+  "created_utc": "2026-10-29T09:59:00Z"
+}

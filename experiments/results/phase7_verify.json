@@ -1,7 +1,7 @@
 {
   "pass": true,
-  "split_version": "e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a",
-  "config_hash": "6e5eec492b7af67cee8b35c18ff4d970f89f2397dd69a73e07fecb17004a4f64",
+  "split_version": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202",
+  "config_hash": "9e83de1b063dfb2bc6c0174f063315d49530544b761df56127ed590f12660d16",
   "checks": [
     {
       "check": "manifest_exists",
@@ -16,12 +16,12 @@
     {
       "check": "split_version_match",
       "pass": true,
-      "detail": "expected e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a, got e52d2ddfea4dba17ebde84a3b8c0129dca0ed928e69de3faad9746baeb7b330a"
+      "detail": "expected 397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202, got 397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202"
     },
     {
       "check": "config_hash_recompute",
       "pass": true,
-      "detail": "expected 6e5eec492b7af67cee8b35c18ff4d970f89f2397dd69a73e07fecb17004a4f64, got 6e5eec492b7af67cee8b35c18ff4d970f89f2397dd69a73e07fecb17004a4f64"
+      "detail": "expected 9e83de1b063dfb2bc6c0174f063315d49530544b761df56127ed590f12660d16, got 9e83de1b063dfb2bc6c0174f063315d49530544b761df56127ed590f12660d16"
     },
     {
       "check": "counts_22_per_class",
@@ -82,5 +82,5 @@
     }
   },
   "failures": [],
-  "elapsed_s": 25.81
+  "elapsed_s": 65.1
 }

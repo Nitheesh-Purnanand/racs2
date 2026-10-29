@@ -1,0 +1,14 @@
+{
+  "phase": 17,
+  "pass": true,
+  "checks": {
+    "row_order_matches_image_index": true,
+    "self_query_top1_is_1": true,
+    "self_query_score_is_1": true,
+    "rebuild_deterministic": true,
+    "faiss_index_flat_ip_agrees": true,
+    "k_sweep_logged": true
+  },
+  "created_utc": "2026-10-29T09:58:04Z",
+  "engine": "numpy_exact"
+}

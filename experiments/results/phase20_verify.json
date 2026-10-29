@@ -1,0 +1,13 @@
+{
+  "phase": 20,
+  "pass": true,
+  "checks": {
+    "sweep_on_calibration_only": true,
+    "rerank_changes_pool": true,
+    "tx_rx_same_reference": true
+  },
+  "created_utc": "2026-10-29T09:59:00Z",
+  "frozen_alpha": 0.75,
+  "frozen_beta": 0.25,
+  "helps_vs_clip_only": true
+}

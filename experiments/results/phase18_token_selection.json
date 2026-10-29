@@ -1,0 +1,35 @@
+{
+  "domain": "racs2-token-selection-v1",
+  "hash": "sha256",
+  "index_bytes": 8,
+  "distribution": {
+    "1": {
+      "buckets_used": 1,
+      "max_share": 1.0
+    },
+    "5": {
+      "buckets_used": 5,
+      "max_share": 0.20544090056285177
+    },
+    "10": {
+      "buckets_used": 10,
+      "max_share": 0.10928705440900563
+    },
+    "20": {
+      "buckets_used": 20,
+      "max_share": 0.05863039399624766
+    },
+    "50": {
+      "buckets_used": 50,
+      "max_share": 0.029080675422138838
+    }
+  },
+  "guess_probability": {
+    "1": 1.0,
+    "5": 0.2,
+    "10": 0.1,
+    "20": 0.05,
+    "50": 0.02
+  },
+  "created_utc": "2026-10-29T09:58:08Z"
+}
