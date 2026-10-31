@@ -2,8 +2,8 @@
 
 > Consolidated understanding of the source documents, for onboarding and as a
 > shared reference. Source of truth remains
-> `phase2/RACS_Final_Project_Overview_Compact.pdf`; plan/agreement in
-> `docs/RACS_ROADMAP.md`; live status in `project_status.md`.
+> `docs/papers/RACS_Final_Project_Overview_Compact.pdf`; plan/agreement in
+> `docs/RACS_ROADMAP.md`; live status in `docs/project_status.md`.
 
 ## 1. What RACS is
 

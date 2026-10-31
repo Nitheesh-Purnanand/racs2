@@ -1,6 +1,6 @@
 # Phase Runbook 17-20: RACS Retrieval Stack
 
-> **Scope**: Phases 17-20 of `racs2_implementation_plan.md` (Milestone M6). Phase numbering follows
+> **Scope**: Phases 17-20 of `docs/racs2_implementation_plan.md` (Milestone M6). Phase numbering follows
 > the implementation plan, not the older `docs/RACS_ROADMAP.md` numbering.
 >
 > **Entry condition**: Phases 15 and 16 are frozen. `phase15_verify.json` and
@@ -210,7 +210,7 @@ Phase 20: freeze reranking weights and reference-sensitivity decision
 ```
 
 Each commit includes its config block, modules, scripts, artifacts and a one-line status update
-in `project_status.md`.
+in `docs/project_status.md`.
 
 ---
 
@@ -225,5 +225,5 @@ in `project_status.md`.
 [ ] alpha/beta/K and token domain recorded with hashes
 [ ] reference-sensitivity decision recorded
 [ ] DEVIATIONS updated for engine fallback, structural kind, conditioning choice
-[ ] project_status.md updated: Phases 17-20 complete, Phase 21 next
+[ ] docs/project_status.md updated: Phases 17-20 complete, Phase 21 next
 ```
