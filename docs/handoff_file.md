@@ -52,9 +52,9 @@ Phone app: `app/server.py` (default hybrid mode uses this layer).
 > **State in one line**: the code and config now run the paper's own components, Phases 7-9
 > are rebuilt and verified on them, and **Phases 10-16 still hold artifacts from the old
 > substitute stack**. The rebuild was stopped partway on purpose.
-> **Plan**: `racs2_implementation_plan.md` v2 (baseline-first). Phases after 5 were renumbered
+> **Plan**: `docs/racs2_implementation_plan.md` v2 (baseline-first). Phases after 5 were renumbered
 > on 2026-10-23; the plan's Section 5 has the old-to-new map.
-> **Companions**: `README.md` (quickstart), `project_status.md` (full history),
+> **Companions**: `README.md` (quickstart), `docs/project_status.md` (full history),
 > `docs/DEVIATIONS.md` (every difference from the paper).
 
 **What is true at handoff time** (re-checked on disk at 14:35, not assumed):
@@ -301,7 +301,7 @@ Expect, and check:
    `baseline_table.json` + `baseline_manifest.json` → `phase15A_manifest.json` → security →
    steganalysis → `phase16_manifest.json` → `phase16_verify.py`. The present manifest is stale
    in three layers (§2), so a partial re-freeze will keep failing the hash checks.
-3. Add the new headline numbers to `project_status.md` §2 and to §6 of this file. Delete §6's
+3. Add the new headline numbers to `docs/project_status.md` §2 and to §6 of this file. Delete §6's
    "superseded" label only when both tables are rebuilt.
 4. Update `docs/DEVIATIONS.md` for anything the paper stack fixes or changes.
 5. **Commit.** The working tree holds the whole upgrade plus ~5 GB of gitignored weights.
@@ -334,7 +334,7 @@ Expect, and check:
    the downstream must be **imported**, not copied.
 6. **22** the controlled comparison against the frozen Phase 15/16 baseline.
 
-Guides: `PHASE_RUNBOOK_17_TO_20.md`, `phase17_instructions.md` … `phase20_instructions.md`.
+Guides: `docs/instructions/PHASE_RUNBOOK_17_TO_20.md`, `phase17_instructions.md` … `phase20_instructions.md`.
 
 **Reference sensitivity is resolved.** IPAdapter-plus at weight 1 means the stego depends on
 the reference pixels, so reranking has a mechanism and the Phase 20 A/B is meaningful. This was
@@ -399,7 +399,7 @@ third_party/   CodeFormer, SwinJSCC   (vendored upstream, gitignored)
 scripts/       run_baseline.py (orchestrator) · baseline_example.py (one image) ·
                fetch_paper_assets.py · phaseN_*.py (build + verify per phase)
 experiments/results/  tables, verify JSONs, grids, archive/ (superseded baselines)
-docs/          DEVIATIONS.md, RACS_ROADMAP.md, PROJECT_UNDERSTANDING.md, phase16_report.md
+docs/          DEVIATIONS.md, RACS_ROADMAP.md, PROJECT_UNDERSTANDING.md, CONTRIBUTION_2.md
 ```
 
 ---
@@ -439,8 +439,8 @@ Work top to bottom. Each line is a check you can actually run.
 - [ ] `--verify-only --yes` must now be clean. If it is not, read which phase failed; do not
       loosen the gate without recording why in `docs/DEVIATIONS.md`.
 - [ ] Re-freeze in the order in §5.2, then regenerate `docs/phase16_report.md`.
-- [ ] Update `project_status.md` §2 and this file's §6 with the new numbers, drop the
+- [ ] Update `docs/project_status.md` §2 and this file's §6 with the new numbers, drop the
       "superseded" label, and run `--show` once to regenerate the reports and CSV.
 - [ ] Commit in one or two logical commits (code+config first, artifacts second).
-- [ ] Only then start Phase 17 (`PHASE_RUNBOOK_17_TO_20.md`). Nothing RACS-specific may be
+- [ ] Only then start Phase 17 (`docs/instructions/PHASE_RUNBOOK_17_TO_20.md`). Nothing RACS-specific may be
       wired into the pipeline before Phase 15 passes.

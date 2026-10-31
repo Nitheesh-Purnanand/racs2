@@ -204,7 +204,7 @@ def main() -> int:
                 "ab": {"clip_only": clip_only, "chosen": best,
                        "helps": best["objective"] > clip_only["objective"]},
                 "reference_sensitivity": "IPAdapter-plus weight 1 conditions EDICT on Xref "
-                                         "pixels at both ends (see handoff_file.md)",
+                                         "pixels at both ends (see docs/handoff_file.md)",
                 "created_utc": now()})
     results[20] = verdict(20, {
         "sweep_on_calibration_only": all(r["role"] == "calibration" for r in cal),

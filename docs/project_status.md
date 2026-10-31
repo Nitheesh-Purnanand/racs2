@@ -10,10 +10,10 @@
 > check, Phase 16 16/17 on the frozen-hash check). Finish with
 > `scripts\run_baseline.py --mode paper --from-phase 10 --to-phase 16 --yes`.
 > **Free memory first**: this box has 1.9 GB of free commit and 3.3 GB free on C:, and a
-> long phase needs about 5 GB. See `handoff_file.md` §5.1 and §7.
+> long phase needs about 5 GB. See `docs/handoff_file.md` §5.1 and §7.
 > **One command**: `.venv\Scripts\python.exe scripts\run_baseline.py --show` prints the
-> current (still superseded) results. See `README.md` and `handoff_file.md` §2.
-> **Runbooks**: `PHASE_RUNBOOK_1_TO_6.md`, `PHASE_RUNBOOK_7_TO_16.md`, `PHASE_RUNBOOK_17_TO_20.md`.
+> current (still superseded) results. See `README.md` and `docs/handoff_file.md` §2.
+> **Runbooks**: `docs/instructions/PHASE_RUNBOOK_1_TO_6.md`, `docs/instructions/PHASE_RUNBOOK_7_TO_16.md`, `docs/instructions/PHASE_RUNBOOK_17_TO_20.md`.
 
 ---
 
@@ -28,8 +28,8 @@
 | Component | Status | Details / Notes |
 | :--- | :--- | :--- |
 | **Workspace Cleanup** | ✅ Completed | Retained only core folders. Removed unused boilerplate. |
-| **Project Analysis** | ✅ Completed | Comprehensive analysis in `racs2_complete_analysis.md`. |
-| **Status Tracker** | ✅ Active | `project_status.md` maintained as live status + changelog. |
+| **Project Analysis** | ✅ Completed | Early analysis (removed in cleanup 2026-10-31; see git history). Current summary: `baseline.md`, `contribution.md`. |
+| **Status Tracker** | ✅ Active | `docs/project_status.md` maintained as live status + changelog. |
 | **Environment & Dependencies** | ✅ Completed | venv + PyTorch 2.6.0+cu124 (CUDA working). Temp/pip cache redirected to D:. |
 | **Phase 1 — Environment & Skeleton** | ✅ Completed | `configs/base.yaml`, `common/seed.py`, `common/device.py`, `scripts/phase1_verify.py`. All 7 checks pass. |
 | **Phase 2 — VAE & Latent Space** | ✅ Completed | `common/paths.py`, `evaluation/metrics.py`, `models/vae.py`, `scripts/phase2_vae.py`. Round-trip verified on 5 images (PSNR ~32.8 dB avg). |
@@ -83,7 +83,7 @@ cd D:\racs2
 ```
 
 Then re-freeze in the order table → 15A manifest → security → steganalysis → Phase 16 manifest
-→ verify, and regenerate `docs/phase16_report.md`. Full checklist: `handoff_file.md` §5 and §10.
+→ verify, and regenerate `docs/phase16_report.md`. Full checklist: `docs/handoff_file.md` §5 and §10.
 
 ### Phase 1 gate results (2026-10-08)
 
@@ -372,7 +372,7 @@ Phases 15 and 16 are rerun.
 #### Documentation and handoff pass (2026-10-29 14:35)
 
 Re-verified the state of the tree against the artifacts on disk, then completed
-`handoff_file.md` and this file so the next session starts from facts rather than from the
+`docs/handoff_file.md` and this file so the next session starts from facts rather than from the
 last narrative. Nothing was rebuilt or re-run in this pass.
 
 Confirmed on disk:
@@ -390,7 +390,7 @@ Confirmed on disk:
   switched at 13:36; its "component choices match frozen manifests" check cannot pass now.
 - Machine headroom: 1.86 GB free commit, C: 3.3 GB, D: 15.8 GB.
 
-`handoff_file.md` gained a verified state table at the top, a corrected artifact table with
+`docs/handoff_file.md` gained a verified state table at the top, a corrected artifact table with
 local timestamps, the concrete hash evidence above, a pre-flight and chunked rebuild sequence,
 an ordered re-freeze sequence, and §10, a resume checklist for the next session.
 
@@ -516,7 +516,7 @@ an ordered re-freeze sequence, and §10, a resume checklist for the next session
 
 ### [2026-10-23] - Plan Reordered: Baseline-First
 
-- **Rewrote** `racs2_implementation_plan.md` as v2. AgentSemSteCom is now reproduced and
+- **Rewrote** `docs/racs2_implementation_plan.md` as v2. AgentSemSteCom is now reproduced and
   validated **first** (Phases 7-16), and only then is the RACS contribution built on top of
   the frozen baseline (Phases 17-22).
 - **Why**: the previous order built RACS-only components first and deferred the baseline to
@@ -618,8 +618,8 @@ an ordered re-freeze sequence, and §10, a resume checklist for the next session
 ### [2026-10-07] - Workspace Initialization & Cleanup
 
 - **Action**: Cleaned workspace to remove legacy non-essential code/templates.
-- **Preserved**: `phase1/`, `phase2/`, `research_papers/`, `docs/`.
-- **Created**: `project_status.md` for live progress and change tracking.
+- **Preserved**: `phase1/`, `phase2/`, `docs/papers/`, `docs/`.
+- **Created**: `docs/project_status.md` for live progress and change tracking.
 
 ---
 
@@ -660,7 +660,7 @@ materialised once.
 
 See `phase3_instructions.md`, `phase4_instructions.md`, and `phase5_instructions.md` for
 the historical task detail. **Phases 1-5 are complete and verified.** The execution order
-changed on 2026-10-23: see `racs2_implementation_plan.md` v2.
+changed on 2026-10-23: see `docs/racs2_implementation_plan.md` v2.
 
 Active next steps (new numbering):
 
@@ -699,7 +699,7 @@ Active next steps (new numbering):
   correct-minus-wrong gap well above the 4 dB threshold (10.3 dB on a single-image probe).
 - [ ] **Phase 17-20**: FAISS, token selection, structural representation, reranking (consumes
   the banked Phase 4-5 artifacts). Instructions written: `phase17_instructions.md` through
-  `phase20_instructions.md`, plus `PHASE_RUNBOOK_17_TO_20.md`.
+  `phase20_instructions.md`, plus `docs/instructions/PHASE_RUNBOOK_17_TO_20.md`.
 - [ ] **Phase 21 (GATE)**: RACS-Base, `Xref_tx == Xref_rx` on 100 percent of images.
 - [ ] **Phase 22**: Controlled AgentSemSteCom vs RACS-Base comparison (primary result).
 
@@ -724,5 +724,5 @@ first, so the substitute baseline is preserved automatically.
 
 After the rebuild passes, in this order: re-freeze (table -> 15A manifest -> security ->
 steganalysis -> Phase 16 manifest -> verify), regenerate `docs/phase16_report.md`, update §2
-above and `handoff_file.md` §6 with the new numbers, then commit. Full checklist:
-`handoff_file.md` §10.
+above and `docs/handoff_file.md` §6 with the new numbers, then commit. Full checklist:
+`docs/handoff_file.md` §10.

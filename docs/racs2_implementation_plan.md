@@ -51,7 +51,7 @@ self-contained mini-project:
 3. **Test and measure**, saving artifacts to `experiments/results/`.
 4. **Answer the gate question** in your own words.
 5. **Integrate** into the growing pipeline.
-6. **Report** in `project_status.md`.
+6. **Report** in `docs/project_status.md`.
 
 Every phase ends with a concrete **gate**. Gates are numeric where the paper gives numbers.
 

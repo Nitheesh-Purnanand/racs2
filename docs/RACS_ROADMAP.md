@@ -5,9 +5,9 @@ implementation plan second**: the goal is that you understand and write the
 project, not that it gets built for you.
 
 Source documents:
-- Spec (source of truth): `phase2/RACS_Final_Project_Overview_Compact.pdf`
-- Baseline paper: `research_papers/Secure_Intellicise_..._Communication.pdf`
-- Original roadmap: `phase2/RACS_Implementation_Plan_Phase_by_Phase.pdf`
+- Spec (source of truth): `docs/papers/RACS_Final_Project_Overview_Compact.pdf`
+- Baseline paper: `docs/papers/Secure_Intellicise_..._Communication.pdf`
+- Original roadmap: `docs/papers/RACS_Implementation_Plan_Phase_by_Phase.pdf`
 
 ---
 

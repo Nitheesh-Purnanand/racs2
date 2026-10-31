@@ -675,6 +675,6 @@ When Phase 16 passes:
 - Phase 17 starts from the banked Phase 4 corpus and Phase 5 embeddings.
 - Phase 20's reranking A/B and Phase 21 depend on whether the downstream consumes reference
   pixels. In the frozen baseline it does not (IP-Adapter off, EDICT text-conditioned only), so
-  read `PHASE_RUNBOOK_17_TO_20.md` section 6 before claiming a reference-quality improvement.
+  read `docs/instructions/PHASE_RUNBOOK_17_TO_20.md` section 6 before claiming a reference-quality improvement.
 
-Next runbook: `PHASE_RUNBOOK_17_TO_20.md`.
+Next runbook: `docs/instructions/PHASE_RUNBOOK_17_TO_20.md`.

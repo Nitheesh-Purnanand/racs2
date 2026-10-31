@@ -82,11 +82,11 @@ off the GPU on purpose (CodeFormer, the IPAdapter image encoder) — see `docs/D
 
 | Document | Purpose |
 | :-- | :-- |
-| `handoff_file.md` | one-page state transfer: status, how to run, what is next |
-| `project_status.md` | long-lived status and change log |
+| `docs/handoff_file.md` | one-page state transfer: status, how to run, what is next |
+| `docs/project_status.md` | long-lived status and change log |
 | `docs/DEVIATIONS.md` | every place the reimplementation differs from the paper |
-| `racs2_implementation_plan.md` | the plan (v2, baseline-first) |
-| `PHASE_RUNBOOK_*.md`, `phaseN_instructions.md` | per-phase commands, gates and theory |
+| `docs/racs2_implementation_plan.md` | the plan (v2, baseline-first) |
+| `docs/instructions/` | per-phase commands, gates and theory |
 
 ## Phone app (send / receive a secret image)
 
