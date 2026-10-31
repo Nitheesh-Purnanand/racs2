@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "phase": 16,
-  "created_utc": "2026-10-29T10:25:24Z",
+  "created_utc": "2026-10-30T09:10:09Z",
   "pass": false,
   "checks": [
     {
       "check": "baseline table hash matches",
-      "pass": true,
+      "pass": false,
       "detail": ""
     },
     {
@@ -91,7 +91,7 @@
     }
   ],
   "summary": {
-    "passed": 13,
+    "passed": 12,
     "total": 17
   },
   "aggregate_psnr": {
