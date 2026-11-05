@@ -32,6 +32,8 @@ import requests
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+if str(PROJECT_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 # Redirect the HF cache to D: and disable Xet before huggingface_hub is imported.
 import common.paths  # noqa: E402,F401

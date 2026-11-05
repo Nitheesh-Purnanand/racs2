@@ -33,6 +33,8 @@ from pathlib import Path
 _BOOTSTRAP_ROOT = Path(__file__).resolve().parent.parent
 if str(_BOOTSTRAP_ROOT) not in sys.path:
     sys.path.insert(0, str(_BOOTSTRAP_ROOT))
+if str(_BOOTSTRAP_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_BOOTSTRAP_ROOT / "src"))
 
 import yaml
 from PIL import Image, ImageDraw

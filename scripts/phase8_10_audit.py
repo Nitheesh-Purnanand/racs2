@@ -12,6 +12,8 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+if str(_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_ROOT / "src"))
 
 import common.paths as paths
 import common.hf_lowmem
@@ -41,9 +43,9 @@ def add(requirement, check, passed, detail=""):
 
 def audit_imports():
     files = [
-        "reference/__init__.py", "reference/seed.py", "reference/conditions.py",
-        "reference/generate.py", "reference/train_controlnet.py",
-        "steganography/__init__.py", "steganography/edict.py",
+        "src/reference/__init__.py", "src/reference/seed.py", "src/reference/conditions.py",
+        "src/reference/generate.py", "src/reference/train_controlnet.py",
+        "src/steganography/__init__.py", "src/steganography/edict.py",
         "scripts/phase8_reference.py", "scripts/phase8_verify.py",
         "scripts/phase9_train_controlnet.py", "scripts/phase9_verify.py",
         "scripts/phase10_edict.py", "scripts/phase10_verify.py",

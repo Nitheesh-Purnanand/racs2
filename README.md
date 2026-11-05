@@ -38,6 +38,35 @@ Secret Xs ─► Kpub (LLM) + Xfeat (structure) ─► Xref ─► EDICT hide + 
 The hard protocol invariant is `Xref_tx == Xref_rx`: the transmitter and receiver must
 reproduce the same reference bit-for-bit, or recovery fails.
 
+## Project layout
+
+```
+app/          phone web app: send / receive a secret image (server, lossless layer, worker)
+configs/      base.yaml, the single source of every setting
+data/         split metadata, tokens and sample secret images (large sets are gitignored)
+docs/         baseline.md, contribution.md, interview prep, deviations, phase notes
+              report/  project report PDF and presentation
+experiments/  frozen results, tables, grids and the XuNet checkpoint
+models/       PAPER_ASSETS.json (SHA-256 pins); downloaded weights live here, gitignored
+report/       LaTeX source of the project report
+scripts/      runnable entry points: phase1-22 build/verify, run_baseline, c2_*
+src/          library code
+              common/         paths, seeding, device, low-memory HF loading
+              semantic/       Kpub (BLIP + Qwen LLM) and Xfeat (OneFormer / OpenPose)
+              reference/      diffusion reference generation (PicX-Real + ControlNet)
+              retrieval/      RACS: CLIP + FAISS search, rerank, token selection
+              steganography/  EDICT hiding / recovery, IP-Adapter, token mask
+              communication/  SwinJSCC codec and AWGN channel
+              enhancement/    CodeFormer face restoration
+              security/       token conditions, XuNet, chi-square / SPA detectors
+              evaluation/     metrics, frozen splits, reports
+              pipelines/      AgentSemSteCom baseline and RACS-Base
+              models/         VAE, SD pipeline and CLIP wrappers
+```
+
+Scripts and the app add `src/` to `sys.path` themselves, so every command below runs
+unchanged from the repo root.
+
 ## Setup
 
 ```powershell
@@ -103,7 +132,7 @@ digital branch — it is recorded in `docs/DEVIATIONS.md`. **No entry, no claim.
 ## Environment
 
 RTX 3050 Laptop, 6 GB VRAM, Windows. The venv is at `.venv`; HuggingFace/torch caches are
-redirected to `<repo>/cache` by `common/paths.py`. `common/hf_lowmem.py` installs a
+redirected to `<repo>/cache` by `src/common/paths.py`. `src/common/hf_lowmem.py` installs a
 read-only safetensors mmap shim that must be imported **before** `diffusers`/`transformers`;
 without it large checkpoint loads blow the Windows paging file. Several components are kept
 off the GPU on purpose (CodeFormer, the IPAdapter image encoder) — see `docs/DEVIATIONS.md`.
@@ -113,7 +142,7 @@ off the GPU on purpose (CodeFormer, the IPAdapter image encoder) — see `docs/D
 | Document | Purpose |
 | :-- | :-- |
 | `docs/INTERVIEW_PREP.md` | quick revision and interview Q&A |
-| `baseline.md` / `contribution.md` | the baseline and our two contributions, with diagrams |
+| `docs/baseline.md` / `docs/contribution.md` | the baseline and our two contributions, with diagrams |
 | `docs/report/` | project report (PDF) and presentation |
 | `docs/handoff_file.md` | one-page state transfer: status, how to run, what is next |
 | `docs/project_status.md` | long-lived status and change log |

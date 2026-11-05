@@ -138,7 +138,7 @@ the stego alone.
 ## 6. Engineering highlights
 
 - **6 GB VRAM budget:** fp16, model offloading, CodeFormer and the IP-Adapter image encoder on
-  the CPU, a read-only safetensors mmap shim (`common/hf_lowmem.py`) so checkpoint loads don't
+  the CPU, a read-only safetensors mmap shim (`src/common/hf_lowmem.py`) so checkpoint loads don't
   exhaust the Windows paging file.
 - **Process isolation:** FAISS and torch in one process trigger `OMP Error #15`, and CLIP text
   encoding segfaulted once diffusion was loaded. The fix was a separate worker process

@@ -18,6 +18,8 @@ import torch
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+if str(_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_ROOT / "src"))
 
 import common.paths as paths  # noqa: E402
 from common.seed import set_seed  # noqa: E402

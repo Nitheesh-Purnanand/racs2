@@ -9,6 +9,8 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+if str(_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_ROOT / "src"))
 
 import common.paths as paths  # noqa: E402
 from steganography import pipeline  # noqa: E402
@@ -79,7 +81,7 @@ def main() -> int:
 
     words = ("communication", "codec", "retrieval", "faiss", "vlm", "semantic.codec")
     hits = pipeline.forbidden_import_hits(
-        [paths.PROJECT_ROOT / "steganography" / n for n in
+        [paths.PROJECT_ROOT / "src" / "steganography" / n for n in
          ("mask.py", "hide.py", "recover.py", "pipeline.py")], words)
     add("no channel/codec/retrieval/VLM import in stego modules", not hits, "; ".join(hits))
 

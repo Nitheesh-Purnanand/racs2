@@ -11,6 +11,8 @@ from PIL import Image
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+if str(_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_ROOT / "src"))
 
 import common.paths as paths  # noqa: E402
 from enhancement.codeformer import build_enhancer, enhance, should_enhance  # noqa: E402

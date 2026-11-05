@@ -46,7 +46,7 @@ Every stego is written to and read back from a real PNG before extraction.
 | D **C + dithered carrier (proposed)** | 100% | 100% | 261 | 0.250 | 57.16 | 0.500 | 0.829 | 2.51 | 2.17 |
 
 Detectors are the classical structural attacks (Westfeld chi-square, Dumitrescu sample
-pair analysis, `security/lsb_detect.py`); AUC is computed between each stego and the
+pair analysis, `src/security/lsb_detect.py`); AUC is computed between each stego and the
 same carrier without payload, so 0.5 means the detector cannot tell them apart.
 
 ## Findings
@@ -79,5 +79,5 @@ same carrier without payload, so 0.5 means the detector cannot tell them apart.
 ## Code
 
 `app/lossless.py` (`compact`, `embed_adaptive`, `extract_adaptive`, `prepare_carrier`),
-`security/lsb_detect.py`, `scripts/c2_make_covers.py`, `scripts/c2_evaluate.py`.
+`src/security/lsb_detect.py`, `scripts/c2_make_covers.py`, `scripts/c2_evaluate.py`.
 Used by the phone app (`app/server.py`, hybrid and lossless modes).

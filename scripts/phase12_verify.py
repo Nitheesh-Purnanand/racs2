@@ -11,6 +11,8 @@ import torch
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+if str(_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_ROOT / "src"))
 
 import common.paths as paths  # noqa: E402
 from communication.awgn import awgn_channel, noise_variance_for_snr_db  # noqa: E402
@@ -72,7 +74,7 @@ def main() -> int:
         str([round(v, 2) if v is not None else None for v in means]))
 
     forbidden = ("semantic_codec", "retrieval", "faiss", "vlm", "codeformer")
-    hits = pipeline.forbidden_import_hits([paths.PROJECT_ROOT / "communication" / "awgn.py"],
+    hits = pipeline.forbidden_import_hits([paths.PROJECT_ROOT / "src" / "communication" / "awgn.py"],
                                           forbidden)
     add("no codec/retrieval/VLM import in awgn.py", not hits, "; ".join(hits))
 

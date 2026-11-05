@@ -9,6 +9,8 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+if str(_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_ROOT / "src"))
 
 import common.paths as paths
 
@@ -73,7 +75,7 @@ def main() -> None:
     add("grid_exists", grid.exists(), str(grid))
 
     # No downstream module may leak into the EDICT core.
-    source = (paths.PROJECT_ROOT / "steganography" / "edict.py").read_text(encoding="utf-8")
+    source = (paths.PROJECT_ROOT / "src" / "steganography" / "edict.py").read_text(encoding="utf-8")
     forbidden = ["retrieval", "faiss", "awgn", "semantic_codec"]
     add("no_downstream_imports", not any(word in source.lower() for word in forbidden))
 

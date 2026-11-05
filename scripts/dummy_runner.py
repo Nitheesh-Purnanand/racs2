@@ -24,6 +24,8 @@ import sys
 _BOOTSTRAP_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _BOOTSTRAP_ROOT not in sys.path:
     sys.path.insert(0, _BOOTSTRAP_ROOT)
+if os.path.join(_BOOTSTRAP_ROOT, "src") not in sys.path:
+    sys.path.insert(0, os.path.join(_BOOTSTRAP_ROOT, "src"))
 
 from evaluation.splits import resolve_path
 

@@ -11,6 +11,8 @@ import torch
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+if str(_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_ROOT / "src"))
 
 import common.paths as paths  # noqa: E402
 from communication.semantic_codec import build_codec, codec_roundtrip  # noqa: E402
@@ -84,7 +86,7 @@ def main() -> int:
 
     forbidden = ("reference", "retrieval", "faiss", "vlm", "edict")
     hits = pipeline.forbidden_import_hits(
-        [paths.PROJECT_ROOT / "communication" / "semantic_codec.py"], forbidden)
+        [paths.PROJECT_ROOT / "src" / "communication" / "semantic_codec.py"], forbidden)
     add("no reference/retrieval/VLM import in codec module", not hits, "; ".join(hits))
 
     add("phase13 json, curve and grid exist",

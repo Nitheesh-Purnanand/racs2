@@ -11,6 +11,8 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
+if str(_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(_ROOT / "src"))
 
 import common.paths as paths  # noqa: E402
 from steganography import pipeline  # noqa: E402
@@ -171,7 +173,7 @@ def main() -> int:
 
     forbidden = ("retrieval", "faiss", "vlm", "racs", "clip_encoder")
     hits = pipeline.forbidden_import_hits(
-        [paths.PROJECT_ROOT / "pipelines" / "agentsemstecom.py"], forbidden)
+        [paths.PROJECT_ROOT / "src" / "pipelines" / "agentsemstecom.py"], forbidden)
     add("no retrieval/FAISS/VLM import in the pipeline", not hits, "; ".join(hits))
 
     grids = [paths.PROJECT_ROOT / bcfg["calibration_grid"],
