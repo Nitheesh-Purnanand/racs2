@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-10-29T07:19:21Z",
+  "generated_utc": "2026-11-05T09:46:36Z",
   "status": "fail",
   "baseline": {
     "system": "agentsemstecom",
@@ -10,119 +10,119 @@
       {
         "class": "common",
         "snr_db": 5,
-        "n": 22,
-        "mse": 0.049566968428817665,
-        "psnr": 13.14198997887698,
-        "ssim": 0.2463492060249502,
-        "lpips": 0.6829128807241266
+        "n": 2,
+        "mse": 0.015212440397590399,
+        "psnr": 18.303532004356384,
+        "ssim": 0.42163194715976715,
+        "lpips": 0.4586229622364044
       },
       {
         "class": "common",
         "snr_db": 10,
-        "n": 22,
-        "mse": 0.02854900908741084,
-        "psnr": 15.651102391156284,
-        "ssim": 0.3517496071078561,
-        "lpips": 0.5742234845053066
+        "n": 2,
+        "mse": 0.008688624715432525,
+        "psnr": 20.723223090171814,
+        "ssim": 0.5365498512983322,
+        "lpips": 0.29709114134311676
       },
       {
         "class": "common",
         "snr_db": 15,
-        "n": 22,
-        "mse": 0.01825090010904453,
-        "psnr": 17.775298031893644,
-        "ssim": 0.45652379908344964,
-        "lpips": 0.44764520498839294
+        "n": 2,
+        "mse": 0.00728348596021533,
+        "psnr": 21.532816886901855,
+        "ssim": 0.5774972885847092,
+        "lpips": 0.24650238454341888
       },
       {
         "class": "common",
         "snr_db": 20,
-        "n": 22,
-        "mse": 0.013713907408104702,
-        "psnr": 19.192002415657043,
-        "ssim": 0.5302166871049188,
-        "lpips": 0.3527290868488225
+        "n": 2,
+        "mse": 0.007394245360046625,
+        "psnr": 21.44696593284607,
+        "ssim": 0.5771257132291794,
+        "lpips": 0.23841938376426697
       },
       {
         "class": "facial",
         "snr_db": 5,
-        "n": 22,
-        "mse": 0.03839202276007696,
-        "psnr": 14.23096320845864,
-        "ssim": 0.2802857424725186,
-        "lpips": 0.649272162805904
+        "n": 2,
+        "mse": 0.005604789359495044,
+        "psnr": 22.55740761756897,
+        "ssim": 0.5990582704544067,
+        "lpips": 0.23352684825658798
       },
       {
         "class": "facial",
         "snr_db": 10,
-        "n": 22,
-        "mse": 0.019244667735289444,
-        "psnr": 17.349163727326825,
-        "ssim": 0.4202423244714737,
-        "lpips": 0.532303739677776
+        "n": 2,
+        "mse": 0.0035242068115621805,
+        "psnr": 24.53465223312378,
+        "ssim": 0.6866478025913239,
+        "lpips": 0.15802741795778275
       },
       {
         "class": "facial",
         "snr_db": 15,
-        "n": 22,
-        "mse": 0.01063004616563293,
-        "psnr": 20.040718642148104,
-        "ssim": 0.5495161319320853,
-        "lpips": 0.39678381383419037
+        "n": 2,
+        "mse": 0.0032459752401337028,
+        "psnr": 24.886711835861206,
+        "ssim": 0.7058168053627014,
+        "lpips": 0.14692039042711258
       },
       {
         "class": "facial",
         "snr_db": 20,
-        "n": 22,
-        "mse": 0.0066100478341633625,
-        "psnr": 22.23109012300318,
-        "ssim": 0.6448758393526077,
-        "lpips": 0.2740298306400126
+        "n": 2,
+        "mse": 0.0030959086725488305,
+        "psnr": 25.097211599349976,
+        "ssim": 0.7150489091873169,
+        "lpips": 0.1402546837925911
       },
       {
         "class": "style",
         "snr_db": 5,
-        "n": 22,
-        "mse": 0.04485789906572212,
-        "psnr": 13.60035771673376,
-        "ssim": 0.25390104339881375,
-        "lpips": 0.6377311755310405
+        "n": 2,
+        "mse": 0.010398043785244226,
+        "psnr": 19.92927610874176,
+        "ssim": 0.5429896116256714,
+        "lpips": 0.344775453209877
       },
       {
         "class": "style",
         "snr_db": 10,
-        "n": 22,
-        "mse": 0.023434874347665093,
-        "psnr": 16.53084549036893,
-        "ssim": 0.3736082308671691,
-        "lpips": 0.49599568952213635
+        "n": 2,
+        "mse": 0.005494170356541872,
+        "psnr": 22.675236463546753,
+        "ssim": 0.6529675722122192,
+        "lpips": 0.21923743188381195
       },
       {
         "class": "style",
         "snr_db": 15,
-        "n": 22,
-        "mse": 0.015491718151183291,
-        "psnr": 18.46379599787972,
-        "ssim": 0.4593015367334539,
-        "lpips": 0.3752366453409195
+        "n": 2,
+        "mse": 0.0047597396187484264,
+        "psnr": 23.277015686035156,
+        "ssim": 0.68332239985466,
+        "lpips": 0.19500629603862762
       },
       {
         "class": "style",
         "snr_db": 20,
-        "n": 22,
-        "mse": 0.011815274525857107,
-        "psnr": 19.77784509008581,
-        "ssim": 0.5177602009339766,
-        "lpips": 0.2887270694429224
+        "n": 2,
+        "mse": 0.004590197233483195,
+        "psnr": 23.434319496154785,
+        "ssim": 0.6918483376502991,
+        "lpips": 0.17844898253679276
       }
     ]
   },
   "security": {
-    "correct_psnr": 17.332097734465744,
-    "wrong_psnr": 13.014400307879303,
-    "no_token_psnr": 13.036055397806745,
-    "correct_minus_wrong_db": 4.317697426586442,
-    "correct_minus_no_token_db": 4.296042336658999,
+    "correct_psnr": 22.366530746221542,
+    "wrong_psnr": 13.959806064764658,
+    "no_token_psnr": 14.024623384078344,
+    "correct_minus_wrong_db": 8.406724681456884,
+    "correct_minus_no_token_db": 8.341907362143198,
     "n_cells": 12
   },
   "security_paper_anchor": {
@@ -233,24 +233,24 @@
     }
   ],
   "steganalysis": {
-    "test_accuracy": 0.4625,
-    "test_n": 80,
+    "test_accuracy": 0.5,
+    "test_n": 8,
     "chance_rate": 0.5,
     "paper_anchor": {
       "accuracy": 0.5091,
       "label": "approximate"
     },
     "checkpoint_path": "D:\\racs2\\experiments\\steganalysis\\xunet_baseline_0000002a.pt",
-    "checkpoint_sha256": "1f72ea3b293a0b9a339c9ff547f10f88f75cf174a63e422a95eaaa4a7d23af2c"
+    "checkpoint_sha256": "948696c12eaf29a7d212317a43f8aa40e54af446b5ce0ca76208bcdb2ed15607"
   },
   "verification": {
     "phase15": {
       "present": true,
-      "pass": true,
+      "pass": false,
       "gate_a_pass": false,
-      "gate_b_pass": true,
+      "gate_b_pass": false,
       "summary": {
-        "passed": 12,
+        "passed": 11,
         "total": 12,
         "gate_a_misses": 8
       }
@@ -259,7 +259,7 @@
       "present": true,
       "pass": false,
       "summary": {
-        "passed": 16,
+        "passed": 12,
         "total": 17
       }
     }
@@ -267,12 +267,20 @@
   "provenance": {
     "split_version": "397637a71130e0d21ca52bfd6e6798efdbb868248739c4ee3f57c71315ba4202",
     "tokens_version": "201662347a7f6dc1b90dd94b96feca867c93e1b273fed445752da1792b4294a1",
-    "config_hash": "da93514ef6f31a949263214acd9c9f8c024c1af7ccf670ac15cf1e307ebe5874",
+    "config_hash": "f4c93891b8fab426c72d5cd53a2bac6cfaec838a7743b037bcf55507b14fd935",
     "code_commit": "cd45d0a756fcdcc76f548d314f087ee611600357",
-    "baseline_created_utc": "2026-10-28T21:32:55Z",
+    "baseline_created_utc": "2026-10-29T10:20:06Z",
     "models": {
-      "reference": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "reference_backend": "picx_real",
+      "reference": "models/picx-real",
       "controlnet": "lllyasviel/control_v11p_sd15_seg",
+      "facial_controlnet": "lllyasviel/control_v11p_sd15_openpose",
+      "kpub": "local_llm",
+      "xfeat": {
+        "common": "oneformer",
+        "facial": "openpose",
+        "style": "none"
+      },
       "edict": {
         "scheduler": "ddim",
         "steps": 20,
@@ -288,7 +296,7 @@
           50
         ],
         "sweep_mixing": [
-          0.5,
+          0.55,
           0.7,
           0.93,
           0.99
@@ -299,26 +307,34 @@
         "grid_path": "experiments/results/phase10_edict_sweep.png",
         "max_rel_error": 0.005
       },
-      "codec": "sd_vae_substitute",
-      "enhancement": "disabled"
+      "ipadapter": {
+        "enabled": true,
+        "weight_name": "ip-adapter-plus_sd15.safetensors",
+        "scale": 1.0,
+        "weight_sha256": "a1c250be40455cc61a43da1201ec3f1edaea71214865fb47f57927e06cbe4996"
+      },
+      "codec": "swinjscc",
+      "codec_sha256": "7a45d4fa6a5b4210909e4d529b5b82ce3f1270cb0021adafe8c5f7318d164030",
+      "enhancement": "enabled",
+      "enhancement_backend": "codeformer"
     },
     "determinism": {
-      "sample": 6,
+      "sample": 2,
       "reference_equal": true,
       "stego_equal": true,
       "recovered_equal": true
     },
-    "baseline_table_sha256": "2d5cc07ad006650d3ac7bbd70a264536c74a571ada32c8a93f3a24ae49b54d92"
+    "baseline_table_sha256": "987032a003bd599489fbd466247902e719dfd4ccf9e6323b26a99ef75e401bac"
   },
   "run": {
-    "mode": "paper",
+    "mode": "current",
     "config_source": "configs/base.yaml",
-    "from_phase": 7,
+    "from_phase": 1,
     "to_phase": 16,
-    "verify_only": false,
+    "verify_only": true,
     "failed": true,
-    "elapsed_s": 82.7,
+    "elapsed_s": 3.4,
     "log_path": "D:\\racs2\\experiments\\results\\baseline_run_log.json",
-    "archive_path": "D:\\racs2\\experiments\\results\\archive\\20261029_124758_before_nonfrozen_run"
+    "archive_path": "D:\\racs2\\experiments\\results\\archive\\20261105_151633_before_nonfrozen_run"
   }
 }

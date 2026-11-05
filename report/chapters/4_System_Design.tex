@@ -1,0 +1,138 @@
+This chapter presents the architecture of RACS from the sender's and the receiver's side.
+In the diagrams, grey blocks are components inherited unchanged from the baseline
+(AgentSemSteCom) and green blocks are new in RACS.
+
+\section{Information Model}
+\begin{table}[H]
+	\centering
+	\caption{What each party knows.}
+	\label{tab:info}
+	\begin{tabularx}{\textwidth}{|c|c|X|}
+		\hline
+		\textbf{Symbol} & \textbf{Visibility} & \textbf{Meaning} \\ \hline
+		$X_s$ & Private & The secret image \\ \hline
+		$K_{\mathrm{pub}}$ & Public & A text description of the image, written by a language model \\ \hline
+		$X_{\mathrm{feat}}$ & Public & The image's structure: a segmentation map or a pose skeleton \\ \hline
+		$\tau$ & Shared secret & An 8-digit token, the only secret sender and receiver share \\ \hline
+		$X_{\mathrm{ref}}$ & Derived & A reference image that both ends must reproduce identically \\ \hline
+		$X_{\mathrm{stego}}$ & Transmitted & The innocent-looking image that is actually sent \\ \hline
+	\end{tabularx}
+\end{table}
+
+Every private random value (seeds, noise, mask, selection) is derived from $\tau$ with SHA-256,
+so both ends compute exactly the same values on different machines.
+
+\section{Starting Point: the Baseline}
+In AgentSemSteCom, the sender describes the secret in words ($K_{\mathrm{pub}}$) and extracts its
+structure ($X_{\mathrm{feat}}$); a diffusion model then paints a reference image $X_{\mathrm{ref}}$
+from these and a token-seeded noise; EDICT blends the secret toward that reference to create the
+stego image, which is sent through the SwinJSCC semantic codec over a noisy channel. The receiver
+paints the same reference again and runs EDICT backwards. This costs about 4\,s and 2.6\,GB of
+GPU memory per reference at \emph{each} end, and the secret comes back only approximately.
+
+\section{RACS Architecture}
+RACS keeps everything that works in the baseline and changes two things: the reference image is
+\emph{retrieved} instead of generated, and an exact-recovery layer carries the secret losslessly
+(Path B) next to the semantic channel (Path A). Figures~\ref{fig:racs-tx} and~\ref{fig:racs-rx}
+show the sender and the receiver. Green blocks are new, grey blocks are the baseline's own
+unchanged code, and the dashed red block is the baseline stage that RACS removes.
+
+\begin{figure}[H]
+	\centering
+	\input{figures/racs_sender.tex}
+	\caption{RACS sender (hiding).}
+	\label{fig:racs-tx}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\input{figures/racs_receiver.tex}
+	\caption{RACS receiver (recovery).}
+	\label{fig:racs-rx}
+\end{figure}
+
+\paragraph{The reference is found, not painted.} The public key $K_{\mathrm{pub}}$ is turned into
+a CLIP embedding and used to search a fixed collection of 1{,}000 images. The 50 closest images
+are re-scored by how well they match in meaning (75\,\%) and in layout (25\,\%, comparing edge
+maps with the public structure $X_{\mathrm{feat}}$), and the token picks one of the best 10. The
+receiver repeats exactly the same steps from public data and the token and gets exactly the same
+image (66 of 66 test images), in 0.05\,s and without a GPU.
+
+\paragraph{The secret arrives exactly.} The stego image still travels through the semantic
+channel (Path A), giving an approximate recovery as in the baseline. In addition, the original
+secret is compressed losslessly, encrypted and sealed with a key derived from the token, and
+hidden with tiny $\pm1$ changes in the most textured pixels of the stego image, which is sent as a
+PNG file (Path B). The receiver recomputes the same pixel positions, checks the seal and decrypts.
+A wrong key or an altered file is rejected instead of producing a misleading image.
+
+\section{New-Block Reference}
+\begin{table}[!htbp]
+	\centering
+	\caption{New RACS blocks (labels as in Figures~\ref{fig:racs-tx} and~\ref{fig:racs-rx}) and the reason for each design choice.}
+	\label{tab:newblocks}
+	\begin{tabularx}{\textwidth}{|c|l|X|}
+		\hline
+		\textbf{Block} & \textbf{What it does} & \textbf{Design choice and reason} \\ \hline
+		N1 & CLIP text embedding of $K_{\mathrm{pub}}$ & Query from \emph{public} data only, so the receiver can recompute it without the secret. \\ \hline
+		N2 & Exact search, top-50 pool & No approximate index, so sender and receiver get identical rankings. \\ \hline
+		N3 & Edge-map structural score & CLIP finds the right content but not the right layout; $X_{\mathrm{feat}}$ is the only public structure both sides hold. \\ \hline
+		N4 & 0.75 / 0.25 rerank, top 10 & Weights chosen on calibration images only; reranking a wider pool changes \emph{which} images the token can pick. \\ \hline
+		N5 & SHA-256($\tau$) mod $K$ & One implementation at both ends; a 1-in-$K$ guess for an attacker. \\ \hline
+		N6 & Lossless WebP compaction & 32\,\% smaller payload, which makes a low embedding rate affordable. \\ \hline
+		N7 & PBKDF2 key derivation \cite{rfc8018} & Slows brute force of the short numeric token. \\ \hline
+		N8, N16 & Stream encryption \cite{fips202} & Hidden bits look random. \\ \hline
+		N8, N15 & HMAC-SHA256 seal \cite{rfc2104} & A wrong key or modified image is \emph{rejected}, never shown as a wrong image. \\ \hline
+		N9 & Carrier upscale + dither & An upscaled image has an unnaturally clean LSB plane; camera-like noise makes it realistic. \\ \hline
+		N10, N13 & Texture-adaptive $\pm1$ & Changes only busy regions; $\pm1$ instead of overwriting defeats the chi-square attack; the receiver recomputes positions with no side information. \\ \hline
+		N11, N12 & PNG file transfer & Lossless; recompression would destroy the payload (and is detected). \\ \hline
+	\end{tabularx}
+\end{table}
+
+\paragraph{One change at a time.} In the code, RACS is a subclass of the baseline that
+overrides a single method: where the reference comes from. Every other stage is imported, not
+copied, so any measured difference comes from the reference alone.
+
+\section{Prototype Architecture}
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.85, transform shape]
+		\node[src, text width=2.4cm] (s) at (0,0) {Sender phone\\(browser)};
+		\node[blk, text width=3.0cm] (srv) at (5.2,0) {Laptop web server\\(runs the pipeline)};
+		\node[src, text width=2.4cm] (r) at (10.4,0) {Receiver phone\\(browser)};
+		\node[newblk, text width=3.4cm] (w) at (5.2,-2.0) {Worker process\\public key + RACS retrieval};
+		\draw[arr] (s) -- node[above, font=\scriptsize]{secret photo} (srv);
+		\draw[arr] (srv) -- node[above, font=\scriptsize]{stego PNG + key} (r);
+		\draw[arr, <->] (srv) -- (w);
+	\end{tikzpicture}
+	\caption{Phone prototype: phones connect over Wi-Fi and the laptop does all the work.}
+	\label{fig:app}
+\end{figure}
+
+The prototype offers three modes: \emph{hybrid} (default: diffusion stego look plus the exact
+layer), \emph{lossless} (exact layer on a retrieved cover, no diffusion) and \emph{diffusion}
+(the paper's approximate pipeline). The stego must be sent as a file, because messaging apps
+recompress photos; the receiver detects this through the seal.
+
+\section{Code Organisation}
+\begin{table}[H]
+	\centering
+	\caption{Modules of the implementation.}
+	\label{tab:modules}
+	\begin{tabularx}{\textwidth}{|l|X|}
+		\hline
+		\textbf{Package} & \textbf{Responsibility} \\ \hline
+		\texttt{common} & Paths, seeding, device selection, low-memory model loading \\ \hline
+		\texttt{configs} & One configuration file read by both ends \\ \hline
+		\texttt{semantic} & Public key and structure extraction \\ \hline
+		\texttt{reference} & Baseline reference generation and ControlNet fine-tuning \\ \hline
+		\texttt{retrieval} & RACS: corpus, search, structure cache, rerank, token pick \\ \hline
+		\texttt{steganography} & EDICT, hiding, recovery, token mask, IPAdapter \\ \hline
+		\texttt{communication} & AWGN channel and SwinJSCC codec \\ \hline
+		\texttt{enhancement} & CodeFormer face restoration \\ \hline
+		\texttt{pipelines} & The assembled baseline and RACS systems \\ \hline
+		\texttt{evaluation} & Metrics, frozen test splits, reports \\ \hline
+		\texttt{security} & Token tests, XuNet, chi-square and SPA detectors \\ \hline
+		\texttt{app} & Phone web server and the exact-recovery layer \\ \hline
+		\texttt{scripts} & Build and verification script for every phase \\ \hline
+	\end{tabularx}
+\end{table}

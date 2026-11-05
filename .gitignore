@@ -41,3 +41,26 @@ third_party/
 experiments/results/manual_test/
 experiments/results/baseline_example/
 experiments/checkpoints/*.safetensors
+
+# Editor / assistant tooling
+.claude/
+.vscode/
+.idea/
+
+# Personal and non-project files kept locally
+resume.txt
+AI_Team_Meeting_Assistant_Presentation.pptx
+~$*
+/*.zip
+/*.pdf
+/*.pptx
+
+# LaTeX build output
+report/**/*.aux
+report/**/*.log
+report/**/*.out
+report/**/*.toc
+report/**/*.synctex.gz
+
+# Local result archives of ad-hoc runs
+experiments/results/archive/2026110*/

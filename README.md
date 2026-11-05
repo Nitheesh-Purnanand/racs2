@@ -1,5 +1,23 @@
 # RACS2 — Retrieval-Augmented Coverless Semantic Steganography
 
+**A Generative AI project.** It hides a secret image inside a diffusion-generated stego image
+and recovers it with the right key. Diffusion models (Stable Diffusion v1.5, EDICT exact
+inversion, ControlNet, IP-Adapter), an LLM (Qwen2.5) that writes the public prompt from a BLIP
+caption, and a generative face restorer (CodeFormer) all run inside the pipeline. On top of
+that it adds a **retrieval-augmented** reference stage (CLIP + FAISS) and an exact-recovery
+crypto layer.
+
+| GenAI building block | Where it is used |
+| :-- | :-- |
+| Latent diffusion (SD v1.5 / PicX-Real) | Reference generation (baseline), stego synthesis |
+| Diffusion inversion (EDICT) | Exactly invertible hiding and recovery |
+| Conditional control (ControlNet, IP-Adapter) | Structure- and reference-guided generation |
+| LLM (Qwen2.5-0.5B-Instruct) + vision captioner (BLIP) | Public key `Kpub` as a text prompt |
+| Multimodal embeddings (CLIP ViT-B/32) + FAISS | Retrieval-augmented reference acquisition (RACS) |
+| Generative restoration (CodeFormer) | Face enhancement after recovery |
+
+Interview revision notes: [`docs/INTERVIEW_PREP.md`](docs/INTERVIEW_PREP.md).
+
 Research reimplementation of **AgentSemSteCom** (Meng et al., *Secure Intellicise Wireless
 Network: Agentic AI for Coverless Semantic Steganography Communication*, IEEE TCCN 12, 2026),
 plus **RACS**, which replaces exactly one stage of it — reference acquisition — with
@@ -19,6 +37,18 @@ Secret Xs ─► Kpub (LLM) + Xfeat (structure) ─► Xref ─► EDICT hide + 
 
 The hard protocol invariant is `Xref_tx == Xref_rx`: the transmitter and receiver must
 reproduce the same reference bit-for-bit, or recovery fails.
+
+## Setup
+
+```powershell
+python -m venv .venv
+.venv\Scripts\pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124
+.venv\Scripts\pip install -r requirements.txt
+.venv\Scripts\python.exe scripts\fetch_paper_assets.py      # model weights, SHA-256 pinned
+```
+
+Python 3.10 and an NVIDIA GPU with at least 6 GB are expected. Datasets and weights are not
+in git (see `.gitignore`); the fetch and build scripts recreate them.
 
 ## Run the baseline
 
@@ -73,7 +103,7 @@ digital branch — it is recorded in `docs/DEVIATIONS.md`. **No entry, no claim.
 ## Environment
 
 RTX 3050 Laptop, 6 GB VRAM, Windows. The venv is at `.venv`; HuggingFace/torch caches are
-redirected to `D:\racs2\cache` by `common/paths.py`. `common/hf_lowmem.py` installs a
+redirected to `<repo>/cache` by `common/paths.py`. `common/hf_lowmem.py` installs a
 read-only safetensors mmap shim that must be imported **before** `diffusers`/`transformers`;
 without it large checkpoint loads blow the Windows paging file. Several components are kept
 off the GPU on purpose (CodeFormer, the IPAdapter image encoder) — see `docs/DEVIATIONS.md`.
@@ -82,6 +112,9 @@ off the GPU on purpose (CodeFormer, the IPAdapter image encoder) — see `docs/D
 
 | Document | Purpose |
 | :-- | :-- |
+| `docs/INTERVIEW_PREP.md` | quick revision and interview Q&A |
+| `baseline.md` / `contribution.md` | the baseline and our two contributions, with diagrams |
+| `docs/report/` | project report (PDF) and presentation |
 | `docs/handoff_file.md` | one-page state transfer: status, how to run, what is next |
 | `docs/project_status.md` | long-lived status and change log |
 | `docs/DEVIATIONS.md` | every place the reimplementation differs from the paper |
@@ -107,3 +140,15 @@ works at 512 px with the photo's aspect ratio kept (edge-padded to a square, cro
 (CLIP Top-10 + token pick), so the receiver gets a **byte-identical** copy and a wrong key is
 rejected. No model runs on the receive side. `--mode diffusion` keeps the paper's EDICT pipeline
 (approximate recovery).
+
+### Hosting
+
+```powershell
+$env:PORT = "8000"; $env:HOST = "0.0.0.0"; $env:RACS_MAX_UPLOAD_MB = "20"
+.venv\Scripts\python.exe app\server.py --mode hybrid
+```
+
+`HOST`/`PORT` (or `--host`/`--port`) set the bind address. Uploads above `RACS_MAX_UPLOAD_MB`
+are refused with HTTP 413. The server is a plain `http.server` with no TLS or login, so put it
+behind a reverse proxy (nginx, Caddy, Cloudflare Tunnel) that terminates HTTPS before exposing
+it publicly. `--mode lossless` needs no GPU and is the cheapest mode to host.

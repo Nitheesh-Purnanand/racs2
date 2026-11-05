@@ -18,6 +18,7 @@ import cgi
 import html
 import io
 import json
+import os
 import secrets
 import socket
 import subprocess
@@ -45,6 +46,8 @@ WORK = paths.PROJECT_ROOT / "temp" / "app"
 WORK.mkdir(parents=True, exist_ok=True)
 META_KEY = "racs2"
 CLASSES = ("common", "facial", "style")
+# Uploads are read into memory; reject anything larger (override with RACS_MAX_UPLOAD_MB).
+MAX_UPLOAD_BYTES = int(float(os.environ.get("RACS_MAX_UPLOAD_MB", "20")) * 1024 * 1024)
 
 
 class Worker:
@@ -311,12 +314,20 @@ class Handler(BaseHTTPRequestHandler):
             p = WORK / Path(self.path[6:]).name
             if p.exists() and p.suffix.lower() in MIME:
                 return self._send(p.read_bytes(), MIME[p.suffix.lower()],
-                                  {"Content-Disposition": f"attachment; filename={p.name}"})
+                                  {"Content-Disposition": f'attachment; filename="{p.name}"'})
             self.send_error(404)
             return
         self._send(page(HOME))
 
     def do_POST(self):
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            length = 0
+        if length <= 0 or length > MAX_UPLOAD_BYTES:
+            self.send_error(413 if length > 0 else 411,
+                            f"upload must be 1 byte to {MAX_UPLOAD_BYTES // (1024 * 1024)} MB")
+            return
         form = cgi.FieldStorage(fp=self.rfile, headers=self.headers,
                                 environ={"REQUEST_METHOD": "POST",
                                          "CONTENT_TYPE": self.headers["Content-Type"]})
@@ -378,7 +389,10 @@ def main() -> int:
     global ENGINE
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", type=int, default=8000)
+    ap.add_argument("--host", default=os.environ.get("HOST", "0.0.0.0"),
+                    help="bind address (env HOST)")
+    ap.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8000")),
+                    help="listen port (env PORT)")
     ap.add_argument("--mode", choices=("hybrid", "lossless", "diffusion"), default="hybrid",
                     help="hybrid: paper-style stego look + exact recovery; lossless: exact "
                          "recovery in a retrieved cover; diffusion: the paper's EDICT pipeline")
@@ -413,7 +427,7 @@ def main() -> int:
             print(f"[selftest] {name}: PSNR {m['psnr']:.2f} dB  SSIM {m['ssim']:.3f}  -> {p}")
         print(f"[selftest] stego {s['stego']}  key {s['key']}  timing {json.dumps(s['timing'])}")
         return 0
-    srv = HTTPServer(("0.0.0.0", args.port), Handler)
+    srv = HTTPServer((args.host, args.port), Handler)
     print(f"[app] ready: open http://{lan_ip()}:{args.port} on a phone on the same Wi-Fi "
           f"(this PC: http://127.0.0.1:{args.port})", flush=True)
     srv.serve_forever()

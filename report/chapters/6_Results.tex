@@ -1,0 +1,325 @@
+This chapter reports measured results. All numbers come from the evaluation split unless
+labelled \emph{calibration}; paper values are shown only as anchors and are never mixed into
+measured rows.
+
+\section{Experimental Setup}
+\begin{itemize}
+	\item \textbf{Classes.} Common (COCO scenes), facial (portraits), style (cat photographs).
+	\item \textbf{Channel.} SwinJSCC ($C=64$) over AWGN at 5, 10, 15 and 20\,dB SNR.
+	\item \textbf{Hiding.} EDICT, 20 steps, strength 0.2, mixing 0.93, $\eta = 0.05$, IPAdapter-plus
+	weight 1, $256$\,px.
+	\item \textbf{Sample sizes.} The baseline and the RACS comparison were measured on 2 images per
+	class at all four SNRs (24 cases per system); the transmitter--receiver invariant and the
+	exact-recovery layer were measured on all 66 evaluation images.
+\end{itemize}
+
+\section{Baseline Recovery Quality}
+\begin{table}[H]
+	\centering
+	\caption{Baseline recovery PSNR (dB) by class and SNR.}
+	\label{tab:basepsnr}
+	\begin{tabular}{|l|c|c|c|c|}
+		\hline
+		\textbf{Class} & \textbf{5 dB} & \textbf{10 dB} & \textbf{15 dB} & \textbf{20 dB} \\ \hline
+		Common & 18.30 & 20.72 & 21.53 & 21.45 \\ \hline
+		Facial & 22.56 & 24.53 & 24.89 & 25.10 \\ \hline
+		Style & 19.93 & 22.68 & 23.28 & 23.43 \\ \hline
+	\end{tabular}
+\end{table}
+
+Quality rises with SNR and flattens above 15\,dB, where the channel stops being the bottleneck and
+the VAE and diffusion round trip limit quality. The perceptual metrics follow the same pattern:
+from 5 to 20\,dB, SSIM improves from 0.42--0.60 to 0.58--0.72 and LPIPS falls from 0.23--0.46 to
+0.14--0.24 across the three classes. Faces score highest, helped by CodeFormer.
+Against the paper's Table~II anchors, the facial class at 5\,dB reaches 22.56\,dB (paper 22.73)
+and at 20\,dB 25.10\,dB with LPIPS 0.140 (paper 26.29\,dB, LPIPS 0.213); the common class at
+5\,dB reaches 18.30\,dB (paper 19.71); the style class at 5\,dB has LPIPS 0.345 (paper 0.385).
+Absolute PSNR is about 1--3\,dB below the paper, consistent with the reduced resolution, step
+count and strength forced by the hardware (Section~\ref{sec:deviations}).
+
+\section{Baseline Security and Steganalysis}
+\begin{table}[H]
+	\centering
+	\caption{Recovery PSNR under the three receiver conditions (10\,dB).}
+	\label{tab:security}
+	\begin{tabular}{|l|c|c|}
+		\hline
+		\textbf{Condition} & \textbf{This work} & \textbf{Paper (approx.)} \\ \hline
+		Correct token & 22.37 dB & 25.37 dB \\ \hline
+		Wrong token & 13.96 dB & 18.91 dB \\ \hline
+		No token & 14.02 dB & -- \\ \hline
+		\textbf{Correct $-$ wrong gap} & \textbf{8.41 dB} & 6.46 dB \\ \hline
+		XuNet detection accuracy & 0.500 & 0.509 \\ \hline
+	\end{tabular}
+\end{table}
+
+A wrong or missing token reduces recovery to about 14\,dB, an unrecognisable image. The gap
+between correct and wrong token is larger than in the paper, so a wrong key reveals less. XuNet is
+at chance, so this detector cannot distinguish stego images from clean ones.
+
+\section{RACS versus the Baseline}
+\subsection{Protocol invariant}
+In separate transmitter and receiver processes, RACS selected the same reference for
+\textbf{66 of 66} evaluation images, with identical file hashes. The FAISS index and the
+in-process exact search returned identical top-50 rows and scores.
+
+\subsection{Efficiency}
+Obtaining the reference is the stage RACS replaces, and it is where the difference is largest
+(Figure~\ref{fig:eff}). Diffusion generation takes 3.92\,s and 2.61\,GB of GPU memory per
+reference; retrieval takes 0.048\,s (0.51\,s including loading the image from disk) and needs no
+GPU at all, about $82\times$ faster. Because both ends must obtain the reference for every message,
+the saving applies twice per message.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[vizbar, xbar, bar width=12pt, width=\textwidth, height=3.8cm,
+				symbolic y coords={RACS,Baseline}, ytick=data, enlarge y limits=0.5,
+				xmin=0, xmax=5, xlabel={Seconds per reference},
+				nodes near coords, nodes near coords style={font=\scriptsize, /pgf/number format/fixed, /pgf/number format/precision=3}]
+				\addplot[fill=vizA, draw=none] coordinates {(3.92,Baseline) (0.048,RACS)};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Reference latency.}
+	\end{subfigure}\hfill
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\begin{tikzpicture}
+			\begin{axis}[vizbar, xbar, bar width=12pt, width=\textwidth, height=3.8cm,
+				symbolic y coords={RACS,Baseline}, ytick=data, enlarge y limits=0.5,
+				xmin=0, xmax=3.4, xlabel={Peak GPU memory (GB)},
+				nodes near coords, nodes near coords style={font=\scriptsize}]
+				\addplot[fill=vizA, draw=none] coordinates {(2.61,Baseline) (0,RACS)};
+			\end{axis}
+		\end{tikzpicture}
+		\caption{Reference GPU memory.}
+	\end{subfigure}
+	\caption{Cost of obtaining the reference image: retrieval is about $82\times$ faster and needs no GPU.}
+	\label{fig:eff}
+\end{figure}
+
+\subsection{Quality and security}
+Both systems were measured on the same cases, tokens and code path. Figure~\ref{fig:psnrplot}
+shows recovery PSNR for every class and SNR: the RACS curve (solid) lies on or slightly above the
+baseline curve (dashed) in 11 of the 12 cells, with the largest gain for faces (up to $+0.64$\,dB).
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			width=0.85\textwidth, height=6.5cm,
+			xlabel={SNR (dB)}, ylabel={Recovery PSNR (dB)},
+			xtick={5,10,15,20}, ymin=17, ymax=26.5,
+			legend style={font=\scriptsize, at={(0.98,0.03)}, anchor=south east, legend columns=2},
+			viz]
+			\addplot[vizC, dashed, mark=o] coordinates {(5,18.30) (10,20.72) (15,21.53) (20,21.45)};
+			\addlegendentry{Common, baseline}
+			\addplot[vizC, thick, mark=*] coordinates {(5,18.45) (10,20.86) (15,21.57) (20,21.55)};
+			\addlegendentry{Common, RACS}
+			\addplot[vizA, dashed, mark=square] coordinates {(5,22.56) (10,24.53) (15,24.89) (20,25.10)};
+			\addlegendentry{Facial, baseline}
+			\addplot[vizA, thick, mark=square*] coordinates {(5,23.19) (10,25.07) (15,25.53) (20,25.60)};
+			\addlegendentry{Facial, RACS}
+			\addplot[vizB, dashed, mark=triangle] coordinates {(5,19.93) (10,22.68) (15,23.28) (20,23.43)};
+			\addlegendentry{Style, baseline}
+			\addplot[vizB, thick, mark=triangle*] coordinates {(5,19.88) (10,22.83) (15,23.41) (20,23.45)};
+			\addlegendentry{Style, RACS}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Recovery PSNR versus SNR for both systems.}
+	\label{fig:psnrplot}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\caption{Aggregate comparison (24 paired cases).}
+	\label{tab:racsagg}
+	\begin{tabular}{|l|c|c|}
+		\hline
+		\textbf{Metric} & \textbf{Baseline} & \textbf{RACS} \\ \hline
+		PSNR (dB) $\uparrow$ & 22.37 & \textbf{22.62} \\ \hline
+		SSIM $\uparrow$ & 0.616 & \textbf{0.627} \\ \hline
+		LPIPS $\downarrow$ & 0.238 & \textbf{0.227} \\ \hline
+		Correct-token PSNR, 10 dB & 22.64 & 22.92 \\ \hline
+		Wrong-token PSNR, 10 dB & 13.97 & 13.98 \\ \hline
+		No-token PSNR, 10 dB & 14.09 & 14.08 \\ \hline
+		Wrong token and wrong reference, 10 dB & -- & 13.98 \\ \hline
+		\textbf{Security gap (correct $-$ wrong), 10 dB} & 8.67 dB & \textbf{8.94 dB} \\ \hline
+	\end{tabular}
+\end{table}
+
+The paired mean PSNR difference is $+0.25$\,dB in favour of RACS, with SSIM and LPIPS also
+slightly better and the security gap preserved. A plausible explanation is that a retrieved
+photograph is a natural image whose statistics suit the IPAdapter conditioning better than a
+generated $256$\,px image does. With 2 images per class this difference is indicative rather than
+statistically established; the important finding is that replacing generation with retrieval
+does \emph{not} degrade quality or security while removing the GPU cost of the reference.
+
+
+\subsection{Hypotheses}
+\begin{table}[H]
+	\centering
+	\caption{Outcome of the four hypotheses.}
+	\label{tab:hyp}
+	\begin{tabularx}{\textwidth}{|l|X|c|}
+		\hline
+		\textbf{Hypothesis} & \textbf{Evidence} & \textbf{Outcome} \\ \hline
+		H1 Efficiency & 82$\times$ faster reference, no GPU memory & Supported \\ \hline
+		H2 Quality & PSNR, SSIM, LPIPS equal or better & Supported \\ \hline
+		H3 Security & Gap 8.94 vs 8.67 dB & Supported \\ \hline
+		H4 Robustness & Same trend across 5--20 dB, all classes & Supported \\ \hline
+	\end{tabularx}
+\end{table}
+
+\section{RACS Exact-Recovery Layer}
+Table~\ref{tab:c2} compares four variants on all 66 evaluation secrets. Variant A writes the
+original file into two LSBs; B adds lossless compaction; C replaces LSB writing with
+texture-adaptive $\pm1$ embedding; D (proposed) adds the dithered carrier.
+
+\begin{table}[H]
+	\centering
+	\caption{Exact-recovery layer, 66 secrets (each stego written to and read back from PNG).}
+	\label{tab:c2}
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{|l|c|c|c|c|c|c|c|}
+		\hline
+		\textbf{Variant} & \textbf{Exact} & \textbf{Wrong key} & \textbf{Payload} & \textbf{Bits per} & \textbf{PSNR} & \textbf{Chi-square} & \textbf{SPA} \\
+		& & \textbf{rejected} & \textbf{(KB)} & \textbf{value} & \textbf{(dB)} & \textbf{AUC} & \textbf{AUC} \\ \hline
+		Generative only & 0\,\% & -- & -- & -- & -- & -- & -- \\ \hline
+		A: naive 2-LSB & 100\,\% & 100\,\% & 386 & 2.00 & 44.1 & 1.00 & 1.00 \\ \hline
+		B: + compression & 100\,\% & 100\,\% & 261 & 2.00 & 44.1 & 1.00 & 1.00 \\ \hline
+		C: + textured $\pm1$ & 100\,\% & 100\,\% & 261 & 0.25 & 57.2 & \textbf{0.50} & 1.00 \\ \hline
+		\textbf{D: + dither (RACS)} & \textbf{100\,\%} & \textbf{100\,\%} & \textbf{261} & \textbf{0.25} & \textbf{57.2} & \textbf{0.50} & \textbf{0.83} \\ \hline
+	\end{tabular}}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\hyphenpenalty=10000\exhyphenpenalty=10000
+	\begin{tikzpicture}
+		\begin{axis}[vizbar, ybar, bar width=11pt, width=0.82\textwidth, height=5.8cm,
+			symbolic x coords={A,B,C,D}, xtick=data,
+			xticklabels={A: naive 2-LSB, B: + compression, C: + textured $\pm1$, D: + dither (RACS)},
+			x tick label style={font=\scriptsize, text width=2.3cm, align=center},
+			ymin=0, ymax=1.12, ylabel={Detector AUC}, enlarge x limits=0.18,
+			legend style={at={(0.5,1.02)}, anchor=south, legend columns=2}]
+			\addplot[fill=vizA, draw=none] coordinates {(A,1.00) (B,1.00) (C,0.50) (D,0.50)};
+			\addplot[fill=vizB, draw=none] coordinates {(A,1.00) (B,1.00) (C,1.00) (D,0.83)};
+			\legend{Chi-square, SPA}
+			\draw[dashed, vizInk, line width=0.6pt] (rel axis cs:0,0.4464) -- (rel axis cs:1,0.4464)
+				node[pos=0.5, above, font=\scriptsize, text=vizInk, fill=white, inner sep=1pt] {chance};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{How well two classical detectors separate stego from clean carriers (0.5 = guessing, 1.0 = always detected). Textured $\pm1$ embedding defeats chi-square; the dithered carrier also weakens SPA.}
+	\label{fig:c2auc}
+\end{figure}
+
+\begin{itemize}
+	\item \textbf{Exactness.} All 66 secrets are recovered pixel-identical by every variant,
+	against 22.37\,dB approximate recovery from the generative pipeline alone.
+	\item \textbf{Authentication.} All 66 wrong keys are rejected by the MAC; no plausible wrong
+	image is ever produced.
+	\item \textbf{Compaction} reduces the payload by 32\,\% (386 to 261\,KB), which makes a low
+	embedding rate affordable.
+	\item \textbf{Chi-square is defeated} by adaptive $\pm1$ embedding (AUC 1.00 to 0.50).
+	\item \textbf{SPA is weakened but not defeated.} The estimated embedding rate falls from 0.40
+	to 0.09, and the AUC falls from 1.00 to 0.83 only once the carrier carries realistic sensor
+	noise; without the dither SPA remains at 1.00 even at 0.25 bits per value. The cover source
+	matters as much as the embedding.
+	\item \textbf{Distortion} against the payload-free carrier is 57.2\,dB PSNR, compared with
+	44.1\,dB for naive embedding.
+	\item \textbf{Cost} is about 2.5\,s to embed and 2.2\,s to extract on the CPU.
+\end{itemize}
+
+\section{Prototype Performance}
+Figure~\ref{fig:app} breaks down one exchange for a $902\times1600$ photograph in the default
+hybrid mode. Sending is dominated by the two model stages that give the stego its natural look
+(writing the public key and the EDICT pass); the RACS reference costs half a second. Receiving
+needs no AI model at all and returns a pixel-identical secret in one to two seconds.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[vizbar, xbar, bar width=10pt, width=0.8\textwidth, height=6.0cm,
+			symbolic y coords={rx,emb,edict,racs,kpub}, ytick={rx,emb,edict,racs,kpub},
+			yticklabels={Receive (no model),Encrypt + embed,EDICT stego look,RACS reference,Public key (CPU)},
+			y tick label style={font=\small},
+			xmin=0, xmax=27, xlabel={Seconds}, enlarge y limits=0.15,
+			point meta=explicit symbolic,
+			nodes near coords, nodes near coords align={horizontal},
+			nodes near coords style={font=\scriptsize, text=black, anchor=west, xshift=2pt}]
+			\addplot[fill=vizA, draw=none] coordinates {
+				(20,kpub) [$\sim$20 s]
+				(0.51,racs) [0.51 s]
+				(21,edict) [$\sim$21 s]
+				(1.6,emb) [0.7--2.5 s]
+				(1.5,rx) [1--2 s]};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Prototype timings for one photograph (hybrid mode, laptop). Bars show typical values; labels give the measured ranges.}
+	\label{fig:app}
+\end{figure}
+
+\section{Discussion}
+\subsection{Why retrieval does not cost quality}
+One might expect a generated reference, built specifically from the secret's own description and
+structure, to beat a reference picked from a fixed collection. The measurements say otherwise.
+The reference enters the hiding process only through the IPAdapter image embedding at bounded
+EDICT strength, so what matters is that it is semantically close and natural-looking, not that it
+is pixel-aligned with the secret. A real photograph satisfies this at least as well as a
+$256$\,px generated image, and the structural rerank keeps the layout roughly compatible. The
+small, consistent gain for faces suggests that real portraits from the corpus suit the IPAdapter
+conditioning slightly better than synthetic ones.
+
+\subsection{Security of the token}
+The private token does three jobs in RACS: it picks the reference, it seeds the noise and mask in
+EDICT, and it derives the keys of the exact layer. An attacker who knows all public information can
+rebuild the top-10 candidate pool and so guess the right reference with probability $1/10$; but
+with the wrong token the noise and mask are still wrong, and the measured recovery with a wrong
+token \emph{and} a wrong reference is the same 13.98\,dB as with a wrong token alone. For the exact
+layer, every guess of the 8-digit token costs 200{,}000 PBKDF2 iterations, so trying all $10^8$
+tokens costs $2\times10^{13}$ HMAC evaluations, and every wrong guess is rejected by the seal
+rather than producing a plausible image that could leak information. A longer key would raise
+this cost further at no extra cost to legitimate users.
+
+\subsection{When RACS may not fit}
+Retrieval can only return what the corpus contains. For a secret far from every corpus image, the
+top-10 pool will be semantically weaker and the stego may look less natural. The 1{,}000-image
+corpus was sufficient for the three evaluation classes here; a deployment would need a larger and
+more diverse collection, or a retrieve-or-generate fallback that uses diffusion only when no corpus
+image is close enough. The exact layer, for its part, requires a lossless channel: it suits file
+transfer, not photo sharing that recompresses images.
+
+\section{Deviations from the Paper}\label{sec:deviations}
+\begin{table}[H]
+	\centering
+	\caption{Documented differences from the paper and their reason.}
+	\label{tab:dev}
+	\begin{tabularx}{\textwidth}{|X|X|X|}
+		\hline
+		\textbf{Paper} & \textbf{This project} & \textbf{Reason} \\ \hline
+		512 px & 256 px & Stable Diffusion + ControlNet exceeds 6 GB at 512 px \\ \hline
+		EDICT 50 steps, strength 0.5 & 20 steps, strength 0.2 & Run time and memory; a configuration value \\ \hline
+		SwinJSCC $C=48$, CelebA-HQ & $C=64$, high-resolution release & Nearest public checkpoint \\ \hline
+		MDJCM digital branch & Not reproduced & No public checkpoint; no digital result claimed \\ \hline
+		Unnamed LLM & Qwen2.5-0.5B-Instruct & Local, deterministic, fits memory \\ \hline
+		OpenPose on all faces & MediaPipe on 3 of 22 & OpenPose finds no body on tight crops \\ \hline
+		CodeFormer on GPU & On CPU & GPU memory \\ \hline
+		XuNet details & Public XuNet design, image-grouped patches & Not fully specified; small test set \\ \hline
+	\end{tabularx}
+\end{table}
+
+\section{Limitations}
+\begin{itemize}
+	\item Quality comparisons use 2 images per class (24 cases per system); the full 22-per-class
+	run is a configuration change requiring several hours.
+	\item Detectability of the exact layer is measured against classical detectors only; a trained
+	CNN steganalyser on this cover source remains to be evaluated.
+	\item The exact layer is fragile by design: recompression destroys the payload (detected, not
+	silently accepted), so the stego must be sent as a file.
+	\item The 8-digit token is short; key stretching slows brute force, but a longer key is
+	advisable in practice.
+	\item One style evaluation image is a human portrait rather than a cat photograph.
+\end{itemize}

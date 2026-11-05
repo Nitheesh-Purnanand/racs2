@@ -1,26 +1,17 @@
 {
   "schema_version": 1,
-  "started_utc": "2026-10-29T07:17:58Z",
-  "finished_utc": "2026-10-29T07:19:21Z",
-  "mode": "paper",
+  "started_utc": "2026-11-05T09:46:33Z",
+  "finished_utc": "2026-11-05T09:46:36Z",
+  "mode": "current",
   "config_source": "configs/base.yaml",
-  "from_phase": 7,
+  "from_phase": 1,
   "to_phase": 16,
-  "verify_only": false,
+  "verify_only": true,
   "resume": false,
-  "retries": 1,
+  "retries": 0,
   "dry_run": false,
-  "archive_path": "D:\\racs2\\experiments\\results\\archive\\20261029_124758_before_nonfrozen_run",
-  "elapsed_s": 82.7,
+  "archive_path": "D:\\racs2\\experiments\\results\\archive\\20261105_151633_before_nonfrozen_run",
+  "elapsed_s": 3.4,
   "failed": true,
-  "entries": [
-    {
-      "cmd": "'D:\\racs2\\.venv\\Scripts\\python.exe' scripts/phase7_build_conditions.py",
-      "returncode": 1,
-      "elapsed_s": 28.2,
-      "dry_run": false,
-      "attempts": 2,
-      "phase": 7
-    }
-  ]
+  "entries": []
 }

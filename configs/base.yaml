@@ -4,7 +4,7 @@ device: "cuda"
 dtype: "float16"
 
 generation:
-  prompt: "a photograph of an astronaut riding a horse"   # TODO: replace with the paper's example Kpub
+  prompt: "a photograph of an astronaut riding a horse"   # Phase 3 timing benchmark only; real runs use the per-image Kpub
   num_inference_steps: 30
   guidance_scale: 7.5
   scheduler: "ddim"

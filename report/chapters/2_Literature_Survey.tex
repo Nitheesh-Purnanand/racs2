@@ -1,0 +1,103 @@
+This chapter reviews the work the project builds on: semantic communication, steganography
+and steganalysis, diffusion models, the supporting vision models, and multimodal retrieval.
+
+\section{Semantic Communication}
+Classical communication compresses an image and then protects the bits with a channel code.
+Deep joint source--channel coding (Deep JSCC) \cite{bourtsoulatze2019deepjscc} instead trains one
+neural network that maps an image straight to channel symbols and another that maps noisy
+symbols back to an image. Quality degrades gracefully as the signal-to-noise ratio (SNR) drops,
+instead of collapsing suddenly. SwinJSCC \cite{yang2024swinjscc} uses a Swin Transformer
+backbone and is the codec used by AgentSemSteCom. Because a semantic representation is designed
+to be understood, an eavesdropper with a similar decoder can understand it too, which motivates
+hiding private content inside it.
+
+\section{Steganography and Steganalysis}
+\subsection{Embedding-based steganography}
+The classic approach changes the least significant bits (LSBs) of a cover image to carry the
+message. It is exact but leaves statistical traces: the chi-square attack
+\cite{westfeld1999attacks} notices that LSB replacement evens out the counts of neighbouring
+pixel values, and Sample Pair Analysis (SPA) \cite{dumitrescu2003spa} estimates how much was
+embedded from pairs of adjacent pixels. Changing values by $\pm1$ instead of overwriting bits,
+and embedding only in textured regions, are the standard defences
+\cite{fridrich2009steganography}.
+
+\subsection{Deep steganography}
+Baluja \cite{baluja2017hiding} showed that a neural network can hide one whole image inside
+another. HiNet \cite{jing2021hinet} and ISN \cite{lu2021isn} improved this with invertible
+networks. The AgentSemSteCom paper reports that a CNN detector catches these methods 95\,\%,
+56\,\% and 56\,\% of the time, against 51\,\% (close to guessing) for its own scheme.
+
+\subsection{Coverless and generative steganography}
+Coverless methods avoid modifying a cover. Early ones mapped secret bits to existing images by
+hashing their features \cite{zhou2015coverless}, with very low capacity. Generative methods
+create the carrier instead: DiffStega \cite{yang2024diffstega} uses a pretrained diffusion model
+and a password-dependent reference to hide an image without any training, and released the
+UniStega benchmark used here for calibration. AgentSemSteCom adds an LLM-written public key,
+token-seeded reference generation, a token-controlled perturbation and a semantic channel.
+
+\subsection{CNN steganalysis}
+XuNet \cite{xu2016xunet} is a compact detector with a fixed high-pass first layer that amplifies
+the noise residue where hidden data lives. It is the detector used by the paper and in this
+project. Accuracy near 50\,\% on balanced data means it cannot tell stego from clean images.
+
+\section{Diffusion Models and Exact Inversion}
+A diffusion model learns to turn random noise into an image step by step, by repeatedly
+predicting and removing noise \cite{ho2020ddpm}. The DDIM sampler \cite{song2021ddim} makes this
+process deterministic, so it can also be run backwards to turn an image into noise. Latent
+diffusion \cite{rombach2022ldm}, the basis of Stable Diffusion, runs the process in the
+compressed latent space of a variational autoencoder (VAE) to save computation.
+
+Running DDIM backwards is only approximately reversible. EDICT \cite{wallace2023edict} fixes
+this by tracking two coupled copies of the latent that update each other in turn, so every step
+can be undone exactly. This exactness is what lets a receiver undo the sender's hiding process.
+One practical detail matters later: EDICT's mixing coefficient must stay away from 0.5, where
+the coupling cannot be inverted.
+
+\section{Conditioning, Perception and Restoration Models}
+\begin{itemize}
+	\item \textbf{ControlNet} \cite{zhang2023controlnet} steers a diffusion model with a spatial
+	map such as a segmentation map or a pose skeleton.
+	\item \textbf{IP-Adapter} \cite{ye2023ipadapter} lets a diffusion model take an image as a
+	prompt, in addition to text.
+	\item \textbf{BLIP} \cite{li2022blip} captions images; \textbf{Qwen2.5} \cite{qwen2024qwen25}
+	is a small language model that rewrites a caption into a prompt.
+	\item \textbf{OneFormer} \cite{jain2023oneformer} segments scenes; \textbf{OpenPose}
+	\cite{cao2021openpose} finds body and face keypoints.
+	\item \textbf{CodeFormer} \cite{zhou2022codeformer} restores damaged faces.
+\end{itemize}
+
+\section{Multimodal Retrieval}
+CLIP \cite{radford2021clip} places images and text in one shared space, so a sentence can be
+used to search for matching pictures. FAISS \cite{johnson2019faiss} provides fast
+nearest-neighbour search; its exact index always returns the same answer, which is essential
+when two parties must agree. Re-Imagen \cite{chen2022reimagen} showed that retrieving real
+images can guide or replace generation. RACS uses the retrieved image directly as the
+steganographic reference.
+
+\section{Evaluation Metrics}
+Recovered images are compared with the original using mean squared error (MSE), peak
+signal-to-noise ratio (PSNR, in dB, higher is better), structural similarity (SSIM)
+\cite{wang2004ssim} and the learned perceptual distance LPIPS \cite{zhang2018lpips} (lower is
+better). Security is the PSNR difference between recovering with the correct token and with a
+wrong one. Detectability is reported as detector accuracy or as AUC, where 0.5 means the
+detector is guessing.
+
+\section{Research Gap}
+\begin{table}[H]
+	\centering
+	\caption{Comparison of related approaches with this project.}
+	\label{tab:litgap}
+	\begin{tabularx}{\textwidth}{|X|>{\centering\arraybackslash}p{1.6cm}|>{\centering\arraybackslash}p{1.7cm}|>{\centering\arraybackslash}p{1.8cm}|>{\centering\arraybackslash}p{1.4cm}|}
+		\hline
+		\textbf{Approach} & \textbf{Coverless} & \textbf{Semantic channel} & \textbf{Reference} & \textbf{Exact secret} \\ \hline
+		LSB / adaptive embedding & No & No & -- & Yes \\ \hline
+		Baluja, HiNet, ISN & No & No & -- & No \\ \hline
+		DiffStega & Yes & No & Generated & No \\ \hline
+		AgentSemSteCom & Yes & Yes & Generated & No \\ \hline
+		\textbf{RACS (this project)} & \textbf{Yes} & \textbf{Yes} & \textbf{Retrieved} & \textbf{Yes} \\ \hline
+	\end{tabularx}
+\end{table}
+
+No earlier work asks whether the generated reference of a coverless semantic steganography
+system can be replaced by retrieval while both ends still agree bit for bit, or combines a
+generative stego with an exact, authenticated payload whose detectability is measured.

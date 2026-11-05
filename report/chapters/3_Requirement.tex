@@ -1,0 +1,125 @@
+This chapter states what the system must do, the qualities it must have, and the
+constraints it was built under. Each requirement is tied to an automatic verification check
+(Section~\ref{sec:gates}).
+
+\section{Stakeholders}
+\begin{itemize}
+	\item \textbf{Sender:} holds a private image and a shared token; wants to send the image
+	without revealing that a secret is being sent.
+	\item \textbf{Receiver:} holds the same token; wants the secret back, and wants a wrong or
+	tampered message to be detected rather than silently accepted.
+	\item \textbf{Eavesdropper:} sees the channel and all public information; may try a wrong
+	token, or try to detect that steganography is being used.
+	\item \textbf{Researcher:} needs to compare the baseline and RACS fairly and reproduce every
+	number.
+\end{itemize}
+
+\section{Functional Requirements}
+\begin{longtable}{|>{\centering\arraybackslash}p{1.0cm}|p{10.6cm}|}
+	\caption{Functional requirements.}\label{tab:fr}\\
+	\hline
+	\textbf{ID} & \textbf{Requirement} \\ \hline
+	\endfirsthead
+	\hline
+	\textbf{ID} & \textbf{Requirement} \\ \hline
+	\endhead
+	FR1 & Generate a public text key $K_{\mathrm{pub}}$ from the secret image, deterministically. \\ \hline
+	FR2 & Extract a public structure map $X_{\mathrm{feat}}$: segmentation for scenes, pose skeleton for faces. \\ \hline
+	FR3 & Derive every private random value from the token with SHA-256, identically at both ends. \\ \hline
+	FR4 & Baseline: generate the reference $X_{\mathrm{ref}}$ with PicX-Real and ControlNet. \\ \hline
+	FR5 & RACS: retrieve $X_{\mathrm{ref}}$ from a fixed corpus using only public data, rerank it, and let the token pick one of the top $K$. \\ \hline
+	FR6 & Hide the secret with EDICT, conditioned on $X_{\mathrm{ref}}$, with token noise and a token mask. \\ \hline
+	FR7 & Send the stego through SwinJSCC and an AWGN channel at 5, 10, 15 and 20\,dB. \\ \hline
+	FR8 & Recover the secret by reproducing $X_{\mathrm{ref}}$ and reversing the hiding; restore faces with CodeFormer. \\ \hline
+	FR9 & Test recovery with the correct, a wrong and no token; train a XuNet steganalyser. \\ \hline
+	FR10 & RACS: deliver the secret file exactly through an encrypted, authenticated embedding layer, or reject it. \\ \hline
+	FR11 & Provide a phone interface for sending and receiving. \\ \hline
+\end{longtable}
+
+\section{Non-Functional Requirements}
+\begin{itemize}
+	\item \textbf{Same reference at both ends.} Sender and receiver must produce a bit-identical
+	reference. They must agree on the corpus, models, index, ranking weights, $K$ and all hiding
+	parameters.
+	\item \textbf{Fair comparison.} RACS may change only how the reference is obtained (plus the
+	optional exact layer); every other stage is the baseline's own code.
+	\item \textbf{Reproducibility.} Every result file records the configuration, data and model
+	hashes.
+	\item \textbf{Honest claims.} Every difference from the paper is recorded with its reason and
+	impact; calibration data never appears in an evaluation table.
+	\item \textbf{Efficiency and locality.} Fit in 6\,GB of GPU memory; no cloud model in the
+	sending or receiving path.
+\end{itemize}
+
+\section{Hardware Requirements}
+The whole system runs on a single laptop, which is itself a requirement: RACS should not need a
+server-class GPU.
+\begin{itemize}
+	\item \textbf{GPU:} NVIDIA GeForce RTX~3050 Laptop with 6\,GB of VRAM.
+	\item \textbf{Memory and storage:} 16\,GB RAM; SSD, with models and data on a secondary drive.
+	\item \textbf{Operating system:} Windows~11.
+	\item \textbf{Prototype clients:} two smartphones on the same Wi-Fi network as the laptop.
+\end{itemize}
+
+\section{Software Requirements}
+\begin{itemize}
+	\item \textbf{Core:} Python~3.10 and PyTorch~2.6 with CUDA~12.4.
+	\item \textbf{Models:} Hugging Face Diffusers and Transformers for Stable Diffusion,
+	ControlNet, IPAdapter, BLIP, Qwen2.5, OneFormer and CLIP; the OpenPose annotator; and the
+	official SwinJSCC and CodeFormer code.
+	\item \textbf{Retrieval and metrics:} FAISS for the exact index; NumPy, SciPy and Pillow for
+	numerics and images; the LPIPS package for the perceptual metric.
+	\item \textbf{Cryptography:} the Python standard library (\texttt{hashlib}, \texttt{hmac}) for
+	SHA-256, SHAKE-256, PBKDF2 and HMAC, so no extra security dependency is needed.
+	\item \textbf{Project tooling:} one YAML configuration file read by both ends, and Git for
+	version control.
+\end{itemize}
+
+\section{Models Used}
+Table~\ref{tab:models} lists the pretrained model behind each stage of the pipeline.
+\begin{table}[htbp]
+	\centering
+	\caption{Pretrained models and their role.}
+	\label{tab:models}
+	\begin{tabularx}{0.9\textwidth}{|l|X|}
+		\hline
+		\textbf{Stage} & \textbf{Model} \\ \hline
+		Image caption & BLIP (base) \\ \hline
+		Public key $K_{\mathrm{pub}}$ & Qwen2.5-0.5B-Instruct \\ \hline
+		Structure (scenes) & OneFormer, ADE20K, Swin-L \\ \hline
+		Structure (faces) & OpenPose body and face \\ \hline
+		Reference (baseline) & PicX-Real + SD v1.5 ControlNet \\ \hline
+		Reference (RACS) & CLIP ViT-B/32 + exact index \\ \hline
+		Image prompt & IP-Adapter-plus \\ \hline
+		Hiding & EDICT on Stable Diffusion v1.5 \\ \hline
+		Channel & SwinJSCC, trained at 10\,dB \\ \hline
+		Face restoration & CodeFormer \\ \hline
+		Steganalysis & XuNet (trained in this project) \\ \hline
+	\end{tabularx}
+\end{table}
+
+\section{Datasets}
+\begin{itemize}
+	\item \textbf{Retrieval corpus:} 1{,}000 COCO \cite{lin2014coco} images at $512\times512$, with
+	a versioned index whose row order is fixed.
+	\item \textbf{Calibration split:} 22 images per class from UniStega \cite{yang2024diffstega},
+	used only to tune and to sanity-check against the paper.
+	\item \textbf{Evaluation split:} 22 images per class, never seen during tuning: COCO scenes
+	(common), Wikimedia Commons portraits (facial) and cat photographs (style).
+\end{itemize}
+
+\section{Constraints}
+\begin{itemize}
+	\item \textbf{6\,GB GPU:} the pipeline runs at $256$\,px; large encoders run on the CPU.
+	\item \textbf{Host memory:} large model files needed a special low-memory loader on Windows.
+	\item \textbf{Library conflicts:} FAISS and PyTorch cannot share a process on Windows, so
+	retrieval runs in its own process.
+	\item \textbf{Unavailable component:} the paper's digital codec branch has no public weights
+	and is not reproduced.
+\end{itemize}
+
+\section{Verification Gates}\label{sec:gates}
+Every phase ends with a script that writes named pass/fail checks to a JSON file, for example
+``the VAE round trip is measured'', ``the same token always picks the same image'', and ``the
+sender and receiver reference are identical for every test image''. A check can be changed only
+with a written reason, never quietly relaxed.

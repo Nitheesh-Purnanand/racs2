@@ -1,0 +1,196 @@
+\documentclass[a4paper, 11pt, oneside]{report}
+
+\newcommand{\plogo}{\fbox{$\mathcal{PL}$}}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{float}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fouriernc}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.geometric,shapes.multipart,fit,calc,backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.16}
+\usepackage{graphics}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{listings}
+\usepackage[nottoc]{tocbibind}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{lipsum}
+
+% ---------- table column types (all tables fit exactly in \textwidth) ----------
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\renewcommand{\arraystretch}{1.3}
+\newcommand{\headrow}{\rowcolor{gray!15}}
+
+% ---------- contents: chapters and sections only (keeps it to two pages) ----------
+\setcounter{tocdepth}{1}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny,
+  xleftmargin=2em
+}
+
+\begin{document}
+	\begin{titlepage}
+
+		\centering
+
+		\vspace*{\baselineskip}
+
+		\vspace{0.75\baselineskip}
+
+		{\LARGE AI-Powered Team Meeting Assistant\\[0.3\baselineskip]
+		\large A Local Multi-Agent System for Structured Software Project Discussions}
+
+		\vspace{0.75\baselineskip}
+
+		\vspace{2\baselineskip}
+
+		A report submitted for the course named Project - II (CS4202)
+
+		\vspace*{5\baselineskip}
+
+		Submitted By
+
+		\vspace{0.5\baselineskip}
+
+		{\scshape\Large Shreya Goswami \\ SEMESTER - VII \\ 230101009}
+
+		\vspace{0.5\baselineskip}
+
+		Supervised By
+
+		\vspace{0.5\baselineskip}
+
+		{\scshape\Large Dr. Sunita Warjri}
+
+		\vspace{0.5\baselineskip}
+
+		\vfill
+
+		\begin{center}
+			\includegraphics[width=5cm]{report_file/iiit manipur.png}
+		\end{center}
+
+	{\scshape\small Department of Computer Science and Engineering\\ Indian Institute of Information Technology Senapati, Manipur \\ November, 2026}
+
+\end{titlepage}
+
+%----------------------------------------------------------------------------------------
+% Declaration
+\begin{center}
+   { \LARGE \textbf{Declaration}}
+\end{center}
+In this submission, I have expressed my idea in my own words, and I have adequately cited and referenced any ideas or words that were taken from another source. I also declare that I adhere to all principles of academic honesty and integrity and that I have not misrepresented or falsified any ideas, data, facts, or sources in this submission. If any violation of the above is made, I understand that the institute may take disciplinary action. Such a violation may also engender disciplinary action from the sources which were not properly cited or permission not taken when needed.
+
+\vspace{1cm}\hspace{8.35cm} Shreya Goswami \\
+\vspace{1cm}\hspace{9cm} 230101009 \\
+\vspace{1CM} DATE: 05-11-2026
+
+\newpage
+
+%----------------------------------------------------------------------------------------
+% Certificate (no floating table, so it cannot drift and leave an empty page)
+\thispagestyle{empty}
+\begin{center}
+	\includegraphics[scale=0.2]{report_file/iiit manipur.png}\\[0.2cm]
+	Department of Computer Science and Engineering \\
+	Indian Institute of Information Technology Senapati, Manipur
+\end{center}
+\vspace{-0.3cm}
+\noindent\rule{\textwidth}{0.4pt}\\
+\noindent Dr. Sunita Warjri \hfill Email: \href{mailto:sunitaw@iiitmanipur.ac.in}{sunitaw@iiitmanipur.ac.in}\\
+\noindent Assistant Professor \hfill Contact No: +91 7085262822
+
+\vspace{1.2cm}
+\begin{center}
+	{\Huge \textbf{\emph{To Whom It May Concern}}}
+\end{center}
+\vspace{0.8cm}
+
+{\large\linespread{1.13}\selectfont
+\noindent This is to certify that the project report entitled \textbf{``AI-Powered Team Meeting Assistant: A Local Multi-Agent System for Structured Software Project Discussions'',} submitted to the department of Computer Science and Engineering, Indian Institute of Information Technology Senapati, Manipur in partial fulfillment for the award of degree of Bachelor of Technology in Computer Science and Engineering is record bonafide work carried out by \textbf{Shreya Goswami} bearing roll number 230103032.\par}
+
+\vspace{1.4cm}
+\hfill\begin{tabular}{c}
+	\large Signature of Supervisor\\[0.3cm]
+	\textbf{(Dr. Sunita Warjri)}
+\end{tabular}
+
+\vspace{1cm}
+\noindent Signature of the Examiner 1 ............................\\[0.5cm]
+Signature of the Examiner 2 ............................\\[0.5cm]
+Signature of the Examiner 3 ............................\\[0.5cm]
+Signature of the Examiner 4 ............................
+\newpage
+
+%----------------------------------------------------------------------------------------
+\begin{abstract}
+Software teams discuss requirements, progress and problems in meetings, but the outcomes decisions, action items and blockers are usually recorded by hand and easily lost. A single general-purpose AI assistant does not represent the different viewpoints of a real team, and letting an AI change project data on its own is risky because language models can produce plausible but incorrect statements.
+
+This project presents the \textbf{AI Powered Team Meeting Assistant}, a full stack web application in which four role based AI agents Project Manager, Backend, Frontend and Mobile Engineer hold a structured meeting about the user's project. Every agent is grounded in context built from the live database, and each meeting produces a structured summary of key points, contributions, decisions, action items, unresolved questions and next steps. The central design rule is \emph{human in the loop control}: nothing the AI proposes is applied until the user approves it.
+
+The system uses React~18, FastAPI and SQLite, with the Gemma~3 (4B) model running locally through Ollama and LangChain, so no data leaves the user's computer. It was verified by 114 automated tests that use a fake Ollama server and by a run against the real local model that passed all 7 checks. The work shows that a small local model, role specific prompts and an explicit approval workflow can usefully support project discussions while final decisions stay with the user.
+\end{abstract}
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+        \begin{center}
+            { \LARGE \textbf{Acknowledgement}}
+        \end{center}
+	\vspace{2cm}
+	I would like to express my sincere gratitude to my project supervisor, Dr. Sunita Warjri, for the guidance, encouragement and valuable feedback provided throughout the course of this project. Their suggestions helped shape both the direction of the work and the quality of this report.
+
+	I am thankful to the Department of Computer Science and Engineering, Indian Institute of Information Technology Senapati, Manipur, for providing the academic environment and resources needed to carry out this work. I also thank the faculty members and staff of the department for their support.
+
+	I am grateful to the developers and communities behind the open source tools used in this project, including Ollama, LangChain, LangGraph, FastAPI, React and SQLite, without which this work would not have been possible.
+
+	Finally, I thank my family and friends for their constant support and motivation.
+
+	\vspace{2cm}
+	\noindent\hfill\begin{tabular}{l}
+		\textbf{Shreya Goswami} \\
+		Roll No.: 230101009 \\
+		B.Tech, Computer Science and Engineering \\
+		IIIT Senapati, Manipur
+	\end{tabular}
+
+	\tableofcontents
+	\listoffigures
+        \listoftables
+	\chapter{Introduction}
+	\input{chapters/1_Introduction}
+        \chapter{Literature Survey}
+        \input{chapters/2_Literature_Survey}
+        \chapter{Requirement Engineering}
+        \input{chapters/3_Requirement}
+        \chapter{System Design}
+        \input{chapters/4_System_Design}
+        \chapter{Implementation}
+        \input{chapters/5_Implementation}
+        \chapter{Results}
+        \input{chapters/6_Results}
+        \chapter{Conclusion}
+        \input{chapters/7_Conclusion}
+
+        \bibliography{report}
+	\bibliographystyle{plain}
+
+\end{document}

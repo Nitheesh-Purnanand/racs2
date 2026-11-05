@@ -1,0 +1,58 @@
+\par Imagine sending a photograph across a wireless network so that anyone listening sees only
+an ordinary picture, while the intended receiver, holding a short secret code, pulls out a
+completely different hidden image. That is \emph{steganographic communication}: instead of
+locking a message, it hides the fact that a message exists at all.
+
+Modern wireless systems are making this both more important and more achievable.
+\emph{Semantic communication} sends the meaning of an image rather than its raw bits, which is
+efficient but also easy for a well-equipped eavesdropper to understand. Generative AI offers a
+way to hide the secret inside the semantics themselves. The recent \textbf{AgentSemSteCom}
+scheme \cite{meng2026agentsemstecom} does exactly this: a language model describes the image,
+a diffusion model paints a reference picture controlled by a private token, and the secret is
+blended into a natural-looking stego image that travels over the channel.
+
+The catch is cost and accuracy. Every message requires the sender \emph{and} the receiver to
+run a diffusion model to paint the same reference picture, and the secret that comes out at
+the end is only an approximation of what went in.
+
+\section{Outline}
+This project rebuilds AgentSemSteCom from scratch on a laptop GPU and then improves it with
+\textbf{RACS} (Retrieval-Augmented Coverless Steganography). The key idea is simple: the
+reference picture does not need to be \emph{painted}; it can be \emph{found}. RACS looks it up
+in an indexed image collection, and the private token decides which candidate is used. RACS
+also adds an exact-recovery layer, so the receiver gets back the secret pixel for pixel. A
+phone app shows the whole system working on real photographs.
+
+\section{Problem Statement}
+AgentSemSteCom has two practical weaknesses:
+\begin{itemize}
+	\item \textbf{Expensive references.} Generating the reference takes about 4\,s and 2.6\,GB of
+	GPU memory per message, at both ends, and both ends must produce exactly the same image.
+	\item \textbf{Approximate recovery.} The secret comes back at roughly 22\,dB PSNR: recognisable,
+	but visibly changed, which is unacceptable for documents, faces or evidence.
+\end{itemize}
+The question this project answers is: \emph{can the reference be obtained cheaply and
+deterministically without diffusion, and can the secret be delivered exactly, without losing
+quality, security or stealth?}
+
+\section{Motivation}
+Retrieval has already replaced expensive generation in other areas of AI
+\cite{chen2022reimagen}, and a steganographic reference only needs to look related to the
+secret, match its layout, be reproducible at both ends and be unpredictable without the token.
+A fixed image collection searched with CLIP \cite{radford2021clip} meets all four requirements
+at a fraction of the cost. At the same time, users of a real messaging app expect to receive
+\emph{the} photo they were sent, not a reconstruction of it, which motivates exact recovery.
+
+\section{Purpose}
+The objectives of this project are to:
+\begin{enumerate}
+	\item reproduce AgentSemSteCom faithfully, with every difference from the paper recorded;
+	\item design RACS and compare it with the baseline under identical conditions, measuring
+	speed, memory, recovery quality, security and robustness from 5 to 20\,dB SNR;
+	\item deliver the secret exactly, reject wrong keys and resist steganalysis;
+	\item demonstrate the system end to end in a phone prototype.
+\end{enumerate}
+
+The rest of the report covers related work (Chapter~2), requirements (Chapter~3), the
+architecture of both systems (Chapter~4), implementation (Chapter~5), results (Chapter~6) and
+conclusions (Chapter~7).

@@ -1,0 +1,362 @@
+The system was built incrementally in phases. Each phase had a stated goal, a small
+experiment, an artifact saved to disk and a verification gate (Section~\ref{sec:gates}). This
+chapter describes the phases in order, then the engineering problems that shaped the
+implementation.
+
+\section{Methodology}
+The working rule was \emph{baseline first}: no RACS component was wired into the pipeline until
+the reproduced baseline passed its gate, so the comparison in Chapter~6 is against a measured
+baseline rather than against numbers copied from the paper. Every phase followed the same loop:
+state what is built and why; build the smallest experiment; test it; explain the output;
+integrate; save the artifact with its configuration hash; move on.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.85, transform shape]
+		\hyphenpenalty=10000\exhyphenpenalty=10000
+		% baseline milestones, left to right
+		\node[blk, text width=2.3cm] (m1) at (0,0) {\textbf{Phases 1--3}\\environment, VAE, diffusion cost};
+		\node[blk, text width=2.3cm] (m2) at (3.0,0) {\textbf{Phases 4--6}\\corpus, CLIP, frozen splits};
+		\node[blk, text width=2.3cm] (m3) at (6.0,0) {\textbf{Phases 7--9}\\$K_{\mathrm{pub}}$, $X_{\mathrm{feat}}$, references};
+		\node[blk, text width=2.3cm] (m4) at (9.0,0) {\textbf{Phases 10--14}\\EDICT, hiding, channel, CodeFormer};
+		\node[blk, text width=2.3cm] (m5) at (12.0,0) {\textbf{Phases 15--16}\\baseline frozen: quality, security};
+		% RACS milestones, right to left underneath
+		\node[newblk, text width=2.3cm] (m6) at (12.0,-3.0) {\textbf{Phases 17--20}\\retrieval, token pick, rerank};
+		\node[newblk, text width=2.3cm] (m7) at (9.0,-3.0) {\textbf{Phases 21--22}\\RACS end to end, comparison};
+		\node[newblk, text width=2.3cm] (m8) at (6.0,-3.0) {\textbf{Exact layer}\\lossless, sealed, adaptive embedding};
+		\node[src, text width=2.3cm] (m9) at (3.0,-3.0) {Phone prototype};
+		\draw[arr] (m1) -- (m2);
+		\draw[arr] (m2) -- (m3);
+		\draw[arr] (m3) -- (m4);
+		\draw[arr] (m4) -- (m5);
+		\draw[arr] (m5) -- node[left, font=\scriptsize, align=right]{baseline gate\\passed} (m6);
+		\draw[arr] (m6) -- (m7);
+		\draw[arr] (m7) -- (m8);
+		\draw[arr] (m8) -- (m9);
+		\node[font=\footnotesize\bfseries, text=gray!50!black, anchor=south west] at ([yshift=0.15cm]m1.north west) {Baseline reproduction (AgentSemSteCom)};
+		\node[font=\footnotesize\bfseries, text=green!35!black, anchor=north west] at ([yshift=-0.15cm]m9.south west) {RACS};
+	\end{tikzpicture}
+	\caption{Order of work. Every phase ends with an artifact and an automatic verification gate; nothing RACS-specific was wired in before the baseline gate passed.}
+	\label{fig:phases}
+\end{figure}
+
+\section{Foundation (Phases 1--3)}
+\subsection{Phase 1: environment and tensor contract}
+A virtual environment with PyTorch~2.6 and CUDA~12.4 was created, and all model caches were
+redirected to the data drive. A seeding utility fixes Python, NumPy and PyTorch (CPU and CUDA)
+random states. The tensor contract was fixed: images are RGB, \texttt{float32}, shape
+$(1,3,H,W)$, values in $[0,1]$ for metrics and $[-1,1]$ for the VAE. The gate checks CUDA
+availability, configuration loading, tensor shapes and that two seeded runs produce identical
+tensors.
+
+\subsection{Phase 2: VAE and latent space}
+The Stable Diffusion VAE compresses a $512\times512\times3$ image to a $64\times64\times4$ latent
+(an $8\times$ spatial reduction). A round trip over five test images gave a mean PSNR of
+32.81\,dB (range 31.78--34.15) and SSIM 0.935. This sets a ceiling: any pipeline that passes
+through the VAE cannot recover a secret better than about 33\,dB.
+
+
+\subsection{Phase 3: diffusion generation cost}
+Stable Diffusion v1.5 was loaded in half precision with attention slicing and a DDIM scheduler.
+A sweep over steps and seeds measured cost: at 20 steps one $512$\,px image took 5.56\,s
+(0.278\,s per step) with 2.60\,GB peak GPU memory, so the paper's 50 steps cost 13.5\,s per
+image. Disabling classifier-free guidance reduced cost by a factor of 1.73, confirming that the
+UNet forward pass dominates. Cost grows linearly with the number of denoising steps (5.56,
+8.18 and 13.47\,s at 20, 30 and 50 steps), which is exactly the per-message cost that RACS removes.
+
+\section{Retrieval Inputs and Test Harness (Phases 4--6)}
+\subsection{Phase 4: retrieval corpus}
+A builder deterministically sampled 1{,}000 images from COCO val2017 with a fixed seed,
+centre-cropped and resized them to $512\times512$ RGB, and wrote a versioned index file listing
+each image identifier, path and SHA-256 hash. The row order of this file is part of the protocol,
+because the index returns row numbers. The verification gate checks every hash, the row count
+and that a rebuild is identical.
+
+
+\subsection{Phase 5: CLIP embeddings}
+CLIP ViT-B/32 embeds each corpus image to a 512-dimensional, L2-normalised \texttt{float32}
+vector. Embeddings are kept in single precision because half precision changed nearest-neighbour
+orderings in borderline cases. Re-encoding the corpus gave a maximum absolute difference of
+$2.5\times10^{-7}$. Using COCO captions as queries, the correct image was the top-1 result 47.6\,\%
+of the time out of 1{,}000; mean similarity was 0.779 within a topic and 0.542 across topics.
+
+
+An important observation was that CLIP similarity and structural similarity disagree: two
+images can be semantically close but laid out completely differently (in one case, CLIP
+similarity 0.643 but edge overlap only 0.199). This motivated the structural reranking of Phase 20.
+
+
+\subsection{Phase 6: evaluation harness and frozen splits}
+Two frozen, role-tagged splits were built (Section~3.7). The calibration split (UniStega, 22 per
+class) may only be used to check the paper's regime and to tune parameters; the evaluation split
+(COCO, Commons portraits, Commons cats, 22 per class, disjoint from the corpus) is the only
+source of claims. The split module refuses to return evaluation data to a tuning routine.
+Each image is assigned a fixed token stored in a versioned token file. The facial evaluation
+images were filtered by title and by CLIP to keep only real single-face photographs. Metrics
+(MSE, PSNR, SSIM, LPIPS with an AlexNet backbone) and a frozen report schema were implemented, and
+a self-test with 83 checks verifies them.
+
+\section{Baseline Reproduction (Phases 7--16)}
+\subsection{Phase 7: public conditions}
+For each of the 132 split images, BLIP produces a perception caption with greedy decoding, and
+Qwen2.5-0.5B-Instruct rewrites it into a concise generation prompt using a fixed one-shot chat
+template. The reply is sanitised (instruction echoes, markdown and URLs removed); a degenerate
+reply falls back deterministically to the perception caption, and the number of fallbacks is
+recorded (zero occurred). OneFormer produces 150-class ADE20K segmentation for common images.
+OpenPose produces body and face keypoints for portraits; on 3 of the 22 tightly cropped
+evaluation portraits OpenPose detects no body, and a MediaPipe face mesh is used instead, with
+the method recorded per image. To fit in memory, the build runs in two passes (all prompts, then
+all features) with one model resident at a time.
+
+\subsection{Phase 8: reference generation}
+PicX-Real with the Stable Diffusion v1.5 segmentation and OpenPose ControlNets generates one
+reference per image at $256$\,px with 20 DDIM steps and guidance 7.5, from a token-derived seed.
+Two independent runs produced byte-identical images for all 132 references (peak GPU memory
+2.84\,GB). The IPAdapter-plus image embedding of each reference is precomputed on the CPU and
+cached on disk keyed by the reference's SHA-256, so both ends read an identical tensor and the
+2.5\,GB image encoder never has to share the GPU with Stable Diffusion.
+
+
+\subsection{Phase 9: ControlNet zero-convolution fine-tuning}
+Algorithm~2 of the paper fine-tunes only the zero-convolution layers of ControlNet. A short run
+(50 steps, batch 1, \texttt{bfloat16}, calibration data only) was performed to validate the code
+path; half precision produced NaN gradients within five steps, while \texttt{bfloat16} was stable.
+A held-out probe loss improved from 0.1488 to 0.1296.
+
+\subsection{Phase 10: EDICT}
+EDICT was implemented from the coupled-transformation equations as its own module and tested in
+isolation by inverting and regenerating random and image latents across a sweep of step counts
+and mixing coefficients. At the operating point (20 steps, $p=0.93$,
+half-precision UNet with single-precision latents) the maximum relative latent error was
+$3.6\times10^{-3}$: a numerical floor from half precision, not an algorithmic failure. The sweep
+also exposed a latent bug: the configuration included $p=0.5$, at which the coupling is
+singular, so a full rebuild could never finish. The sweep now starts at 0.55.
+
+\subsection{Phase 11: local hiding and recovery}
+A full inversion treats the clean secret latent as pure noise and decodes to a reference-like
+image (11.3\,dB against the secret), which is not imperceptible. Hiding therefore uses a
+bounded-strength EDICT chain (strength 0.2, 20 steps, guidance 3.0) that is still an exact
+paired inverse. Token noise and the sparse token mask are applied in the latent. IPAdapter
+injects the reference embedding at both ends, making the stego depend on the reference pixels.
+
+\subsection{Phase 12: AWGN channel}
+The channel adds Gaussian noise whose strength is set from the signal power and the target
+SNR, split equally across the in-phase and quadrature parts of complex symbols. A seeded generator
+provides the noise realisation so that experiments are repeatable. The measured noise variance
+matched the analytic value within 0.46\,\%.
+
+\subsection{Phase 13: semantic codec}
+The official SwinJSCC release with bandwidth $C=64$ trained at 10\,dB (the nearest public
+checkpoint to the paper's $C=48$) was integrated in single precision, with only its noise
+generator replaced by a seeded one. In isolation it reconstructs images at 32.54\,dB at 10\,dB
+SNR, compared with 22.88\,dB for the VAE-based substitute used before the official weights were
+obtained.
+
+\subsection{Phase 14: CodeFormer enhancement}
+The official CodeFormer architecture and checkpoint run at $512$\,px with fidelity 0.5 on the
+facial class only, on the CPU because of GPU memory. The gate requires measured deltas rather
+than assuming improvement; CodeFormer may lower PSNR slightly while improving LPIPS.
+
+\subsection{Phase 15: assembled baseline}
+The stages were assembled into one baseline object. A calibration run (15A) checks the regime
+against the paper's Table~II with tolerances (Gate~A), and an evaluation run (15B) produces the
+frozen table (Gate~B). The manifest records the configuration hash, split and token versions,
+and the hash of every model. Results are in Chapter~6.
+
+\subsection{Phase 16: security and steganalysis}
+Recovery is measured under three receiver conditions: the \emph{correct} token, a valid
+\emph{wrong} token, and \emph{no token} (a fixed public fallback token with an all-zero mask).
+A XuNet steganalyser with a fixed SRM high-pass first layer is trained to separate clean images
+from stego images, with the train, validation and test splits grouped by image so that patches of
+one image never cross splits.
+
+\section{RACS Reference Retrieval (Phases 17--22)}
+All retrieval logic lives in one module shared by transmitter and receiver.
+
+\subsection{Phase 17: exact retrieval}
+The corpus embeddings are indexed with an exact inner-product index. A FAISS
+\texttt{IndexFlatIP} is built and saved in its own process; within the pipeline, the same exact
+inner product is computed with NumPy, because FAISS and PyTorch load conflicting OpenMP runtimes
+in one process on Windows. The gate verifies that FAISS and the in-process search return identical
+top-50 rows and scores, that each corpus image retrieves itself first with score 1.0, and that the
+row order matches the index file.
+
+\subsection{Phase 18: token selection}
+The token is hashed with SHA-256 together with a fixed label, and the result modulo $K$
+gives the position of the chosen image in the top-$K$ list. The gate verifies identical output in separate processes, that $K=1$ always selects index 0, that
+over the evaluation tokens all ten buckets are used and the distribution is near uniform, and
+that the language's built-in hash is never called.
+
+\subsection{Phase 19: structural representation}
+Each corpus image is converted to a dilated binary edge map at $128$\,px and cached. Query
+structure is derived from the public $X_{\mathrm{feat}}$ (segment boundaries or keypoint
+coverage). The cache is deterministic, and the gate requires at least three cases in which the
+CLIP ranking and the structural ranking disagree; five were found.
+
+\subsection{Phase 20: reranking}
+Each candidate gets a combined score: a weight $\alpha$ times its CLIP similarity plus a weight
+$\beta$ times its edge-map overlap with the public structure. A sweep on
+calibration data only measured, for the selected top-10 pool, the mean semantic similarity to the
+secret, the mean edge IoU, and the fraction of images whose pool changed relative to CLIP alone
+(Figure~\ref{fig:sweep}). The objective weights semantic similarity and edge IoU equally.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[viz, width=0.75\textwidth, height=5.4cm,
+			xlabel={Semantic weight $\alpha$ \ (structural weight $\beta = 1-\alpha$)},
+			ylabel={Calibration objective},
+			xtick={0,0.25,0.5,0.75,1}, xmin=-0.08, xmax=1.08,
+			ymin=0.762, ymax=0.7745,
+			yticklabel style={/pgf/number format/fixed, /pgf/number format/precision=3}]
+			\addplot[vizA, mark=*, mark size=2pt] coordinates {(0,0.7648) (0.25,0.7690) (0.5,0.7717) (0.75,0.7723) (1,0.7640)};
+			\addplot[only marks, mark=*, mark size=3.6pt, vizB, forget plot] coordinates {(0.75,0.7723)};
+			\node[font=\scriptsize, anchor=south, text=black] at (axis cs:0.75,0.7726) {chosen: $\alpha=0.75$};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Rerank weight sweep on calibration data only. Mixing in some structure beats pure CLIP ranking; $\alpha=0.75$ scores best and changes the top-10 pool for two thirds of the images.}
+	\label{fig:sweep}
+\end{figure}
+
+$\alpha = 0.75$, $\beta = 0.25$ maximises the objective; it keeps most of the semantic quality of
+CLIP alone while raising structural agreement, and it changes the candidate pool for two thirds
+of the images. These weights were frozen before any evaluation run.
+
+\subsection{Phase 21: RACS end to end}
+RACS-Base subclasses the baseline and overrides only reference acquisition. Retrieval for the
+transmitter and for the receiver run in two separate processes before the diffusion stack loads
+(CLIP text encoding crashed when loaded beside it). The gate requires
+$X_{\mathrm{ref}}^{\mathrm{tx}} = X_{\mathrm{ref}}^{\mathrm{rx}}$ for every evaluation image, compared
+by identifier and file hash. Both systems are then measured through the same object and the same
+evaluation function, differing only in where the reference comes from.
+
+\subsection{Phase 22: controlled comparison}
+A comparison script reads both systems' measurements on the same cases and tokens, refuses
+calibration data, and reports quality, security, latency and memory side by side (Chapter~6).
+
+\section{RACS Exact-Recovery Layer}
+The layer is a self-contained module with four functions: compaction,
+carrier preparation, embedding and extraction. A container
+format stores a magic value, the length and the format of the payload, and the HMAC tag.
+Evaluation generates 66 paper-style carriers (EDICT at strength 0.5 with a RACS-retrieved
+reference), embeds every evaluation secret with four progressively stronger variants, writes each
+stego to a real PNG file and reads it back before extraction. Two classical detectors were
+implemented: Westfeld's chi-square test and Sample Pair Analysis. For each detector the AUC is
+computed between each stego and the same carrier without payload, so 0.5 means the detector cannot
+tell them apart.
+
+Figure~\ref{fig:payload} shows how one secret becomes the hidden bit stream. The token is
+stretched once by PBKDF2 into three independent values: an encryption key, a MAC key and the seed
+that orders the embedding positions. Because the positions are chosen from texture computed on the
+top five bits of each value, and a $\pm1$ change never alters those bits, the receiver recomputes
+exactly the same positions from the stego image alone.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.8, transform shape]
+		\hyphenpenalty=10000\exhyphenpenalty=10000
+		% key schedule (row 1)
+		\node[src, text width=2.0cm] (tok) at (0,0) {Token $\tau$};
+		\node[newblk, text width=2.4cm] (kdf) at (3.0,0) {\textbf{PBKDF2}\\200{,}000 rounds};
+		\node[draw, thick, minimum height=0.8cm, minimum width=2.3cm, fill=gray!8, font=\footnotesize, anchor=west] (ek) at (5.4,0) {encryption key};
+		\node[draw, thick, minimum height=0.8cm, minimum width=1.6cm, fill=gray!8, font=\footnotesize, right=0pt of ek] (mk) {MAC key};
+		\node[draw, thick, minimum height=0.8cm, minimum width=2.1cm, fill=gray!8, font=\footnotesize, right=0pt of mk] (ps) {position seed};
+		% payload container (row 2)
+		\node[src, text width=2.0cm] (sec) at (0,-2.0) {Secret file};
+		\node[newblk, text width=2.4cm] (cmp) at (3.0,-2.0) {\textbf{Compact}\\lossless WebP if smaller};
+		\node[draw, thick, minimum height=0.8cm, minimum width=1.0cm, fill=gray!8, font=\footnotesize, anchor=west] (hdr) at (5.4,-2.0) {RACS};
+		\node[draw, thick, minimum height=0.8cm, minimum width=1.1cm, fill=gray!8, font=\footnotesize, right=0pt of hdr] (len) {length};
+		\node[draw, thick, minimum height=0.8cm, minimum width=1.8cm, fill=green!12, font=\footnotesize, right=0pt of len] (body) {file bytes};
+		\node[src, text width=2.0cm] (png) at (13.0,-2.0) {Stego PNG};
+		% processing (row 3)
+		\node[newblk, text width=2.4cm] (enc) at (6.6,-4.1) {\textbf{Encrypt}\\SHAKE-256 stream (encryption key)};
+		\node[newblk, text width=2.4cm] (mac) at (9.8,-4.1) {\textbf{Seal}\\32-byte HMAC tag (MAC key)};
+		\node[newblk, text width=2.6cm] (emb) at (13.0,-4.1) {\textbf{Embed}\\$\pm1$ in most textured 50\,\% (position seed)};
+		\draw[arr] (tok) -- (kdf);
+		\draw[arr] (kdf) -- (ek);
+		\draw[arr] (sec) -- (cmp);
+		\draw[arr] (cmp) -- (hdr);
+		\draw[arr] (len.south) -- (len.south |- enc.north);
+		\draw[arr] (enc) -- (mac);
+		\draw[arr] (mac) -- (emb);
+		\draw[arr] (emb) -- (png);
+	\end{tikzpicture}
+	\caption{How the exact-recovery layer packs a secret. The token is stretched into three independent values, each used by one step; a wrong token produces a different MAC key, so the seal check fails and the file is rejected.}
+	\label{fig:payload}
+\end{figure}
+
+\section{Prototype}
+A web server on the laptop serves a mobile page. The sender uploads a photograph and receives a
+stego PNG and an 8-digit key; the receiver uploads the PNG and the key and receives the secret.
+Photographs keep their aspect ratio by edge-padding to a square at $512$\,px and cropping back on
+receipt. The public-key generation and retrieval run in a separate worker process for the reasons
+given above. A self-test mode runs a round trip from the command line. Figure~\ref{fig:sequence}
+shows one complete exchange.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.85, transform shape]
+		\hyphenpenalty=10000\exhyphenpenalty=10000
+		% participants
+		\node[src, text width=2.4cm] (s) at (0,0) {\textbf{Sender phone}};
+		\node[blk, text width=2.6cm] (l) at (5.5,0) {\textbf{Laptop server}};
+		\node[src, text width=2.4cm] (r) at (11,0) {\textbf{Receiver phone}};
+		\foreach \n in {s,l,r} \draw[dashed, gray!70] (\n.south) -- ++(0,-9.2);
+		% send
+		\draw[arr] (0,-1.1) -- node[above, font=\footnotesize]{upload secret photo} (5.5,-1.1);
+		\node[newblk, text width=3.6cm, font=\footnotesize] at (5.5,-2.1) {$K_{\mathrm{pub}}$, RACS retrieval, EDICT stego look, encrypt + embed};
+		\draw[arr] (5.5,-3.5) -- node[above, font=\footnotesize]{stego PNG + 8-digit key} (0,-3.5);
+		% hand-over between people
+		\draw[arr] (0,-4.4) -- node[above, font=\footnotesize]{PNG sent as a file (any messenger)} (11,-4.4);
+		\draw[arr, dashed] (0,-5.1) -- node[above, font=\footnotesize]{key shared separately} (11,-5.1);
+		% receive
+		\draw[arr] (11,-6.0) -- node[above, font=\footnotesize]{upload PNG + key} (5.5,-6.0);
+		\node[newblk, text width=3.6cm, font=\footnotesize] at (5.5,-7.0) {read $\pm1$ bits, check seal, decrypt (no AI model)};
+		\draw[arr] (5.5,-8.2) -- node[above, font=\footnotesize]{exact secret, or ``rejected''} (11,-8.2);
+	\end{tikzpicture}
+	\caption{One exchange in the phone prototype. The laptop does all computation; a recompressed photo or a wrong key is detected by the seal and rejected.}
+	\label{fig:sequence}
+\end{figure}
+
+\section{Verification Results}
+Every phase writes its gate result to a JSON record of named checks, so the state of the whole
+build can be audited at any time. Figure~\ref{fig:gates} summarises the stored records: 119 checks
+across twelve phases, 113 of which pass. All six failures sit in Phases 15 and 16 and have a
+single cause: those phases were run on the 2-image-per-class subset, while their gates expect the
+full 22 images per class (sample counts, record counts, and the hash of the full frozen table).
+Every determinism, provenance and component check passes, including all RACS phases.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[vizbar, ybar stacked, bar width=13pt, width=0.95\textwidth, height=5.6cm,
+			symbolic x coords={5,7,8,9,10,15,16,17,18,19,20,21}, xtick=data,
+			xlabel={Phase}, ylabel={Verification checks}, ymin=0, ymax=22,
+			enlarge x limits=0.05,
+			legend style={at={(0.98,0.97)}, anchor=north east}]
+			\addplot[fill=green!55!black, draw=none] coordinates {(5,20) (7,13) (8,12) (9,10) (10,14) (15,11) (16,12) (17,6) (18,5) (19,3) (20,3) (21,4)};
+			\addplot[fill=red!70!black, draw=none] coordinates {(5,0) (7,0) (8,0) (9,0) (10,0) (15,1) (16,5) (17,0) (18,0) (19,0) (20,0) (21,0)};
+			\legend{Passed, Failed (subset size only)}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Automatic verification checks per phase, from the stored gate records. Phases 17--21 are the RACS phases.}
+	\label{fig:gates}
+\end{figure}
+
+\section{Engineering Challenges}
+\begin{itemize}
+	\item \textbf{Windows commit charge.} Memory-mapped checkpoint loading reserved more virtual
+	memory than the paging file allowed, causing access violations. A small shim loads
+	\texttt{safetensors} files read-only before any model library is imported.
+	\item \textbf{6\,GB GPU.} Half precision, attention slicing, $256$\,px operation, one model
+	resident at a time, CPU placement of the IPAdapter encoder and CodeFormer, and on-disk caches
+	of derived tensors kept every phase within budget.
+	\item \textbf{Cross-process determinism.} Process-randomised hashing, half-precision encoders
+	and implicit device nondeterminism were removed from every path that affects the reference.
+	\item \textbf{Float-to-integer truncation.} A conversion on the transmitter side truncated
+	instead of rounding before the IPAdapter embedding, which could have desynchronised the two
+	ends; caching by reference hash removed the risk.
+	\item \textbf{Mixed-state detection.} Upgrading components invalidated earlier frozen
+	artifacts. Configuration and model hashes in every manifest made the verification gates fail
+	loudly until the affected phases were rebuilt, instead of silently mixing results.
+\end{itemize}

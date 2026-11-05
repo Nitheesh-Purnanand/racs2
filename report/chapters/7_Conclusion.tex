@@ -1,0 +1,85 @@
+\section{Summary}
+This work reproduced AgentSemSteCom, an agentic, generative semantic steganographic
+communication scheme, end to end on a single 6\,GB laptop GPU, using the components named in the
+paper and documenting every unavoidable difference. The reproduction is in the paper's regime:
+facial recovery of 22.6--25.1\,dB across 5--20\,dB SNR, a correct-minus-wrong token gap of
+8.41\,dB (paper 6.46\,dB), and a XuNet steganalyser at chance.
+
+On top of this baseline, the project built \textbf{RACS}, which improves it in two ways:
+\begin{itemize}
+	\item \textbf{Retrieval instead of generation.} The reference image is found in an indexed
+	collection and picked by the token, instead of being painted by a diffusion model. It is
+	obtained about $82\times$ faster (0.048\,s instead of 3.92\,s) with no GPU memory, sender and
+	receiver get the identical image for all 66 test images, and quality and security are kept or
+	slightly improved (PSNR 22.62 vs 22.37\,dB, security gap 8.94 vs 8.67\,dB).
+	\item \textbf{Exact recovery.} All 66 secrets are recovered pixel-identical, every wrong key is
+	rejected, the chi-square attack is reduced to chance, and Sample Pair Analysis is weakened from
+	AUC 1.00 to 0.83. The cover image's realism turned out to matter as much as the embedding rule.
+\end{itemize}
+
+A phone prototype shows RACS working on real photographs, with a receive path that needs no AI
+model and finishes in one to two seconds.
+
+\section{Learning Outcomes}
+\begin{itemize}
+	\item Practical understanding of latent diffusion, DDIM, exact inversion with EDICT,
+	ControlNet and IP-Adapter, and of where each loses or preserves information.
+	\item Deep joint source--channel coding and channel simulation at a controlled SNR.
+	\item Multimodal retrieval with CLIP and exact nearest-neighbour search, and why determinism
+	matters more than speed when both ends must agree.
+	\item Applied cryptography for steganography: key stretching, stream encryption, message
+	authentication, and the difference between hiding content and hiding existence.
+	\item Steganalysis: chi-square, Sample Pair Analysis and CNN detectors, and how cover-source
+	statistics affect detectability.
+	\item Research engineering: phase gates, frozen splits, configuration and model hashing, a
+	deviation register, and memory management on constrained hardware.
+\end{itemize}
+
+\section{Future Work}
+\begin{itemize}
+	\item \textbf{Full-scale evaluation.} Run the comparison on all 22 images per class and report
+	confidence intervals; run EDICT at the paper's 50 steps and strength 0.5.
+	\item \textbf{RACS variants.} Vision--language reranking with a fixed deterministic ranking
+	(RACS-Agent), lightweight deterministic editing of the retrieved image (RACS-AgentEdit), and a
+	retrieve-or-generate fallback when no corpus image is close enough (RACS-Hybrid).
+	\item \textbf{Larger corpora.} Grow the corpus from 1{,}000 to 50{,}000--100{,}000 images and
+	study the trade-off between retrieval quality and index cost under the determinism contract.
+	\item \textbf{Stronger steganalysis.} Evaluate the exact layer against trained CNN
+	steganalysers such as SRNet on this cover source, and adapt embedding costs accordingly.
+	\item \textbf{Robust exact layer.} Add error-correcting codes so that the exact payload
+	survives mild recompression, and support longer keys.
+	\item \textbf{Digital branch.} Reproduce the digital semantic codec when a checkpoint becomes
+	available.
+\end{itemize}
+
+The most natural next step is RACS-Hybrid (Figure~\ref{fig:hybrid}), which keeps retrieval as the
+fast default and falls back to diffusion only when the corpus has nothing close enough. The
+decision must itself be deterministic and computed from public data, so that the receiver always
+takes the same branch as the sender.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[scale=0.85, transform shape]
+		\hyphenpenalty=10000\exhyphenpenalty=10000
+		\node[src, text width=2.4cm] (in) at (0,0) {$K_{\mathrm{pub}}$, $X_{\mathrm{feat}}$, token $\tau$};
+		\node[newblk, text width=2.6cm] (ret) at (3.6,0) {\textbf{RACS retrieval}\\top-10 pool};
+		\node[draw, diamond, aspect=2.2, fill=yellow!10, align=center, font=\small, inner sep=1pt] (dec) at (7.4,0) {best score\\above threshold?};
+		\node[newblk, text width=2.4cm] (use) at (11.2,1.2) {\textbf{Use retrieved} $X_{\mathrm{ref}}$\\0.05\,s, no GPU};
+		\node[oldblk, text width=2.4cm] (gen) at (11.2,-1.2) {\textbf{Generate} $X_{\mathrm{ref}}$\\diffusion, about 4\,s};
+		\draw[arr] (in) -- (ret);
+		\draw[arr] (ret) -- (dec);
+		\draw[arr] (dec.north) |- node[pos=0.75, above, font=\scriptsize]{yes} (use.west);
+		\draw[arr] (dec.south) |- node[pos=0.75, below, font=\scriptsize]{no} (gen.west);
+	\end{tikzpicture}
+	\caption{Proposed RACS-Hybrid: retrieval by default, generation only as a fallback. The threshold uses public scores only, so both ends make the same choice.}
+	\label{fig:hybrid}
+\end{figure}
+
+\section{Conclusion}
+Diffusion generation is not required to obtain a good steganographic reference image: a
+deterministic, indexed retrieval stage delivers the same recovery quality and security at a
+small fraction of the cost and without a GPU, provided the transmitter and receiver follow a
+strict determinism contract. And approximate generative recovery need not be the end point: a
+carefully designed authenticated layer can deliver the exact secret while keeping classical
+detectors near chance. Together, these results make coverless semantic steganography cheaper,
+exact and more practical for real devices.
